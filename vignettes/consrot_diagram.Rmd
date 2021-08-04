@@ -1,0 +1,274 @@
+---
+title: "Self-generating CONSORT diagram"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{consrot_diagram}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(consort)
+```
+
+
+## Prepare test data
+```{r}
+set.seed(1001)
+N <- 300
+
+trialno <- sample(c(1000:2000), N)
+exc1 <- rep(NA, N)
+exc1[sample(1:N, 15)] <- sample(c("Sample not collected", "MRI not collected",
+                                  "Other"), 15, replace = T, prob = c(0.4, 0.4, 0.2))
+
+induc <- rep(NA, N)
+induc[is.na(exc1)] <- trialno[is.na(exc1)]
+
+exc2 <- rep(NA, N)
+exc2[sample(1:N, 20)] <- sample(c("Sample not collected", "Dead",
+                                  "Other"), 20, replace = T, prob = c(0.4, 0.4, 0.2))
+exc2[is.na(induc)] <- NA
+
+exc <- ifelse(is.na(exc2), exc1, exc2)
+
+arm <- rep(NA, N)
+arm[is.na(exc)] <- sample(c("Conc", "Seq"), sum(is.na(exc)), replace = T)
+arm3 <- sample(c("Trt A", "Trt B", "Trt C"), N, replace = T)
+arm3[is.na(arm)] <- NA
+
+fow1 <- rep(NA, N)
+fow1[!is.na(arm)] <- sample(c("Withdraw", "Discontinued", "Death", "Other", NA),
+                            sum(!is.na(arm)), replace = T, 
+                            prob = c(0.05, 0.05, 0.05, 0.05, 0.8))
+fow2 <- rep(NA, N)
+fow2[!is.na(arm) & is.na(fow1)] <- sample(c("Protocol deviation", "Outcome missing", NA),
+                                          sum(!is.na(arm) & is.na(fow1)), replace = T, 
+                                          prob = c(0.05, 0.05, 0.9))
+
+
+df <- data.frame(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2)
+rm(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2, N)
+
+
+```
+
+# Description
+
+This function developed to populate consort diagram automatically. But to do so, a population disposition data should be prepared. The following data is prepared for demonstration.
+
+-   `trailno`: List of the subject ID.
+-   `exc1`: reason for exclusion after enrolled, should be missing if not excluded.
+-   `induc`: list of subject ID entered the induction phase.
+-   `exc2`: reason for exclusion in the induction phase, should be missing if not excluded.
+-   `exc`: reason for exclusion after enrolled. This is the combination of `exc1` and `exc2`.
+-   `arm`: treatment arm, two groups.
+-   `fow1`: reason for exclusion in the follow-up, should be missing if not excluded.
+-   `fow2`: reason for exclusion in the final analysis, should be missing if not excluded.
+-   `arm3`: treatment arm, three groups.
+
+```{r cars, echo=FALSE}
+head(df)
+```
+
+# Usage
+
+Basic logic:
+
+1.  The vertical node are the number of patients in the current node, no dropout reasons of inclusion reasons should be provided.
+2.  Side box is only used for the drop outs. It include information about the number of patients excluded and reasons. 
+3.  Any subjects with exclusion reasons will not be included in the next vertical node box after excluded. So the subject id can be used multiple times to indicate how many patients left in the current node. 
+4.  The node labels, for ex visit number or phase, can only horizontally align to a vertical main nodes, not an exclusion box.
+5.  If more than 2 treatment allocation is present, all the exclusion box after the allocation will be aligned to the right
+
+## Self-generating function
+
+To generate consort diagram with data.frame, one should prepare a disposition data.frame.
+
+```{r eval=FALSE}
+consort_plot(data,
+             orders,
+             side_box,
+             allocation = NULL,
+             labels = NULL,
+             dist = 0.05,
+             cex = 0.8)
+```
+
+-   `data`: Dataset prepared above
+-   `order`: A named vector or a list, names as the variable and values as labels in the box. The order of the diagram will be based on this. Variables listed here, but not included in other parameters will calculate the number of non-missing values.
+-   `side_box`: Variable vector, appeared as side box in the diagram. The next box will be the subset of the missing values of these variables. The subject id variable can be used multiple times, since only the number of non-missing is calculated for the vertical box.
+-   `allocation`: Name of the grouping/treatment variable (optional), the diagram will split into branches on this variables.
+-   `labels`: Named vector, names is the location of the vertical node excluding the side box. The position location should plus 1 after the allocation variables if the allocation is defined.
+-   `dist`: Optional, distance between boxes. Default is 0.05.
+-   `cex`: Multiplier applied to fontsize, Default is 0.6
+
+## Manual 
+Functions are mainly in three categories, main box, side box and label box. Others include building function. These are the functions used by the self generating function. These box functions require the previous node and text label.
+-   `add_box`: add main box, no previous nodes should be provided if this is the first node.
+-   `add_side_box`: add exclusion box.
+-   `add_split`: add allocation box, all nodes will be split into groups. The label text for this node and following nodes should be a vector with a length larger than 1. 
+-   `add_label_box`: add visiting or phasing label given a reference node.
+-   `build_consort`: combine the consort diagram nodes and label nodes into one plot. The labels will be vertically align on the left, diagram nodes on the right. 
+
+```{r eval=FALSE}
+add_box(prev_box = NULL, # Previous node, left blank if this is the first node.
+        txt,             # Text in the node
+        dist = 0.02)     # Distance between box
+
+
+add_side_box(prev_box,
+             txt,
+             dist = 0.02)
+
+add_split(prev_box,
+          txt,
+          dist = 0.02)
+
+add_label_box(ref_box, # Reference node to horizontally align with
+              txt)
+
+build_consort(consort_list,      # A list of flow chart nodes
+              label_list = NULL), # A list of node labels
+
+```
+
+# Working example (self generation)
+## Single arm
+
+```{r message=FALSE, fig.width  = 7, fig.height = 6}
+out <- consort_plot(data = df,
+             order = c(trialno = "Population",
+                          exc1    = "Excluded",
+                          arm     = "Allocated",
+                          fow1    = "Lost of Follow-up",
+                          trialno = "Finished Followup",
+                          fow2    = "Not evaluable for the final analysis",
+                          trialno = "Final Analysis"),
+             side_box = c("exc1", "fow1", "fow2"),
+             cex = 0.9)
+out
+
+```
+
+## Two arms
+
+```{r fig.width  = 10, fig.height = 7}
+out <- consort_plot(data = df,
+             order = c(trialno = "Population",
+                          exc    = "Excluded",
+                          arm     = "Randomized patient",
+                          fow1    = "Lost of Follow-up",
+                          trialno = "Finished Followup",
+                          fow2    = "Not evaluable",
+                          trialno = "Final Analysis"),
+             side_box = c("exc", "fow1", "fow2"),
+             allocation = "arm",
+             labels = c("1" = "Screening", "2" = "Randomization",
+                        "5" = "Final"))
+
+out
+```
+
+## Three arms
+
+```{r fig.width  = 11, fig.height = 7}
+consort_plot(data = df,
+             order = c(trialno = "Population",
+                          exc    = "Excluded",
+                          arm3     = "Randomized patient",
+                          fow1    = "Lost of Follow-up",
+                          trialno = "Finished Followup",
+                          fow2    = "Not evaluable",
+                          trialno = "Final Analysis"),
+             side_box = c("exc", "fow1", "fow2"),
+             allocation = "arm3",
+             labels = c("1" = "Screening", "2" = "Randomization",
+                        "5" = "Final"))
+```
+
+## Multiple phase
+
+```{r fig.width  = 11, fig.height = 9}
+consort_plot(data = df,
+             order = list(trialno = "Population",
+                          exc1    = "Excluded",
+                          induc   = "Induction",
+                          exc2    = "Excluded",
+                          arm3     = "Randomized patient",
+                          fow1    = "Lost of Follow-up",
+                          trialno = "Finished Followup",
+                          fow2    = "Not evaluable",
+                          trialno = "Final Analysis"),
+             side_box = c("exc1", "exc2", "fow1", "fow2"),
+             allocation = "arm3",
+             labels = c("1" = "Screening", "2" = "Month 4",
+                        "3" = "Randomization", "5" = "Month 24",
+                        "6" = "End of study"),
+             dist = 0.02,
+             cex = 0.7)
+
+```
+
+
+# Working example (human effort)
+The previous is to easily generate a consort diagram based on a disposition data, here we show how to create a consort diagram by providing the label text manually. 
+```{r fig.width  = 11, fig.height = 7}
+library(grid)
+# Might want to change some settings
+options(boxGrobTxt = gpar(color = "black", cex = 0.8),
+          boxGrob  = gpar(color = "black", cex = 0.8),
+          connectGrobArrow = arrow(length = unit(0.1, "inches"),
+                                   type = "closed"))
+
+txt1 <- "Population (n=300)"
+txt1_side <- "Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)"
+
+node1 <- add_box(txt = txt1)
+
+node3 <- add_side_box(node1, txt = txt1_side)    
+
+node4 <- add_box(node3, txt = "Randomized (n=200)")
+
+node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
+side1_sp <- add_side_box(node1_sp, txt = c("Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)",
+                                           "Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)"))
+
+node2_sp <- add_box(side1_sp, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
+
+lab1 <- add_label_box(node1, txt = "Screening")
+lab2 <- add_label_box(node4, txt = "Randomized")
+lab3 <- add_label_box(node2_sp, txt = "Final analysis")
+
+g <- build_consort(list(node1,
+                   node3,
+                   node4,
+                   node1_sp,
+                   side1_sp,
+                   node2_sp),
+              list(lab1, lab2, lab3))
+```
+
+# Saving plot
+In order to export the plot to fit a page properly, you need to provide the width and height of the output plot. You might need to try different width and height to get a satisfying plot.You can use R basic device destination for the output. Below is how to save a plot in `png` format:
+```{r eval=FALSE}
+# save plots
+png("consort_diagram.png", width = 29, 
+    height = 21, res = 300, units = "cm", type = "cairo") 
+out
+dev.off() 
+
+```
+
+Or you can use `ggplot2::ggsave` function to save the plot object:
+```{r eval=FALSE}
+ggplot2::ggsave("consort_diagram.pdf", plot = p)
+```
+

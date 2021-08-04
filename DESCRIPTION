@@ -1,0 +1,19 @@
+Package: consort
+Type: Package
+Title: Create consort diagram
+Version: 0.1.0
+Authors@R: person("Alimu", "Dayimu",
+                  email = "ad938@cam.ac.uk",
+                  role = c("aut", "cre"),
+                  comment = c(ORCID = "0000-0001-9998-7463"))
+Description: to make it easy to create CONSORT diagrams for the transparent reporting of participant allocation in randomized, controlled clinical trials. This is done by creating a standardized disposition data, and using this data as the source for the creation a standard CONSORT diagram. Human effort by supplying text labels on the node can also be achieved.
+License: MIT + file LICENSE
+BugReports: https://github.com/adayim/consort/issues
+Encoding: UTF-8
+Imports:
+    Gmisc (>= 2.1.0)
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1
