@@ -12,6 +12,7 @@
 #' @param labels Named vector, names is the location of the vertical node
 #' excluding the side box. The position location should plus 1 after the allocation
 #'  variables if the allocation is defined.
+#' @param coords The horizontal coordinates of the boxes, see details.
 #' @param dist Optional, distance between boxes. Default is 0.02.
 #' @param cex Multiplier applied to font size, Default is 0.8
 #'
@@ -133,6 +134,7 @@ consort_plot <- function(data,
                          side_box,
                          allocation = NULL,
                          labels = NULL,
+                         coords = NULL,
                          dist = 0.02,
                          cex = 0.8){
 
@@ -193,7 +195,10 @@ consort_plot <- function(data,
       }else if(i == "split_data_variable"){
         tab <- table(data[[i]])
         txt <- glue(names(tab), tab)
-        gp_list[[indx]] <- add_split(gp_list[[indx-1]], txt = txt, dist = dist)
+        gp_list[[indx]] <- add_split(gp_list[[indx-1]],
+                                     txt = txt, 
+                                     dist = dist,
+                                     coords = coords)
         data <- data[!is.na(data[[i]]), ]
         data <- split(data, as.factor(data[[i]]))
 

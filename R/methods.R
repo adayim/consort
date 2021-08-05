@@ -9,10 +9,6 @@
 #'
 #' @export
 #' @importFrom grid grid.draw grid.newpage viewport vpTree pushViewport seekViewport upViewport vpList gpar rectGrob roundrectGrob
-print <- function (x, ...) {
-  UseMethod("print", x)
-}
-
 print.consort.plot <- function(x, ...) {
 
   requireNamespace("grid", quietly = TRUE)

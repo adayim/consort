@@ -10,6 +10,7 @@ consort_plot(
   side_box,
   allocation = NULL,
   labels = NULL,
+  coords = NULL,
   dist = 0.02,
   cex = 0.8
 )
@@ -29,6 +30,8 @@ diagram will split into branches on this variables forward.}
 \item{labels}{Named vector, names is the location of the vertical node
 excluding the side box. The position location should plus 1 after the allocation
  variables if the allocation is defined.}
+
+\item{coords}{The horizontal coordinates of the boxes, see details.}
 
 \item{dist}{Optional, distance between boxes. Default is 0.02.}
 

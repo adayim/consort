@@ -18,8 +18,11 @@ knitr::opts_chunk$set(
 library(consort)
 ```
 
+The goal of this package is to make it easy to create CONSORT diagrams for the transparent reporting of participant allocation in randomized, controlled clinical trials. This is done by creating a standardized disposition data, and using this data as the source for the creation a standard CONSORT diagram. Human effort by supplying text labels on the node can also be achieved. Below is the illustration of the CONSORT diagram creating process for the two different methods.
 
 ## Prepare test data
+In a clinical research, we normally will have a participants disposition data. One column is the participants' ID, and the following columns indicating the status of the participants at different stage of the study. One can easily derive the number of participants at different stage by counting the number of participants on-study excluding the participants who are excluded. 
+
 ```{r}
 set.seed(1001)
 N <- 300
@@ -60,7 +63,7 @@ rm(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2, N)
 
 ```
 
-# Description
+## Description
 
 This function developed to populate consort diagram automatically. But to do so, a population disposition data should be prepared. The following data is prepared for demonstration.
 
@@ -85,7 +88,7 @@ Basic logic:
 1.  The vertical node are the number of patients in the current node, no dropout reasons of inclusion reasons should be provided.
 2.  Side box is only used for the drop outs. It include information about the number of patients excluded and reasons. 
 3.  Any subjects with exclusion reasons will not be included in the next vertical node box after excluded. So the subject id can be used multiple times to indicate how many patients left in the current node. 
-4.  The node labels, for ex visit number or phase, can only horizontally align to a vertical main nodes, not an exclusion box.
+4.  The node labels, for example visit number or phase, can only horizontally align to a vertical main nodes, not an exclusion box.
 5.  If more than 2 treatment allocation is present, all the exclusion box after the allocation will be aligned to the right
 
 ## Self-generating function

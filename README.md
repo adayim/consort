@@ -4,9 +4,13 @@
 # consort
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/adayim/consort/workflows/R-CMD-check/badge.svg)](https://github.com/adayim/consort/actions)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/consort)](https://CRAN.R-project.org/package=consort)
 <!-- badges: end -->
 
-The goal of {consort} is to make it easy to create CONSORT diagrams for
+The goal of `consort` is to make it easy to create CONSORT diagrams for
 the transparent reporting of participant allocation in randomized,
 controlled clinical trials. This is done by creating a standardized
 disposition data, and using this data as the source for the creation a
@@ -85,7 +89,6 @@ out <- consort_plot(data = df,
                         "5" = "Final"),
              dist = 0.02,
              cex = 0.6)
-#> Loading required package: grid
 
 out
 ```
