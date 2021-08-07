@@ -2,7 +2,7 @@
 title: "Self-generating CONSORT diagram"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{consrot_diagram}
+  %\VignetteIndexEntry{Self-generating CONSORT diagram}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
