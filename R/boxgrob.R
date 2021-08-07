@@ -138,11 +138,9 @@ consort_plot <- function(data,
                          dist = 0.02,
                          cex = 0.8){
 
-  requireNamespace("grid", quietly = TRUE)
-
-  options(boxGrobTxt = gpar(color = "black", cex = cex),
-          boxGrob  = gpar(color = "black", cex = cex),
-          connectGrobArrow = arrow(length = unit(0.1, "inches"),
+  options(boxGrobTxt = grid::gpar(color = "black", cex = cex),
+          boxGrob  = grid::gpar(color = "black", cex = cex),
+          connectGrobArrow = grid::arrow(length = unit(0.1, "inches"),
                                    type = "closed"))
 
   if(is.list(orders))
