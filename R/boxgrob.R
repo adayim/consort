@@ -210,8 +210,8 @@ consort_plot <- function(data,
 
   if(!is.null(labels)){
     if(any(is.na(as.numeric(names(labels)))))
-      stop("Labels should a named vection with names as the position of
-           the box except side box.")
+      stop("Labels must be a named vector with names as the position of
+           the node excluding side node.")
 
     # Get the corresponding position in the orders
     side_pos <- which(names(orders) %in% side_box)
@@ -225,6 +225,7 @@ consort_plot <- function(data,
       lb_list[[indx]] <- add_label_box(gp_list[[i]],
                                        txt = labels[indx])
     }
+
   }else{
     lb_list <- NULL
   }
@@ -261,16 +262,21 @@ consort_plot <- function(data,
 add_box <- function(prev_box = NULL, txt, dist = 0.02){
 
   if(!is.null(prev_box)){
+
     if(!inherits(prev_box, c("consort.list", "consort")))
       stop("ref_box must be consort.list or consort object")
 
+    if(inherits(prev_box, "consort.list") & length(txt) != length(prev_box))
+      stop("The previous node must be a split box if multiple txt defined")
+      
+    # No allocation split
     if(length(txt) == 1){
       out_box <- .add_box(prev_box, txt, dist)
       class(out_box) <- union("consort", class(out_box))
-
+    
+    # If allocation split
     }else{
-      if(length(txt) != length(prev_box))
-        stop("The previous node must be a split box if multiple txt defined")
+     
       out_box <- lapply(seq_along(txt), function(i).add_box(prev_box[[i]],
                                                             txt[i],
                                                             dist))
@@ -304,7 +310,9 @@ add_box <- function(prev_box = NULL, txt, dist = 0.02){
 
 #' Add side node
 #'
-#' Add an exclusion node on the right side.
+#' Add an exclusion node on the right side. If the length of text label is two, then
+#' the first one will be aligned on the left and the second on the right. Otherwise,
+#' all the side nodes will be aligned on the right.
 #'
 #' @param prev_box Previous node object, the created new node will be aligned
 #' at the right bottom of the `prev_box`.
@@ -325,10 +333,11 @@ add_side_box <- function(prev_box, txt, dist = 0.02){
   if(!inherits(prev_box, c("consort.list", "consort")))
     stop("ref_box must be consort.list or consort object")
 
-  if(length(txt) > 1){
-    if(length(txt) != length(prev_box))
-      stop("The previous node must be a split box if multiple txt defined")
+  if(inherits(prev_box, "consort.list") & length(txt) != length(prev_box))
+    stop("The previous node must be a split box if multiple txt defined")
 
+  if(length(txt) > 1){
+    
     # One box on left, the other is right if only two groups given,
     # all will be on right side if not.
     if(length(txt) == 2)
@@ -395,6 +404,9 @@ add_split <- function(prev_box, txt, coords = NULL, dist = 0.02){
   if(inherits(prev_box, "consort.list"))
     stop("Nested splits are not supported in the current version")
 
+  if(inherits(prev_box, "consort.list") & length(prev_box) != 1)
+    stop("The package does not support multiple split.")
+
   if(length(txt) == 1)
     stop("The length of txt should be larger than 1, please use add_box instead.")
 
@@ -417,7 +429,6 @@ add_split <- function(prev_box, txt, coords = NULL, dist = 0.02){
 
     x_coords <- coords
   }
-
 
   .add_split <- function(prev_box, txt, x, dist){
     pre_cords <- Gmisc::coords(prev_box)

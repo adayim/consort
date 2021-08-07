@@ -17,7 +17,9 @@ nodes, a vector of with the same length must be provided.}
 side node.}
 }
 \description{
-Add an exclusion node on the right side.
+Add an exclusion node on the right side. If the length of text label is two, then
+the first one will be aligned on the left and the second on the right. Otherwise,
+all the side nodes will be aligned on the right.
 }
 \examples{
 \dontrun{
