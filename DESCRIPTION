@@ -2,7 +2,7 @@ Package: consort
 Type: Package
 Title: Create consort diagram
 Version: 0.1.1
-Authors@R: person("Alimu", "Dayimu",
+Authors@R: person("Alim", "Dayim",
                   email = "ad938@cam.ac.uk",
                   role = c("aut", "cre"),
                   comment = c(ORCID = "0000-0001-9998-7463"))
