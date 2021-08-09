@@ -7,12 +7,16 @@
 \method{print}{consort.plot}(x, ...)
 }
 \arguments{
-\item{x}{A consort.list, consort.plot or consort object.}
+\item{x}{A \code{consort.list}, \code{consort.plot} or \code{consort}.}
 
 \item{...}{Not used.}
 }
+\value{
+None.
+}
 \description{
-Add methods to print function
+Method for create viewports for the \code{consort.list}, \code{consort.plot} 
+or \code{consort} objects and display the output in on a grid device.
 }
 \seealso{
 \code{\link{add_side_box}},\code{\link{add_split}},

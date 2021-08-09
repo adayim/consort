@@ -1,6 +1,8 @@
 
 
 #' Self generating consort diagram
+#' 
+#' Create CONSORT diagram from a participant disposition data.
 #'
 #' @param data Data set with disposition information for each participants.
 #' @param orders A named vector or a list, names as the variable in the dataset
@@ -22,6 +24,8 @@
 #'  nodes. All the drop outs will be populated as a side box. Which was different
 #'   from the official CONSORT diagram template, which has dropout inside a
 #'   vertical node.
+#'   
+#' @return A \code{consort.plot} object.
 #'
 #' @export
 #'
@@ -29,45 +33,46 @@
 #' \code{\link{add_side_box}},\code{\link{build_consort}}
 #'
 #' @examples
-#' \dontrun{
 #' ## Prepare test data
 #' set.seed(1001)
 #' N <- 300
 #'
 #' trialno <- sample(c(1000:2000), N)
 #' exc1 <- rep(NA, N)
-#' exc1[sample(1:N, 15)] <- sample(c("Sample not collected", "MRI not collected",
-#'                                   "Other"), 15, replace = T, prob = c(0.4, 0.4, 0.2))
+#' exc1[sample(1:N, 15)] <- sample(c("Sample not collected", "MRI not collected", "Other"),
+#'                                15, 
+#'                                replace = TRUE, prob = c(0.4, 0.4, 0.2))
 #'
 #' induc <- rep(NA, N)
 #' induc[is.na(exc1)] <- trialno[is.na(exc1)]
 #'
 #' exc2 <- rep(NA, N)
 #' exc2[sample(1:N, 20)] <- sample(c("Sample not collected", "Dead",
-#'                                   "Other"), 20, replace = T, prob = c(0.4, 0.4, 0.2))
+#'                                   "Other"), 20, replace = TRUE, 
+#'                                   prob = c(0.4, 0.4, 0.2))
 #' exc2[is.na(induc)] <- NA
 #'
 #' exc <- ifelse(is.na(exc2), exc1, exc2)
 #'
 #' arm <- rep(NA, N)
-#' arm[is.na(exc)] <- sample(c("Conc", "Seq"), sum(is.na(exc)), replace = T)
-#' arm3 <- sample(c("Trt A", "Trt B", "Trt C"), N, replace = T)
+#' arm[is.na(exc)] <- sample(c("Conc", "Seq"), sum(is.na(exc)), replace = TRUE)
+#' arm3 <- sample(c("Trt A", "Trt B", "Trt C"), N, replace = TRUE)
 #' arm3[is.na(arm)] <- NA
 #'
 #' fow1 <- rep(NA, N)
 #' fow1[!is.na(arm)] <- sample(c("Withdraw", "Discontinued", "Death", "Other", NA),
-#'                             sum(!is.na(arm)), replace = T,
+#'                             sum(!is.na(arm)), replace = TRUE,
 #'                             prob = c(0.05, 0.05, 0.05, 0.05, 0.8))
 #' fow2 <- rep(NA, N)
 #' fow2[!is.na(arm) & is.na(fow1)] <- sample(c("Protocol deviation", "Outcome missing", NA),
-#'                                           sum(!is.na(arm) & is.na(fow1)), replace = T,
+#'                                           sum(!is.na(arm) & is.na(fow1)), replace = TRUE,
 #'                                           prob = c(0.05, 0.05, 0.9))
 #'
 #'
 #' df <- data.frame(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2)
 #' rm(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2, N)
 #'
-#' # Single arm
+#' ## Single arm
 #' out <- consort_plot(data = df,
 #' order = c(trialno = "Population",
 #'           exc1    = "Excluded",
@@ -79,7 +84,7 @@
 #' side_box = c("exc1", "fow1", "fow2"),
 #' cex = 0.9)
 #'
-#' # Two arms
+#' ## Two arms
 #' out <- consort_plot(data = df,
 #'              order = c(trialno = "Population",
 #'                           exc    = "Excluded",
@@ -92,7 +97,7 @@
 #'              allocation = "arm",
 #'              labels = c("1" = "Screening", "2" = "Randomization",
 #'                         "5" = "Final"))
-#' # Three arms
+#' ## Three arms
 #' consort_plot(data = df,
 #'              order = c(trialno = "Population",
 #'                           exc    = "Excluded",
@@ -106,7 +111,7 @@
 #'              labels = c("1" = "Screening", "2" = "Randomization",
 #'                         "5" = "Final"))
 #'
-#' # Multiple phase
+#' ## Multiple phase
 #' consort_plot(data = df,
 #'              order = list(trialno = "Population",
 #'                           exc1    = "Excluded",
@@ -125,7 +130,7 @@
 #'              dist = 0.02,
 #'              cex = 0.7)
 #'
-#' }
+#' 
 #'
 #' @import grid
 #' @importFrom stats na.omit
@@ -235,9 +240,10 @@ consort_plot <- function(data,
 
 
 
-#' Add node
+#' Add nodes
 #'
-#' Create vertically aligned labeled box for the nodes.
+#' Create/add vertically aligned labeled nodes or side nodes.
+#' 
 #'
 #' @param prev_box Previous node object, the created new node will be vertically
 #' aligned with this node. Left this as `NULL` if this is the first node. The first
@@ -246,18 +252,47 @@ consort_plot <- function(data,
 #' nodes, a vector of with the same length must be provided.
 #' @param dist Distance between previous node, including the distance between the
 #' side node.
-#'
+#' 
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}}
-#'
+#' @return A \code{consort.list} or \code{consort} object.
+#' 
 #' @export
 #'
 #' @importFrom Gmisc connectGrob coords moveBox
 #'
 #' @examples
-#' \dontrun{
-#'node1 <- add_box(txt = "Screened (n=300)")
-#' }
-
+#' txt1 <- "Population (n=300)"
+#' txt1_side <- "Excluded (n=15): \n
+#'               \u2022 MRI not collected (n=3)\n
+#'               \u2022 Tissues not collected (n=4)\n
+#'               \u2022 Other (n=8)"
+#' 
+#' node1 <- add_box(txt = txt1)
+#' 
+#' node3 <- add_side_box(node1, txt = txt1_side)    
+#' 
+#' node4 <- add_box(node3, txt = "Randomized (n=200)")
+#' 
+#' node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
+#' side1_sp <- add_side_box(node1_sp, 
+#'                          txt = c("Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)\n
+#'                          \u2022 Other (n=8)", 
+#'                          "Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)"))
+#' 
+#' node2_sp <- add_box(side1_sp, 
+#'                     txt = c("Final analysis (n=100)",
+#'                              "Final analysis (n=100"))
+#' 
+#' node1
+#' node3
+#' node4
+#' node1_sp
+#' side1_sp
+#' node2_sp
 #'
 add_box <- function(prev_box = NULL, txt, dist = 0.02){
 
@@ -308,7 +343,7 @@ add_box <- function(prev_box = NULL, txt, dist = 0.02){
 }
 
 
-#' Add side node
+#' Add a side node
 #'
 #' Add an exclusion node on the right side. If the length of text label is two, then
 #' the first one will be aligned on the left and the second on the right. Otherwise,
@@ -319,14 +354,44 @@ add_box <- function(prev_box = NULL, txt, dist = 0.02){
 #' @inheritParams add_box
 #'
 #' @seealso \code{\link{add_box}},\code{\link{add_split}}
+#' 
+#' @return A \code{consort.list} or \code{consort} object.
 #'
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' txt1_side <- "Excluded (n=11):\n\u2022 MRI not collected (n=3)\n\u2022 Other (n=8)"
-#' node3 <- add_side_box(node1, txt = txt1_side)
-#' }
+#' txt1 <- "Population (n=300)"
+#' txt1_side <- "Excluded (n=15): \n
+#'               \u2022 MRI not collected (n=3)\n
+#'               \u2022 Tissues not collected (n=4)\n
+#'               \u2022 Other (n=8)"
+#' 
+#' node1 <- add_box(txt = txt1)
+#' 
+#' node3 <- add_side_box(node1, txt = txt1_side)    
+#' 
+#' node4 <- add_box(node3, txt = "Randomized (n=200)")
+#' 
+#' node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
+#' side1_sp <- add_side_box(node1_sp, 
+#'                          txt = c("Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)\n
+#'                          \u2022 Other (n=8)", 
+#'                          "Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)"))
+#' 
+#' node2_sp <- add_box(side1_sp, 
+#'                     txt = c("Final analysis (n=100)",
+#'                              "Final analysis (n=100")) 
+#' node1
+#' node3
+#' node4
+#' node1_sp
+#' side1_sp
+#' node2_sp
+#' 
 
 add_side_box <- function(prev_box, txt, dist = 0.02){
 
@@ -380,6 +445,7 @@ add_side_box <- function(prev_box, txt, dist = 0.02){
 #' @param txt A vector of text labels for each nodes.
 #' @param coords The horizontal coordinates of the boxes, see details.
 #' @inheritParams add_box
+#' 
 #'
 #' @details
 #' The `coords` will be used to set the horizontal coordinates of the nodes. The
@@ -387,16 +453,47 @@ add_side_box <- function(prev_box, txt, dist = 0.02){
 #'  final figure. If the `coords` is `NULL`, not given. The function will calculate
 #'  the `coords`. If the the length of the `txt` is two, then a coordinates of
 #'  0.35 and 0.65 will be used. Once the split box is added, all the following nodes
-#'  will be splitted.
+#'  will be split accordingly.
 #'
 #' @seealso \code{\link{add_box}}, \code{\link{add_side_box}}
+#' 
+#' @return A \code{consort.list} object.
 #'
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' txt1 <- "Population (n=300)"
+#' txt1_side <- "Excluded (n=15): \n
+#'               \u2022 MRI not collected (n=3)\n
+#'               \u2022 Tissues not collected (n=4)\n
+#'               \u2022 Other (n=8)"
+#' 
+#' node1 <- add_box(txt = txt1)
+#' 
+#' node3 <- add_side_box(node1, txt = txt1_side)    
+#' 
+#' node4 <- add_box(node3, txt = "Randomized (n=200)")
+#' 
 #' node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
-#' }
+#' side1_sp <- add_side_box(node1_sp, 
+#'                          txt = c("Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)\n
+#'                          \u2022 Other (n=8)", 
+#'                          "Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)"))
+#' 
+#' node2_sp <- add_box(side1_sp, 
+#'                     txt = c("Final analysis (n=100)",
+#'                              "Final analysis (n=100"))#' 
+#' node1
+#' node3
+#' node4
+#' node1_sp
+#' side1_sp
+#' node2_sp
+#' 
 
 #'
 add_split <- function(prev_box, txt, coords = NULL, dist = 0.02){
@@ -461,14 +558,44 @@ add_split <- function(prev_box, txt, coords = NULL, dist = 0.02){
 #' @param txt Text in the node.
 #'
 #' @export
+#' 
+#' @return A \code{consort} object.
 #'
 #' @importFrom Gmisc boxGrob
 #'
 #' @examples
-#' \dontrun{
+#' txt1 <- "Population (n=300)"
+#' txt1_side <- "Excluded (n=15): \n
+#'               \u2022 MRI not collected (n=3)\n
+#'               \u2022 Tissues not collected (n=4)\n
+#'               \u2022 Other (n=8)"
+#' 
+#' node1 <- add_box(txt = txt1)
+#' 
+#' node3 <- add_side_box(node1, txt = txt1_side)    
+#' 
+#' node4 <- add_box(node3, txt = "Randomized (n=200)")
+#' 
+#' node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
+#' side1_sp <- add_side_box(node1_sp, 
+#'                          txt = c("Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)\n
+#'                          \u2022 Other (n=8)", 
+#'                          "Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)"))
+#' 
+#' node2_sp <- add_box(side1_sp, 
+#'                     txt = c("Final analysis (n=100)",
+#'                              "Final analysis (n=100"))#' 
 #' lab1 <- add_label_box(node1, txt = "Screening")
 #' lab2 <- add_label_box(node4, txt = "Randomized")
-#' }
+#' lab3 <- add_label_box(node2_sp, txt = "Final analysis")
+#' build_consort(list(node1, node3, node4, node1_sp, side1_sp, node2_sp),
+#'               list(lab1, lab2, lab3))
+#'               
+
 
 add_label_box <- function(ref_box,
                           txt){
@@ -508,18 +635,44 @@ add_label_box <- function(ref_box,
 #' @param label_list A list of label nodes.
 #'
 #' @export
+#' 
+#' @return A \code{consort.plot} object.
 #'
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}},
 #' \code{\link{add_side_box}}
 #'
 #' @examples
-#' \dontrun{
-#' build_consort(consort_list = list(node1, node3, node4, node1_sp,
-#'                                    side1_sp, node2_sp),
-#'               label_list   = list(lab1, lab2, lab3))
-#'
-#' }
-
+#' txt1 <- "Population (n=300)"
+#' txt1_side <- "Excluded (n=15): \n
+#'               \u2022 MRI not collected (n=3)\n
+#'               \u2022 Tissues not collected (n=4)\n
+#'               \u2022 Other (n=8)"
+#' 
+#' node1 <- add_box(txt = txt1)
+#' 
+#' node3 <- add_side_box(node1, txt = txt1_side)    
+#' 
+#' node4 <- add_box(node3, txt = "Randomized (n=200)")
+#' 
+#' node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
+#' side1_sp <- add_side_box(node1_sp, 
+#'                          txt = c("Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)\n
+#'                          \u2022 Other (n=8)", 
+#'                          "Excluded (n=15):\n
+#'                          \u2022 MRI not collected (n=3)\n
+#'                          \u2022 Tissues not collected (n=4)"))
+#' 
+#' node2_sp <- add_box(side1_sp, 
+#'                     txt = c("Final analysis (n=100)",
+#'                              "Final analysis (n=100"))
+#'                              
+#' lab1 <- add_label_box(node1, txt = "Screening")
+#' lab2 <- add_label_box(node4, txt = "Randomized")
+#' lab3 <- add_label_box(node2_sp, txt = "Final analysis")
+#' build_consort(list(node1, node3, node4, node1_sp, side1_sp, node2_sp),
+#'               list(lab1, lab2, lab3))
 #'
 #'
 build_consort <- function(consort_list, label_list = NULL){
@@ -536,6 +689,7 @@ build_consort <- function(consort_list, label_list = NULL){
 
 
 # Subset missing data for the next step
+#' @keywords internal
 sub_data <- function(data, var){
   if(!is.data.frame(data))
     sapply(data, function(x)x[is.na(x[[var]]), ],
@@ -544,7 +698,8 @@ sub_data <- function(data, var){
     data[is.na(data[[var]]), ]
 }
 
-# Create text inside box
+# Paste text
+#' @keywords internal
 glue <- function(txt, big_n){
   if(all(big_n == 0))
     paste0(txt)
@@ -552,6 +707,8 @@ glue <- function(txt, big_n){
     paste0(txt, " (n=", big_n, ")")
 }
 
+# Calculate the numbers in the box use the data provided.
+#' @keywords internal
 box_text <- function(data, var, label, side = TRUE){
 
   # Create sub bullet
@@ -587,6 +744,7 @@ box_text <- function(data, var, label, side = TRUE){
 
 
 # Align grobs horizontally
+#' @keywords internal
 align_hori <- function(boxlist) {
 
   # Find the lowest box, and set as reference

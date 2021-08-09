@@ -1,11 +1,15 @@
 #' Add methods to print function
+#' 
+#' Method for create viewports for the \code{consort.list}, \code{consort.plot} 
+#' or \code{consort} objects and display the output in on a grid device.
 #'
-#' @param x A consort.list, consort.plot or consort object.
+#' @param x A \code{consort.list}, \code{consort.plot} or \code{consort}.
 #' @param ... Not used.
 #'
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}},
 #' \code{\link{add_side_box}}, \code{\link{consort_plot}},\code{\link{build_consort}}
-
+#' 
+#' @return None.
 #'
 #' @export
 #' @importFrom grid grid.draw grid.newpage viewport vpTree pushViewport seekViewport upViewport vpList gpar rectGrob roundrectGrob
@@ -43,12 +47,19 @@ print.consort.plot <- function(x, ...) {
   }
 }
 
+#' Print Consort Plots
+#' @param x an object of \code{consort.list}.
+#' @param ... further arguments passed to \code{print} or \code{grid::grid.draw}.
+#' 
+#' @return None
+#' @name print.consort
 #' @export
 print.consort.list <- function(x, ...) {
   for(box in x)
     print(box, ...)
 }
 
+#' @rdname print.consort
 #' @export
 print.consort <- function(x, ...) {
   grid::grid.draw(x, ...)
@@ -62,6 +73,7 @@ print.consort <- function(x, ...) {
 #' This method is to support saving plots with `ggplot2::ggsave`.
 #'
 #' @param x A consort.plot object.
+#' @rdname print.consort
 #' @export
 grid.draw.consort.plot <- function(x){
   print.consort.plot(x)

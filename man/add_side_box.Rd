@@ -2,7 +2,7 @@
 % Please edit documentation in R/boxgrob.R
 \name{add_side_box}
 \alias{add_side_box}
-\title{Add side node}
+\title{Add a side node}
 \usage{
 add_side_box(prev_box, txt, dist = 0.02)
 }
@@ -16,16 +16,47 @@ nodes, a vector of with the same length must be provided.}
 \item{dist}{Distance between previous node, including the distance between the
 side node.}
 }
+\value{
+A \code{consort.list} or \code{consort} object.
+}
 \description{
 Add an exclusion node on the right side. If the length of text label is two, then
 the first one will be aligned on the left and the second on the right. Otherwise,
 all the side nodes will be aligned on the right.
 }
 \examples{
-\dontrun{
-txt1_side <- "Excluded (n=11):\n\u2022 MRI not collected (n=3)\n\u2022 Other (n=8)"
-node3 <- add_side_box(node1, txt = txt1_side)
-}
+txt1 <- "Population (n=300)"
+txt1_side <- "Excluded (n=15): \n
+              \u2022 MRI not collected (n=3)\n
+              \u2022 Tissues not collected (n=4)\n
+              \u2022 Other (n=8)"
+
+node1 <- add_box(txt = txt1)
+
+node3 <- add_side_box(node1, txt = txt1_side)    
+
+node4 <- add_box(node3, txt = "Randomized (n=200)")
+
+node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
+side1_sp <- add_side_box(node1_sp, 
+                         txt = c("Excluded (n=15):\n
+                         \u2022 MRI not collected (n=3)\n
+                         \u2022 Tissues not collected (n=4)\n
+                         \u2022 Other (n=8)", 
+                         "Excluded (n=15):\n
+                         \u2022 MRI not collected (n=3)\n
+                         \u2022 Tissues not collected (n=4)"))
+
+node2_sp <- add_box(side1_sp, 
+                    txt = c("Final analysis (n=100)",
+                             "Final analysis (n=100")) 
+node1
+node3
+node4
+node1_sp
+side1_sp
+node2_sp
+
 }
 \seealso{
 \code{\link{add_box}},\code{\link{add_split}}

@@ -3,9 +3,9 @@
 \docType{package}
 \name{consort-package}
 \alias{consort-package}
-\title{Create consort diagram}
+\title{Create Consort diagram}
 \description{
-to make it easy to create CONSORT diagrams for the transparent reporting
+To make it easy to create CONSORT diagrams for the transparent reporting
  of participant allocation in randomized, controlled clinical trials. This
   is done by creating a standardized disposition data, and using this data
    as the source for the creation a standard CONSORT diagram. Human effort
