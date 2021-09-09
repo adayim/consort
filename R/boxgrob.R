@@ -234,6 +234,10 @@ consort_plot <- function(data,
   }else{
     lb_list <- NULL
   }
+
+  # Remove the blank box
+  gp_list <- gp_list[lengths(gp_list) != 0]
+
   gl <- build_consort(consort_list = gp_list, label_list   = lb_list)
   return(gl)
 }
@@ -423,7 +427,12 @@ add_side_box <- function(prev_box, txt, dist = 0.02){
 
     # Re-connect
     for(i in seq_along(txt)){
-      connect <- Gmisc::connectGrob(prev_box[[i]], out_box[[i]], type = "L")
+      if(length(out_box[[i]]) == 0){
+        connect <- NULL
+      }else{
+        connect <- Gmisc::connectGrob(prev_box[[i]], out_box[[i]], type = "L")
+      }
+      
       attr(out_box[[i]], "connect") <- connect
       attr(out_box[[i]], "prev_box") <- prev_box[[i]]
     }
@@ -683,6 +692,9 @@ build_consort <- function(consort_list, label_list = NULL){
 
   stopifnot(is.list(consort_list))
 
+  # Remove any blank box
+  consort_list <- consort_list[lengths(consort_list) != 0]
+
   gl <- list(consort_list = consort_list,
              label_list   = label_list)
   class(gl) <- union("consort.plot", class(gl))
@@ -728,12 +740,24 @@ box_text <- function(data, var, label, side = TRUE){
   if(side){
     if(!is.data.frame(data)){
       sapply(data, function(x){
-        paste0(glue(label, sum(!is.na(x[[var]]))), ":\n",
+        # Return NULL if total number is 0
+        if(sum(!is.na(x[[var]])) == 0){
+          return(NULL)
+        }else{
+          paste0(glue(label, sum(!is.na(x[[var]]))), ":\n",
                glue_sub(x[[var]]))
-      })
+        }
+        
+      }, simplify = TRUE)
     }else{
-      paste0(glue(label, sum(!is.na(data[[var]]))), ":\n",
+      # Return NULL if total number is 0
+      if(sum(!is.na(data[[var]])) == 0){
+        return(NULL)
+      }else{
+        paste0(glue(label, sum(!is.na(data[[var]]))), ":\n",
              glue_sub(data[[var]]))
+      }
+      
     }
   }else{
     if(!is.data.frame(data)){
@@ -753,8 +777,13 @@ align_hori <- function(boxlist) {
 
   # Find the lowest box, and set as reference
   y_val <- sapply(boxlist, function(x){
-    convertUnit(Gmisc::coords(x)$y, unitTo = "npc", valueOnly = TRUE)
+    if(length(x) == 0){
+      return(NA)
+    }else{
+      convertUnit(Gmisc::coords(x)$y, unitTo = "npc", valueOnly = TRUE)
+    }
   })
+
   y_val <- which.min(y_val)
   y_oth <- base::setdiff(seq_along(boxlist), y_val)
 
@@ -763,14 +792,19 @@ align_hori <- function(boxlist) {
   # Align other boxes
   boxlist[y_oth] <- lapply(boxlist[y_oth],
                            FUN = function(box, ref_pos) {
-                             box_pos <- Gmisc::coords(box)
-                             new_y <- ref_pos$top - box_pos$half_height
-                             out_box <- Gmisc::moveBox(box, y = new_y)
+                             if(length(box) == 0){
+                               return(structure(list(),
+                                       type =  attr(box, "type")))
+                             }else{
+                               box_pos <- Gmisc::coords(box)
+                               new_y <- ref_pos$top - box_pos$half_height
+                               out_box <- Gmisc::moveBox(box, y = new_y)
 
-                             class(out_box) <- union("consort", class(out_box))
+                               class(out_box) <- union("consort", class(out_box))
 
-                             structure(out_box,
-                                       type =  attr(box, "type"))
+                               structure(out_box,
+                                         type =  attr(box, "type"))
+                             }
 
                            },
                            ref_pos = ref_positions)
@@ -786,6 +820,13 @@ align_hori <- function(boxlist) {
 #' @inheritParams add_box
 #' @keywords internal
 .add_box <- function(prev_box, txt, dist = 0.02){
+
+  # Incase the txt is a list
+  txt <- unlist(txt)
+
+  # If the current box is blank
+  if(length(prev_box) == 0)
+    prev_box <- attr(prev_box, "prev_box")
 
   # If previous box is not a side box
   if(attr(prev_box, "type") == "side_box"){
@@ -820,6 +861,16 @@ align_hori <- function(boxlist) {
 #' @keywords internal
 
 .add_side <- function(prev_box, txt, dist = 0.02, right = TRUE){
+
+  # Incase the txt is a list
+  txt <- unlist(txt)
+
+  if(is.null(txt))
+    return(structure(list(),
+              connect  =  NULL,
+              prev_box =  prev_box,
+              type     = "side_box"))
+
   pre_cords <- Gmisc::coords(prev_box)
 
   # Define the name of the side box

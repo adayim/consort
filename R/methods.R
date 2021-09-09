@@ -55,6 +55,7 @@ print.consort.plot <- function(x, ...) {
 #' @name print.consort
 #' @export
 print.consort.list <- function(x, ...) {
+  x <- x[lengths(x) != 0]
   for(box in x)
     print(box, ...)
 }
