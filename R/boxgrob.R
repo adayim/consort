@@ -298,7 +298,7 @@ consort_plot <- function(data,
 #' side1_sp
 #' node2_sp
 #'
-add_box <- function(prev_box = NULL, txt, dist = 0.02){
+add_box <- function(prev_box = NULL, txt, just = "center", dist = 0.02){
 
   if(!is.null(prev_box)){
 
@@ -310,15 +310,16 @@ add_box <- function(prev_box = NULL, txt, dist = 0.02){
       
     # No allocation split
     if(length(txt) == 1){
-      out_box <- .add_box(prev_box, txt, dist)
+      out_box <- .add_box(prev_box, txt = txt, just = just, dist = dist)
       class(out_box) <- union("consort", class(out_box))
     
     # If allocation split
     }else{
      
       out_box <- lapply(seq_along(txt), function(i).add_box(prev_box[[i]],
-                                                            txt[i],
-                                                            dist))
+                                                            txt = txt[i],
+                                                            just = just,
+                                                            dist = dist))
       out_box <- align_hori(out_box) # Horizontal align
       # Re-connect
       for(i in seq_along(txt)){
@@ -359,6 +360,8 @@ add_box <- function(prev_box = NULL, txt, dist = 0.02){
 #'
 #' @param prev_box Previous node object, the created new node will be aligned
 #' at the right bottom of the `prev_box`.
+#' @param side Position of the side box, `left` or `right` side of the terminal box.
+#' Will be aligned on the left and right side if only two groups, right otherwise. 
 #' @inheritParams add_box
 #'
 #' @seealso \code{\link{add_box}},\code{\link{add_split}}
@@ -401,28 +404,33 @@ add_box <- function(prev_box = NULL, txt, dist = 0.02){
 #' node2_sp
 #' 
 
-add_side_box <- function(prev_box, txt, dist = 0.02){
+add_side_box <- function(prev_box, txt, side = NULL, dist = 0.02){
 
   if(!inherits(prev_box, c("consort.list", "consort")))
     stop("ref_box must be consort.list or consort object")
 
   if(inherits(prev_box, "consort.list") & length(txt) != length(prev_box))
     stop("The previous node must be a split box if multiple txt defined")
+  
+  if(!is.null(side) & length(side) != length(txt))
+    stop("The length of side must have the same length with txt.")
+  
+  # One box on left, the other is right if only two groups given,
+  # all will be on right side if not.
+  if(is.null(side)){
+    if(length(txt) == 2)
+      side <- c("left", "right")
+    else
+      side <- rep("right", length(txt))
+  }
 
   if(length(txt) > 1){
-    
-    # One box on left, the other is right if only two groups given,
-    # all will be on right side if not.
-    if(length(txt) == 2)
-      right <- c(FALSE, TRUE)
-    else
-      right <- rep(TRUE, length(txt))
 
     # If more than one groups is given
     out_box <- lapply(seq_along(txt), function(i).add_side(prev_box[[i]],
-                                                           txt[i],
-                                                           dist,
-                                                           right[i]))
+                                                           txt = txt[i],
+                                                           dist = dist,
+                                                           side = side[i]))
     out_box <- align_hori(out_box) # Horizontal align
 
     # Re-connect
@@ -440,7 +448,7 @@ add_side_box <- function(prev_box, txt, dist = 0.02){
     class(out_box) <- union("consort.list", class(out_box))
 
   }else{
-    out_box <- .add_side(prev_box, txt, dist)
+    out_box <- .add_side(prev_box, txt = txt, dist = dist, side = side)
     class(out_box) <- union("consort", class(out_box))
 
   }
@@ -819,7 +827,7 @@ align_hori <- function(boxlist) {
 #'
 #' @inheritParams add_box
 #' @keywords internal
-.add_box <- function(prev_box, txt, dist = 0.02){
+.add_box <- function(prev_box, txt, just = "center", dist = 0.02){
 
   # Incase the txt is a list
   txt <- unlist(txt)
@@ -839,7 +847,7 @@ align_hori <- function(boxlist) {
 
   pre_cords <- Gmisc::coords(prev_box)
 
-  box <- boxGrob(txt, box_fn = rectGrob)
+  box <- Gmisc::boxGrob(txt, just = just, box_fn = rectGrob)
   y_cords <- pre_cords$bottom - Gmisc::coords(box)$half_height - unit(dist, "npc")
   x <- Gmisc::coords(vert_box)$x
 
@@ -854,13 +862,15 @@ align_hori <- function(boxlist) {
             type = "box")
 }
 
-#' Create box grob at the right bottom of the previous node
+#' Create box grob at the right/left bottom of the previous node
 #'
-#' @param right Position of the side box.
+#' @param side Position of the side box.
 #' @inheritParams add_box
 #' @keywords internal
 
-.add_side <- function(prev_box, txt, dist = 0.02, right = TRUE){
+.add_side <- function(prev_box, txt, dist = 0.02, side = c("right", "left")){
+
+  side <- match.arg(side)
 
   # Incase the txt is a list
   txt <- unlist(txt)
@@ -874,12 +884,14 @@ align_hori <- function(boxlist) {
   pre_cords <- Gmisc::coords(prev_box)
 
   # Define the name of the side box
-  bx_name <- ifelse(right, "left_side_box", "right_side_box")
+  bx_name <- switch(side,
+                    "right" = "right_side_box",
+                    "left"  = "left_side_box")
 
-  box <- boxGrob(txt, just = "left", name = bx_name, box_fn = rectGrob)
+  box <- Gmisc::boxGrob(txt, just = "left", name = bx_name, box_fn = rectGrob)
   y_cords <- pre_cords$bottom - Gmisc::coords(box)$half_height - unit(dist, "npc")
 
-  if(right)
+  if(side == "right")
     x <- pre_cords$x + Gmisc::coords(box)$half_width + unit(6, "mm")
   else
     x <- pre_cords$x - Gmisc::coords(box)$half_width - unit(6, "mm")
