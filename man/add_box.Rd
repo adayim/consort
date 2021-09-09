@@ -4,7 +4,7 @@
 \alias{add_box}
 \title{Add nodes}
 \usage{
-add_box(prev_box = NULL, txt, dist = 0.02)
+add_box(prev_box = NULL, txt, just = "center", dist = 0.02)
 }
 \arguments{
 \item{prev_box}{Previous node object, the created new node will be vertically

@@ -4,7 +4,7 @@
 \alias{add_side_box}
 \title{Add a side node}
 \usage{
-add_side_box(prev_box, txt, dist = 0.02)
+add_side_box(prev_box, txt, side = NULL, dist = 0.02)
 }
 \arguments{
 \item{prev_box}{Previous node object, the created new node will be aligned
@@ -12,6 +12,9 @@ at the right bottom of the `prev_box`.}
 
 \item{txt}{Text in the node. If the `prev_box` is a horizontally aligned multiple
 nodes, a vector of with the same length must be provided.}
+
+\item{side}{Position of the side box, `left` or `right` side of the terminal box.
+Will be aligned on the left and right side if only two groups, right otherwise.}
 
 \item{dist}{Distance between previous node, including the distance between the
 side node.}

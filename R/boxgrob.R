@@ -186,18 +186,24 @@ consort_plot <- function(data,
     i <- names(orders)[indx]
 
     if(indx == 1){
-      txt <- glue(orders[indx], sum(!is.na(data[[i]])))
+      txt <- paste0(orders[indx], " (n=", sum(!is.na(data[[i]])), ")")
       gp_list[[indx]] <- add_box(txt = txt, dist = dist)
       data <- data[!is.na(data[[i]]), ]
     }else{
+      if(is.data.frame(data)){
+        val <- data[[i]]
+      }else{
+        val <- sapply(data, function(x)x[[i]], simplify = FALSE)
+      }
+        
       if(i %in% side_box){
-        txt <- box_text(data = data, var = i, label = orders[indx])
+        txt <- box_text(x = val, label = orders[indx], sum_only = FALSE)
         gp_list[[indx]] <- add_side_box(gp_list[[indx-1]], txt = txt, dist = dist)
         data <- sub_data(data, i)
 
       }else if(i == "split_data_variable"){
         tab <- table(data[[i]])
-        txt <- glue(names(tab), tab)
+        txt <- paste0(names(tab), " (n=", tab, ")")
         gp_list[[indx]] <- add_split(gp_list[[indx-1]],
                                      txt = txt, 
                                      dist = dist,
@@ -206,7 +212,7 @@ consort_plot <- function(data,
         data <- split(data, as.factor(data[[i]]))
 
       }else{
-        txt <- box_text(data = data, var = i, label = orders[indx], side = FALSE)
+        txt <- box_text(x = val, label = orders[indx], sum_only = TRUE)
         gp_list[[indx]] <- add_box(gp_list[[indx-1]], txt = txt, dist = dist)
 
       }
@@ -722,60 +728,58 @@ sub_data <- function(data, var){
     data[is.na(data[[var]]), ]
 }
 
-# Paste text
-#' @keywords internal
-glue <- function(txt, big_n){
-  if(all(big_n == 0))
-    paste0(txt)
-  else
-    paste0(txt, " (n=", big_n, ")")
+#' Generate label and bullet points
+#' 
+#' This function use the data to generate label and bullet points for the box.
+#'
+#' @param x A list or a vector to be used.
+#' @param label A character string as a label at the beginning of the text label. 
+#' @param sum_only If shows total only (default). If the value is `FALSE`, the
+#' values will be tabulated with bullet points.
+#'
+#' @return A character string of vector.
+#' @export
+#'
+#' @examples
+#' val <- data.frame(am = factor(ifelse(mtcars$am == 1, "Automatic", "Manual")),
+#'                  car = row.names(mtcars))
+#'  
+#'  box_text(val$car, label = "Cars in the data")
+#'  box_text(val$car, label = "Cars in the data", sum_only = FALSE)
+#'  box_text(split(val$car, val$am), label = "Cars in the data")
+#'  box_text(split(val$car, val$am), label = "Cars in the data", sum_only = FALSE)
+#' 
+#' 
+box_text <- function(x, label, sum_only = TRUE){
+  if(is.list(x)){
+    sapply(x, function(val){
+      box_label(x = val, label = label, sum_only = sum_only)
+    }, simplify = TRUE)
+  }else{
+    box_label(x = x, label = label, sum_only = sum_only)      
+  }
 }
 
 # Calculate the numbers in the box use the data provided.
 #' @keywords internal
-box_text <- function(data, var, label, side = TRUE){
-
-  # Create sub bullet
-  glue_sub <- function(data){
-    if(all(table(data) == "") | all(dim(table(data)) == 0)){
-      return("")
-    }else{
-      txt_sub <- paste0("\u2022 ", names(table(data)), " (n=", table(data), ")")
-      paste(txt_sub, collapse = "\n")
-    }
+box_label <- function(x, label, sum_only = TRUE){
+  
+  # Blank as NA
+  if(is.character(x))
+    x[x == ""] <- NA
+  
+  # Return NULL if no values and it is not for sum
+  if(sum(!is.na(x)) == 0 & !sum_only)
+    return(NULL)
+  
+  tp <- paste0(label, " (n=", sum(!is.na(x)), ")")
+  if(!sum_only){
+    txt_sub <- paste0("\u2022 ", names(table(x)), " (n=", table(x), ")")
+    tp <- paste0(tp, ":\n", paste(txt_sub, collapse = "\n"))
   }
-
-  if(side){
-    if(!is.data.frame(data)){
-      sapply(data, function(x){
-        # Return NULL if total number is 0
-        if(sum(!is.na(x[[var]])) == 0){
-          return(NULL)
-        }else{
-          paste0(glue(label, sum(!is.na(x[[var]]))), ":\n",
-               glue_sub(x[[var]]))
-        }
-        
-      }, simplify = TRUE)
-    }else{
-      # Return NULL if total number is 0
-      if(sum(!is.na(data[[var]])) == 0){
-        return(NULL)
-      }else{
-        paste0(glue(label, sum(!is.na(data[[var]]))), ":\n",
-             glue_sub(data[[var]]))
-      }
-      
-    }
-  }else{
-    if(!is.data.frame(data)){
-      sapply(data, function(x){
-        glue(label, sum(!is.na(x[[var]])))
-      })
-    }else{
-      glue(label, sum(!is.na(data[[var]])))
-    }
-  }
+  
+  return(tp)
+  
 }
 
 

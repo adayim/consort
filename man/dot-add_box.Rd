@@ -4,7 +4,7 @@
 \alias{.add_box}
 \title{Create node vertically align with the previous one}
 \usage{
-.add_box(prev_box, txt, dist = 0.02)
+.add_box(prev_box, txt, just = "center", dist = 0.02)
 }
 \arguments{
 \item{prev_box}{Previous node object, the created new node will be vertically

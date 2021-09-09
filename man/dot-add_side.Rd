@@ -2,9 +2,9 @@
 % Please edit documentation in R/boxgrob.R
 \name{.add_side}
 \alias{.add_side}
-\title{Create box grob at the right bottom of the previous node}
+\title{Create box grob at the right/left bottom of the previous node}
 \usage{
-.add_side(prev_box, txt, dist = 0.02, right = TRUE)
+.add_side(prev_box, txt, dist = 0.02, side = c("right", "left"))
 }
 \arguments{
 \item{prev_box}{Previous node object, the created new node will be vertically
@@ -17,9 +17,9 @@ nodes, a vector of with the same length must be provided.}
 \item{dist}{Distance between previous node, including the distance between the
 side node.}
 
-\item{right}{Position of the side box.}
+\item{side}{Position of the side box.}
 }
 \description{
-Create box grob at the right bottom of the previous node
+Create box grob at the right/left bottom of the previous node
 }
 \keyword{internal}
