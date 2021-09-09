@@ -257,6 +257,7 @@ g <- build_consort(list(node1,
                    side1_sp,
                    node2_sp),
               list(lab1, lab2, lab3))
+g
 ```
 
 # Saving plot

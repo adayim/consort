@@ -197,13 +197,12 @@ consort_plot <- function(data,
       }
         
       if(i %in% side_box){
-        txt <- box_text(x = val, label = orders[indx], sum_only = FALSE)
+        txt <- box_text(x = val, label = orders[indx], bullet = TRUE)
         gp_list[[indx]] <- add_side_box(gp_list[[indx-1]], txt = txt, dist = dist)
         data <- sub_data(data, i)
 
       }else if(i == "split_data_variable"){
-        tab <- table(data[[i]])
-        txt <- paste0(names(tab), " (n=", tab, ")")
+        txt <- box_text(data[[i]])
         gp_list[[indx]] <- add_split(gp_list[[indx-1]],
                                      txt = txt, 
                                      dist = dist,
@@ -212,7 +211,7 @@ consort_plot <- function(data,
         data <- split(data, as.factor(data[[i]]))
 
       }else{
-        txt <- box_text(x = val, label = orders[indx], sum_only = TRUE)
+        txt <- box_text(x = val, label = orders[indx], bullet = FALSE)
         gp_list[[indx]] <- add_box(gp_list[[indx-1]], txt = txt, dist = dist)
 
       }
@@ -260,6 +259,7 @@ consort_plot <- function(data,
 #' node will be aligned in the top center.
 #' @param txt Text in the node. If the `prev_box` is a horizontally aligned multiple
 #' nodes, a vector of with the same length must be provided.
+#' @param just The justification for the text: left, center or right.
 #' @param dist Distance between previous node, including the distance between the
 #' side node.
 #' 
@@ -734,8 +734,9 @@ sub_data <- function(data, var){
 #'
 #' @param x A list or a vector to be used.
 #' @param label A character string as a label at the beginning of the text label. 
-#' @param sum_only If shows total only (default). If the value is `FALSE`, the
-#' values will be tabulated with bullet points.
+#' The count for each categories will be returned if no label is provided.
+#' @param bullet If shows bullet points. If the value is `TRUE`, the bullet points
+#' will be tabulated, default is `FALSE`.
 #'
 #' @return A character string of vector.
 #' @export
@@ -745,35 +746,39 @@ sub_data <- function(data, var){
 #'                  car = row.names(mtcars))
 #'  
 #'  box_text(val$car, label = "Cars in the data")
-#'  box_text(val$car, label = "Cars in the data", sum_only = FALSE)
+#'  box_text(val$car, label = "Cars in the data", bullet = FALSE)
 #'  box_text(split(val$car, val$am), label = "Cars in the data")
-#'  box_text(split(val$car, val$am), label = "Cars in the data", sum_only = FALSE)
+#'  box_text(split(val$car, val$am), label = "Cars in the data", bullet = FALSE)
 #' 
 #' 
-box_text <- function(x, label, sum_only = TRUE){
+box_text <- function(x, label = NULL, bullet = FALSE){
   if(is.list(x)){
     sapply(x, function(val){
-      box_label(x = val, label = label, sum_only = sum_only)
+      box_label(x = val, label = label, bullet = bullet)
     }, simplify = TRUE)
   }else{
-    box_label(x = x, label = label, sum_only = sum_only)      
+    box_label(x = x, label = label, bullet = bullet)      
   }
 }
 
 # Calculate the numbers in the box use the data provided.
 #' @keywords internal
-box_label <- function(x, label, sum_only = TRUE){
+box_label <- function(x, label, bullet = TRUE){
   
   # Blank as NA
   if(is.character(x))
     x[x == ""] <- NA
   
-  # Return NULL if no values and it is not for sum
-  if(sum(!is.na(x)) == 0 & !sum_only)
+  # Return NULL if no values and with bullet
+  if(sum(!is.na(x)) == 0 & bullet)
     return(NULL)
   
+  if(is.null(label))
+    return(paste0(names(table(x)), " (n=", table(x), ")"))
+  
   tp <- paste0(label, " (n=", sum(!is.na(x)), ")")
-  if(!sum_only){
+
+  if(bullet){
     txt_sub <- paste0("\u2022 ", names(table(x)), " (n=", table(x), ")")
     tp <- paste0(tp, ":\n", paste(txt_sub, collapse = "\n"))
   }
@@ -845,7 +850,7 @@ align_hori <- function(boxlist) {
     vert_box <- attr(prev_box, "prev_box")
   }else{
     vert_box <- prev_box
-    dist <- 4*dist # Add more distance
+    dist <- 2*dist # Add more distance
   }
     
 

@@ -4,15 +4,16 @@
 \alias{box_text}
 \title{Generate label and bullet points}
 \usage{
-box_text(x, label, sum_only = TRUE)
+box_text(x, label = NULL, bullet = FALSE)
 }
 \arguments{
 \item{x}{A list or a vector to be used.}
 
-\item{label}{A character string as a label at the beginning of the text label.}
+\item{label}{A character string as a label at the beginning of the text label. 
+The count for each categories will be returned if no label is provided.}
 
-\item{sum_only}{If shows total only (default). If the value is `FALSE`, the
-values will be tabulated with bullet points.}
+\item{bullet}{If shows bullet points. If the value is `TRUE`, the bullet points
+will be tabulated, default is `FALSE`.}
 }
 \value{
 A character string of vector.
@@ -25,9 +26,9 @@ val <- data.frame(am = factor(ifelse(mtcars$am == 1, "Automatic", "Manual")),
                  car = row.names(mtcars))
  
  box_text(val$car, label = "Cars in the data")
- box_text(val$car, label = "Cars in the data", sum_only = FALSE)
+ box_text(val$car, label = "Cars in the data", bullet = FALSE)
  box_text(split(val$car, val$am), label = "Cars in the data")
- box_text(split(val$car, val$am), label = "Cars in the data", sum_only = FALSE)
+ box_text(split(val$car, val$am), label = "Cars in the data", bullet = FALSE)
 
 
 }
