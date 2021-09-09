@@ -4,6 +4,7 @@
 * Add text align option for terminal box.
 * Allow continuous terminal box.
 * Exported box label generation function.
+* Added some examples.
 
 # consort 0.1.1
 
