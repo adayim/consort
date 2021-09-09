@@ -318,12 +318,16 @@ add_box <- function(prev_box = NULL, txt, dist = 0.02){
       out_box <- align_hori(out_box) # Horizontal align
       # Re-connect
       for(i in seq_along(txt)){
-        if(attr(prev_box[[i]], "type") == "side_box")
+        if(attr(prev_box[[i]], "type") == "side_box"){
           vert_box <- attr(prev_box[[i]], "prev_box")
-
+        }else{
+          vert_box <- prev_box[[i]]
+        }
+          
         connect <- Gmisc::connectGrob(vert_box, out_box[[i]], type = "vert")
         attr(out_box[[i]], "connect") <- connect
         attr(out_box[[i]], "prev_box") <- prev_box[[i]]
+        
       }
 
       class(out_box)<- union("consort.list", class(out_box))
@@ -766,7 +770,7 @@ align_hori <- function(boxlist) {
                              class(out_box) <- union("consort", class(out_box))
 
                              structure(out_box,
-                                       type     = "side_box")
+                                       type =  attr(box, "type"))
 
                            },
                            ref_pos = ref_positions)
@@ -783,8 +787,14 @@ align_hori <- function(boxlist) {
 #' @keywords internal
 .add_box <- function(prev_box, txt, dist = 0.02){
 
-  if(attr(prev_box, "type") == "side_box")
+  # If previous box is not a side box
+  if(attr(prev_box, "type") == "side_box"){
     vert_box <- attr(prev_box, "prev_box")
+  }else{
+    vert_box <- prev_box
+    dist <- 4*dist # Add more distance
+  }
+    
 
   pre_cords <- Gmisc::coords(prev_box)
 
