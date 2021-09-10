@@ -8,6 +8,8 @@
 [![R-CMD-check](https://github.com/adayim/consort/workflows/R-CMD-check/badge.svg)](https://github.com/adayim/consort/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/consort)](https://CRAN.R-project.org/package=consort)
+[![CRAN
+download](http://cranlogs.r-pkg.org/badges/grand-total/consort)](https://cran.r-project.org/package=consort)
 <!-- badges: end -->
 
 The goal of `consort` is to make it easy to create CONSORT diagrams for
