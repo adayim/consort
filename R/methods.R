@@ -12,7 +12,6 @@
 #' @return None.
 #'
 #' @export
-#' @importFrom grid grid.draw grid.newpage viewport vpTree pushViewport seekViewport upViewport vpList gpar rectGrob roundrectGrob
 print.consort.plot <- function(x, ...) {
 
   label_list <- x$label_list
