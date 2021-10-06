@@ -15,7 +15,4 @@ A list of box grobs
 \description{
 This function will align all box with the lowest.
 }
-\examples{
-
-}
 \keyword{internal}

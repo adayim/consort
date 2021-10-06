@@ -4,12 +4,14 @@
 \alias{add_label_box}
 \title{Add a vertically aligned label nodes on the left side.}
 \usage{
-add_label_box(ref_box, txt)
+add_label_box(ref_box, txt, ...)
 }
 \arguments{
 \item{ref_box}{Reference node to which the label will be horizontally aligned.}
 
 \item{txt}{Text in the node.}
+
+\item{...}{Other parameters pass to \link{textbox},}
 }
 \value{
 A \code{consort} object.

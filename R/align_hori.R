@@ -7,8 +7,6 @@
 #' @return A list of box grobs
 #' 
 #' @keywords internal
-#'
-#' @examples
 #' 
 align_hori <- function(boxlist) {
 

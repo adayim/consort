@@ -22,8 +22,8 @@
 #' @examples
 #' fg1 <- textbox(text = "This is a test")
 #' fg2 <- textbox(text = "This is an other test", 0.6, 0.2)
-#' grid.draw(fg1)
-#' grid.draw(fg2)
+#' grid::grid.draw(fg1)
+#' grid::grid.draw(fg2)
 #' connect_box(fg1, fg2, connect = "bl", type = "p")
 #' 
 #' 
