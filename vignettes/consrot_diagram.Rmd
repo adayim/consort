@@ -106,7 +106,7 @@ consort_plot(data,
 ```
 
 -   `data`: Dataset prepared above
--   `order`: A named vector or a list, names as the variable and values as labels in the box. The order of the diagram will be based on this. Variables listed here, but not included in other parameters will calculate the number of non-missing values.
+-   `orders`: A named vector or a list, names as the variable and values as labels in the box. The order of the diagram will be based on this. Variables listed here, but not included in other parameters will calculate the number of non-missing values.
 -   `side_box`: Variable vector, appeared as side box in the diagram. The next box will be the subset of the missing values of these variables. The subject id variable can be used multiple times, since only the number of non-missing is calculated for the vertical box.
 -   `allocation`: Name of the grouping/treatment variable (optional), the diagram will split into branches on this variables.
 -   `labels`: Named vector, names is the location of the vertical node excluding the side box. The position location should plus 1 after the allocation variables if the allocation is defined.
@@ -148,7 +148,7 @@ build_consort(consort_list,      # A list of flow chart nodes
 
 ```{r message=FALSE, fig.width  = 7, fig.height = 6}
 out <- consort_plot(data = df,
-             order = c(trialno = "Population",
+             orders = c(trialno = "Population",
                           exc1    = "Excluded",
                           arm     = "Allocated",
                           fow1    = "Lost of Follow-up",
@@ -163,9 +163,9 @@ out
 
 ## Two arms
 
-```{r fig.width  = 10, fig.height = 7}
+```{r fig.width  = 8, fig.height = 7}
 out <- consort_plot(data = df,
-             order = c(trialno = "Population",
+             orders = c(trialno = "Population",
                           exc    = "Excluded",
                           arm     = "Randomized patient",
                           fow1    = "Lost of Follow-up",
@@ -182,9 +182,9 @@ out
 
 ## Three arms
 
-```{r fig.width  = 11, fig.height = 7}
+```{r fig.width  = 9.5, fig.height = 7}
 consort_plot(data = df,
-             order = c(trialno = "Population",
+             orders = c(trialno = "Population",
                           exc    = "Excluded",
                           arm3     = "Randomized patient",
                           fow1    = "Lost of Follow-up",
@@ -199,9 +199,9 @@ consort_plot(data = df,
 
 ## Multiple phase
 
-```{r fig.width  = 11, fig.height = 9}
+```{r fig.width  = 9, fig.height = 9}
 consort_plot(data = df,
-             order = list(trialno = "Population",
+             orders = list(trialno = "Population",
                           exc1    = "Excluded",
                           induc   = "Induction",
                           exc2    = "Excluded",
@@ -225,13 +225,10 @@ consort_plot(data = df,
 The previous is to easily generate a consort diagram based on a disposition data, here we show how to create a consort diagram by providing the label text manually. 
 
 ## Provide text
-```{r fig.width  = 9, fig.height = 7}
+```{r fig.width  = 7, fig.height = 5}
 library(grid)
 # Might want to change some settings
-options(boxGrobTxt = gpar(color = "black", cex = 0.8),
-          boxGrob  = gpar(color = "black", cex = 0.8),
-          connectGrobArrow = arrow(length = unit(0.1, "inches"),
-                                   type = "closed"))
+options(txt_gp = gpar(cex = 0.8))
 
 txt1 <- "Population (n=300)"
 txt1_side <- "Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)"
@@ -263,30 +260,30 @@ g
 ```
 
 ## Using disposition table
-```{r fig.width  = 9, fig.height = 7}
+```{r fig.width  = 7, fig.height = 7}
 
 df$arm <- factor(df$arm)
 
-txt <- box_text(df$trialno, label = "Patient consented")
+txt <- gen_text(df$trialno, label = "Patient consented")
 node1 <- add_box(txt = txt)
 
-txt <- box_text(df$exc, label = "Excluded", bullet = TRUE)
+txt <- gen_text(df$exc, label = "Excluded", bullet = TRUE)
 node_sd1 <- add_side_box(node1, txt = txt)   
 
 # Exclude subjects
 df <- df[is.na(df$exc), ]
 
-node2 <- add_box(node_sd1, txt = box_text(df$arm, label = "Patients randomised")) 
+node2 <- add_box(node_sd1, txt = gen_text(df$arm, label = "Patients randomised")) 
 
-txt <- box_text(df$arm)
+txt <- gen_text(df$arm)
 node3 <- add_split(node2, txt = txt)
 
-txt <- box_text(split(df$fow1, df$arm),
+txt <- gen_text(split(df$fow1, df$arm),
                 label = "Lost to follow-up", bullet = TRUE)
 node4 <- add_box(node3, txt = txt, just = "left")
 
 df <- df[is.na(df$fow1), ]
-txt <- box_text(split(df$trialno, df$arm),
+txt <- gen_text(split(df$trialno, df$arm),
                 label = "Primary analysis")
 node5 <- add_box(node4, txt = txt)
 
@@ -303,6 +300,7 @@ g <- build_consort(list(node1,
                    list(lab1, lab2))
 g
 ```
+
 # Saving plot
 In order to export the plot to fit a page properly, you need to provide the width and height of the output plot. You might need to try different width and height to get a satisfying plot.You can use R basic device destination for the output. Below is how to save a plot in `png` format:
 ```{r eval=FALSE}
