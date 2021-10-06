@@ -1,7 +1,7 @@
 Package: consort
 Type: Package
 Title: Create Consort Diagram
-Version: 0.2.0
+Version: 1.0.0
 Authors@R: person("Alim", "Dayim",
                   email = "ad938@cam.ac.uk",
                   role = c("aut", "cre"),
@@ -12,7 +12,6 @@ URL: https://github.com/adayim/consort/
 BugReports: https://github.com/adayim/consort/issues
 Encoding: UTF-8
 Imports:
-    Gmisc (>= 2.1.0),
     grid
 Suggests: 
     testthat (>= 3.0.0),
