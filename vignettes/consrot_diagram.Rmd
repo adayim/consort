@@ -239,11 +239,11 @@ node3 <- add_side_box(node1, txt = txt1_side)
 
 node4 <- add_box(node3, txt = "Randomized (n=200)")
 
-node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
+node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100)"))
 side1_sp <- add_side_box(node1_sp, txt = c("Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)",
-                                           "Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)"))
+                                           "Excluded (n=7):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)"))
 
-node2_sp <- add_box(side1_sp, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
+node2_sp <- add_box(side1_sp, txt = c("Final analysis (n=85)", "Final analysis (n=93)"))
 
 lab1 <- add_label_box(node1, txt = "Screening")
 lab2 <- add_label_box(node4, txt = "Randomized")

@@ -4,6 +4,8 @@
 #' or \code{consort} objects and display the output in on a grid device.
 #'
 #' @param x A \code{consort.list}, \code{consort.plot} or \code{consort}.
+#' @param widths A numeric vector or unit object specifying width of the label (if any) and consort.
+#' This parameter will be ignored if \code{x} has no label.
 #' @param ... Not used.
 #'
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}},
@@ -12,12 +14,10 @@
 #' @return None.
 #'
 #' @export
-print.consort.plot <- function(x, ...) {
+print.consort.plot <- function(x, widths = c(0.1, 0.9), ...) {
 
   label_list <- x$label_list
   consort_list <- x$consort_list
-
-  widths = c(0.1, 0.9)
 
   grid::grid.newpage()
   if(is.null(label_list)){

@@ -4,10 +4,13 @@
 \alias{print.consort.plot}
 \title{Add methods to print function}
 \usage{
-\method{print}{consort.plot}(x, ...)
+\method{print}{consort.plot}(x, widths = c(0.1, 0.9), ...)
 }
 \arguments{
 \item{x}{A \code{consort.list}, \code{consort.plot} or \code{consort}.}
+
+\item{widths}{A numeric vector or unit object specifying width of the label (if any) and consort.
+This parameter will be ignored if \code{x} has no label.}
 
 \item{...}{Not used.}
 }
