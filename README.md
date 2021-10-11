@@ -10,6 +10,8 @@
 status](https://www.r-pkg.org/badges/version/consort)](https://CRAN.R-project.org/package=consort)
 [![CRAN
 download](http://cranlogs.r-pkg.org/badges/grand-total/consort)](https://cran.r-project.org/package=consort)
+[![Codecov test
+coverage](https://codecov.io/gh/adayim/consort/branch/main/graph/badge.svg)](https://codecov.io/gh/adayim/consort?branch=main)
 <!-- badges: end -->
 
 The goal of `consort` is to make it easy to create CONSORT diagrams for
