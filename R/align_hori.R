@@ -11,10 +11,6 @@
 align_hori <- function(boxlist) {
 
   stopifnot(is.list(boxlist))
-
-  cls <- sapply(boxlist, function(x)!inherits(x, "box"))
-  if(any(cls))
-    stop("The elements in the list must be a box object.")
   
   # Find the lowest box, and set as reference
   y_val <- sapply(boxlist, function(x){
@@ -25,10 +21,16 @@ align_hori <- function(boxlist) {
     }
   })
   
-  y_val <- which.min(y_val)
-  y_oth <- base::setdiff(seq_along(boxlist), y_val)
+  # If only one non-blank box
+  if(sum(!is.na(y_val)) == 1)
+    return(boxlist)
+
+  y_min <- which.min(y_val)
+
+  # Do nothing to blank box
+  y_oth <- base::setdiff(seq_along(boxlist)[!is.na(y_val)], y_min)
   
-  ref_positions <- get_coords(boxlist[[y_val]])
+  ref_positions <- get_coords(boxlist[[y_min]])
   
   # Align other boxes
   boxlist[y_oth] <- lapply(boxlist[y_oth],
