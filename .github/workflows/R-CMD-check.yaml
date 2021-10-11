@@ -84,20 +84,3 @@ jobs:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
           
-      - name: Coverage
-        env:
-          MATNAME: ${{ matrix.name }}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} 
-        run: |
-          docker run --rm -i \
-            -e MATNAME=$MATNAME \
-            -e GITHUB_ACTION=$GITHUB_ACTION \
-            -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY \
-            -e GITHUB_REF=$GITHUB_REF \
-            -e GITHUB_HEAD_REF=$GITHUB_HEAD_REF \
-            -e GITHUB_RUN_ID=$GITHUB_RUN_ID \
-            -e GITHUB_SHA=$GITHUB_SHA \
-            -e CODECOV_TOKEN=$CODECOV_TOKEN \
-            -v ${PWD}:/mnt -w /mnt -e CI=true ${cntr} \
-            ${{ matrix.cmd }} -e \
-            '(v <- Sys.getenv("MATNAME"));if (v == "release") covr::codecov(quiet = FALSE)'
