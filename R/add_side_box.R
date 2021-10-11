@@ -56,7 +56,7 @@ add_side_box <- function(prev_box, txt, side = NULL, dist = 0.02){
     stop("ref_box must be consort.list or consort object")
   
   if(inherits(prev_box, "consort.list") & length(txt) != length(prev_box))
-    stop("The previous node must be a split box if multiple txt defined")
+    stop("The previous node must be have same length as txt")
   
   if(!is.null(side) & length(side) != length(txt))
     stop("The length of side must have the same length with txt.")
@@ -120,11 +120,15 @@ add_side_box <- function(prev_box, txt, side = NULL, dist = 0.02){
   # Incase the txt is a list
   txt <- unlist(txt)
   
-  if(is.null(txt))
+  # Any missing or blank, return a blank list. No side box will be drawn.
+  if(is.null(txt) | txt == "" | is.na(txt)){
     return(structure(list(),
                      connect  =  NULL,
                      prev_box =  prev_box,
                      type     = "side_box"))
+  }
+  
+    
   
   pre_cords <- get_coords(prev_box)
   
