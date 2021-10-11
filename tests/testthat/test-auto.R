@@ -1,7 +1,9 @@
 # Plot checking helper
-save_png <- function(p, width = 9, height = 5) {
+save_png <- function(p, width, height) {
   path <- tempfile(fileext = ".png")
-  ggplot2::ggsave(filename = path, p, width = width, height = height)
+  png(path, width = width, height = height, units = "in", res = 300)
+  on.exit(dev.off())
+  p
   path
 }
 
