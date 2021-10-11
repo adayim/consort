@@ -47,9 +47,9 @@ box_label <- function(x, label, bullet = TRUE){
   if(is.character(x))
     x[x == ""] <- NA
   
-  # Return NULL if no values and with bullet
+  # Return blank if no values and with bullet
   if(sum(!is.na(x)) == 0 & bullet)
-    return(NULL)
+    return("")
   
   if(is.null(label))
     return(paste0(names(table(x)), " (n=", table(x), ")"))
