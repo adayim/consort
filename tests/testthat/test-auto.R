@@ -42,7 +42,7 @@ test_that("Auto generate", {
                     labels = c("1" = "Screening", "2" = "Randomization",
                                "5" = "Final"),
                     cex = 0.9)
-  
+
   expect_s3_class(g, "consort.plot")
   
   skip_on_cran()

@@ -45,7 +45,7 @@ test_that("Generate consort manually", {
   
   skip_on_cran()
   skip_on_ci()
-  
+
   expect_snapshot_file(save_png(g, width = 8, height = 5), 
                        "full_text.png",
                        compare = compare_file_text)
