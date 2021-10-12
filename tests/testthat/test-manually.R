@@ -40,5 +40,13 @@ test_that("Generate consort manually", {
                           side1_sp,
                           node2_sp),
                      list(lab1, lab2, lab3))
-  expect_snapshot_file(save_png(g, width = 8, height = 5), "full_text.png")
+  
+  expect_s3_class(g, "consort.plot")
+  
+  skip_on_cran()
+  skip_on_ci()
+  
+  expect_snapshot_file(save_png(g, width = 8, height = 5), 
+                       "full_text.png",
+                       compare = compare_file_text)
 })
