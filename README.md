@@ -94,7 +94,7 @@ out <- consort_plot(data = df,
              dist = 0.02,
              cex = 0.6)
 
-out
+plot(out)
 ```
 
 <img src="man/figures/README-diagram-1.png" width="100%" />
