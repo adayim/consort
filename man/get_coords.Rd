@@ -32,5 +32,4 @@ This function will get the coordinates of the textbox object.
 \examples{
 fg <- textbox(text = "This is a test")
 get_coords(fg)
-
 }

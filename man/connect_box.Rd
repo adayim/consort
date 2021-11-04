@@ -12,10 +12,10 @@ connect_box(start, end, connect, type = c("s", "p"), name = NULL)
 \item{end}{Ending point of the arrow.}
 
 \item{connect}{The connection of the box. It should be the combination of the
-position. The \code{t} refers to "top", \code{l} for "left", \code{b} for 
-"bottom" and \code{r} for "right". The first letter is the starting point of 
+position. The \code{t} refers to "top", \code{l} for "left", \code{b} for
+"bottom" and \code{r} for "right". The first letter is the starting point of
 the start box, the second is the ending point of the end box. For example, if
-one wants to connect the left side of the start box with right side of the 
+one wants to connect the left side of the start box with right side of the
 left side of the end box, the value should be \code{"lr"}. All the connection
 will be started in the middle point.}
 
@@ -36,5 +36,4 @@ fg2 <- textbox(text = "This is an other test", 0.7, 0.2)
 grid::grid.draw(fg1)
 grid::grid.draw(fg2)
 connect_box(fg1, fg2, connect = "bl", type = "p")
-
 }

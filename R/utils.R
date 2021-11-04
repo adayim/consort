@@ -1,5 +1,5 @@
 #' Add methods to print function
-#' 
+#'
 #' Method for plot objects and display the output in on a grid device.
 #'
 #' @param x A \code{consort} object.
@@ -7,7 +7,7 @@
 #'
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}},
 #' \code{\link{add_side_box}}, \link[grid]{grid.draw}
-#' 
+#'
 #' @return None.
 #'
 #' @export
@@ -20,16 +20,17 @@ plot.consort <- function(x, ...) {
 
 # Wrap text
 #' @keywords internal
-#' 
-text_wrap <- function(txt, width = 0.9 * getOption("width")){
-  if(length(txt) > 1)
+#'
+text_wrap <- function(txt, width = 0.9 * getOption("width")) {
+  if (length(txt) > 1) {
     stop("Vector does not supported!")
-  
+  }
+
   # Split text by line break
   s_txt <- unlist(strsplit(txt, split = "\n"))
-  if(requireNamespace("stringi", quietly = TRUE)){
+  if (requireNamespace("stringi", quietly = TRUE)) {
     s_txt <- stringi::stri_wrap(s_txt, width, 0)
-  }else{
+  } else {
     s_txt <- strwrap(s_txt, width)
   }
   paste(s_txt, collapse = "\n")
@@ -37,32 +38,31 @@ text_wrap <- function(txt, width = 0.9 * getOption("width")){
 
 # Get previous twoo grobs
 #' @keywords internal
-#' 
-get_prev_grobs <- function(x, col = NULL){
-
+#'
+get_prev_grobs <- function(x, col = NULL) {
   nd_list <- which(sapply(x, is.textbox))
-  
-  if(is.null(col)){
+
+  if (is.null(col)) {
     mx <- max(nd_list)
-    if(grepl("sidebox", x[[mx]]$name)){
+    if (grepl("sidebox", x[[mx]]$name)) {
       side_grob <- x[[mx]]
       vert_grob <- x[[nd_list[length(nd_list) - 1]]] # The previous one is a terminal node
-    }else{
+    } else {
       side_grob <- NULL
       vert_grob <- x[[mx]]
     }
-  }else {
+  } else {
     sp_layout <- attr(x, "split_layout")
     sp_layout <- sp_layout[, col]
     last_pos <- sp_layout[length(sp_layout)]
-    
-    if(length(sp_layout) == 1 | grepl("vertbox|splitbox", names(last_pos))){
+
+    if (length(sp_layout) == 1 | grepl("vertbox|splitbox", names(last_pos))) {
       side_grob <- NULL
       vert_grob <- x[[last_pos]]
-    }else if((is.na(last_pos) & grepl("sidebox", names(last_pos)))){
+    } else if ((is.na(last_pos) & grepl("sidebox", names(last_pos)))) {
       side_grob <- NULL
       vert_grob <- x[[sp_layout[length(sp_layout) - 1]]] # The previous one is a terminal node
-    }else{
+    } else {
       side_grob <- x[[last_pos]]
       vert_grob <- x[[sp_layout[length(sp_layout) - 1]]] # The previous one is a terminal node
     }
@@ -72,7 +72,7 @@ get_prev_grobs <- function(x, col = NULL){
 }
 
 #' @keywords internal
-is.textbox <- function(x){
+is.textbox <- function(x) {
   inherits(x, "textbox")
 }
 

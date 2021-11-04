@@ -10,11 +10,11 @@ add_label_box(prev_box, txt, widths = c(0.1, 0.9), only_terminal = TRUE, ...)
 \item{prev_box}{A completed diagram created with \code{add_box}, \code{add_side_box} etc.}
 
 \item{txt}{Text in the node. If a character string is provided, the label will be aligned
- to the last box if a character is provided. If a named vector, the labels will align to 
+ to the last box if a character is provided. If a named vector, the labels will align to
 corresponding row of the node. And the names is the number indicating row number of box to
  horizontally align with and value is the text in the box.}
 
-\item{widths}{A numeric vector of length 2 specifying relative precentage 
+\item{widths}{A numeric vector of length 2 specifying relative precentage
 of the label and diagram in the final gprah.}
 
 \item{only_terminal}{If the txt is only for the terminal box, default. Otherwise, the side box will
@@ -29,7 +29,7 @@ A \code{consort} object.
 In a consort diagram, this can be used to indicate different stage.
 }
 \details{
-The \code{ref_box} parameter kept for the legacy reason, and should be avoided. This is 
+The \code{ref_box} parameter kept for the legacy reason, and should be avoided. This is
 to create a box to horizontally aling with the \code{ref_box}.
 }
 \examples{
@@ -41,21 +41,23 @@ txt1_side <- "Excluded (n=15): \n
 
 g <- add_box(txt = txt1)
 
-g <- add_side_box(g, txt = txt1_side)    
+g <- add_side_box(g, txt = txt1_side)
 
 g <- add_box(g, txt = "Randomized (n=200)")
 
 g <- add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100"))
-g <- add_side_box(g, 
-                  txt = c("Excluded (n=15):\n
+g <- add_side_box(g,
+  txt = c(
+    "Excluded (n=15):\n
                   \u2022 MRI not collected (n=3)\n
                   \u2022 Tissues not collected (n=4)\n
-                   \u2022 Other (n=8)", 
-                   "Excluded (n=15):\n
+                   \u2022 Other (n=8)",
+    "Excluded (n=15):\n
                    \u2022 MRI not collected (n=3)\n
-                   \u2022 Tissues not collected (n=4)"))
+                   \u2022 Tissues not collected (n=4)"
+  )
+)
 
 g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
 g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
-              
 }

@@ -30,10 +30,10 @@ See \link[grid]{textGrob} for more details.}
 
 \item{txt_gp}{An object of class \link[grid]{gpar} style to be applied to the
 text. This will also be read from global options of \code{"txt_gp"}. For
-example, if one wants to set a font size for all the text inside box, 
+example, if one wants to set a font size for all the text inside box,
 \code{options(txt_gp = gpar(cex = 0.8))} will do the trick.}
 
-\item{box_fn}{Function to create box for the text. Parameters of `x=0.5`, 
+\item{box_fn}{Function to create box for the text. Parameters of `x=0.5`,
 `y=0.5` and `box_gp` will be passed to this function and return a \code{grob}
 object. This will also be read from global options of \code{"box_gp"}.}
 
@@ -57,6 +57,5 @@ grob boundary location can be accessed with \link[grid]{grobX} and
 fg <- textbox(text = "This is a test")
 grid::grid.draw(fg)
 grid.textbox(text = "This is a test")
-
 grid.textbox(text = "This is a test")
 }

@@ -9,10 +9,10 @@ move_box(obj, x = NULL, y = NULL, pos_type = c("absolute", "relative"))
 \arguments{
 \item{obj}{A \code{box} object.}
 
-\item{x}{A unit element or a number that can be converted to \code{npc}, see 
+\item{x}{A unit element or a number that can be converted to \code{npc}, see
 \link[grid]{unit}.}
 
-\item{y}{A unit element or a number that can be converted to \code{npc}, see 
+\item{y}{A unit element or a number that can be converted to \code{npc}, see
 \link[grid]{unit}.}
 
 \item{pos_type}{If the provided coordinates are \code{absolute} position the
@@ -22,11 +22,10 @@ box will be moved to or it's a \code{relative} position to it's current.}
 A box object with updated x and y coordinates.
 }
 \description{
-This function can be used to move the box to a given position with 
+This function can be used to move the box to a given position with
 \link[grid]{editGrob} changing the \code{x} and \code{y} value.
 }
 \examples{
 fg <- textbox(text = "This is a test")
 fg2 <- move_box(fg, 0.3, 0.3)
-
 }

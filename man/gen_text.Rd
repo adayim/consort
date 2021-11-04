@@ -12,7 +12,7 @@ box_text(x, label = NULL, bullet = FALSE)
 \arguments{
 \item{x}{A list or a vector to be used.}
 
-\item{label}{A character string as a label at the beginning of the text label. 
+\item{label}{A character string as a label at the beginning of the text label.
 The count for each categories will be returned if no label is provided.}
 
 \item{bullet}{If shows bullet points. If the value is `TRUE`, the bullet points
@@ -25,13 +25,13 @@ A character string of vector.
 This function use the data to generate label and bullet points for the box.
 }
 \examples{
-val <- data.frame(am = factor(ifelse(mtcars$am == 1, "Automatic", "Manual")),
-                 car = row.names(mtcars))
- 
- gen_text(val$car, label = "Cars in the data")
- gen_text(val$car, label = "Cars in the data", bullet = FALSE)
- gen_text(split(val$car, val$am), label = "Cars in the data")
- gen_text(split(val$car, val$am), label = "Cars in the data", bullet = FALSE)
+val <- data.frame(
+  am = factor(ifelse(mtcars$am == 1, "Automatic", "Manual")),
+  car = row.names(mtcars)
+)
 
-
+gen_text(val$car, label = "Cars in the data")
+gen_text(val$car, label = "Cars in the data", bullet = FALSE)
+gen_text(split(val$car, val$am), label = "Cars in the data")
+gen_text(split(val$car, val$am), label = "Cars in the data", bullet = FALSE)
 }
