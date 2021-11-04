@@ -4,7 +4,7 @@
 \alias{add_side_box}
 \title{Add a side node}
 \usage{
-add_side_box(prev_box, txt, side = NULL, dist = 0.02, text_width = NULL)
+add_side_box(prev_box, txt, side = NULL, dist = 0.02, text_width = NULL, ...)
 }
 \arguments{
 \item{prev_box}{Previous node object, the created new node will be aligned
@@ -23,6 +23,8 @@ side node.}
 lines in the output. String will not be wrapped if not defined (default).
 The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
 package installed, otherwise \code{\link[base]{strwrap}} will be used.}
+
+\item{...}{Other parameters pass to \link{textbox},}
 }
 \value{
 A \code{consort.list} or \code{consort} object.

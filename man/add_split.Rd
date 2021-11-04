@@ -4,7 +4,7 @@
 \alias{add_split}
 \title{Add a splitting box}
 \usage{
-add_split(prev_box, txt, coords = NULL, dist = 0.02, text_width = NULL)
+add_split(prev_box, txt, coords = NULL, dist = 0.02, text_width = NULL, ...)
 }
 \arguments{
 \item{prev_box}{Previous node that the newly created split box will be aligned.}
@@ -20,6 +20,8 @@ side node.}
 lines in the output. String will not be wrapped if not defined (default).
 The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
 package installed, otherwise \code{\link[base]{strwrap}} will be used.}
+
+\item{...}{Other parameters pass to \link{textbox},}
 }
 \value{
 A \code{consort.list} object.

@@ -4,7 +4,7 @@
 \alias{.add_side}
 \title{Create box grob at the right/left bottom of the previous node}
 \usage{
-.add_side(prev_vert, txt, dist = 0.02, side = c("right", "left"))
+.add_side(prev_vert, txt, dist = 0.02, side = c("right", "left"), ...)
 }
 \arguments{
 \item{txt}{Text in the node. If the `prev_box` is a horizontally aligned multiple
@@ -14,6 +14,8 @@ nodes, a vector of with the same length must be provided.}
 side node.}
 
 \item{side}{Position of the side box.}
+
+\item{...}{Other parameters pass to \link{textbox},}
 }
 \description{
 Create box grob at the right/left bottom of the previous node

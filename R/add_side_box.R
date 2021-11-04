@@ -47,7 +47,8 @@ add_side_box <- function(prev_box,
                          txt,
                          side = NULL,
                          dist = 0.02,
-                         text_width = NULL){
+                         text_width = NULL,
+                         ...){
   
   # Wrap text
   if(!is.null(text_width)){
@@ -116,7 +117,8 @@ add_side_box <- function(prev_box,
       out_box[[i]] <- .add_side(prev_vert = grb_lst[[i]]$vert_grob,
                                 txt = txt[i],
                                 dist = dist,
-                                side = side[i])
+                                side = side[i],
+                                ...)
     }
     
     out_box <- align_hori(out_box) # Horizontal align
@@ -156,7 +158,7 @@ add_side_box <- function(prev_box,
     }else{
       prev_grob <- get_prev_grobs(prev_box)$vert_grob
       
-      out_box <- .add_side(prev_grob, txt = txt, dist = dist, side = side)
+      out_box <- .add_side(prev_grob, txt = txt, dist = dist, side = side, ...)
         
       connect <- connect_box(prev_grob, out_box, connect = "bl", type = "p")
 
@@ -180,7 +182,8 @@ add_side_box <- function(prev_box,
 .add_side <- function(prev_vert, 
                       txt, 
                       dist = 0.02, 
-                      side = c("right", "left")){
+                      side = c("right", "left"),
+                      ...){
   
   side <- match.arg(side)
   
@@ -195,7 +198,8 @@ add_side_box <- function(prev_box,
   box <- textbox(txt, 
                  just = "left",
                  box_fn = rectGrob,
-                 name = "sidebox")
+                 name = "sidebox",
+                 ...)
   
   y_cords <- pre_cords$bottom - get_coords(box)$half_height - dist
   

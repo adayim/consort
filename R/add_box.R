@@ -17,6 +17,7 @@
 #' lines in the output. String will not be wrapped if not defined (default).
 #' The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
 #' package installed, otherwise \code{\link[base]{strwrap}} will be used.
+#' @param ... Other parameters pass to \link{textbox}, 
 #' 
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}}
 #' @return A \code{consort} object.
@@ -56,7 +57,8 @@ add_box <- function(prev_box = NULL,
                     just = "center",
                     dist = 0.02,
                     y = unit(0.9, "npc"),
-                    text_width = NULL){
+                    text_width = NULL,
+                    ...){
   
   # Wrap text
   if(!is.null(text_width)){
@@ -91,7 +93,8 @@ add_box <- function(prev_box = NULL,
                           prev_side = grb_lst$side_grob, 
                           txt = txt,
                           just = just,
-                          dist = dist)
+                          dist = dist,
+                          ...)
 
       connect <- connect_box(grb_lst$vert_grob, out_box, connect = "bt")
       
@@ -121,7 +124,8 @@ add_box <- function(prev_box = NULL,
                                  prev_side = grb_lst[[i]]$side_grob, 
                                  txt = txt[i],
                                  just = just,
-                                 dist = dist)
+                                 dist = dist,
+                                 ...)
       }
 
       out_box <- align_hori(out_box) # Horizontal align terminal box
@@ -172,7 +176,8 @@ add_box <- function(prev_box = NULL,
                      prev_side = NULL,
                      txt, 
                      just = "center",
-                     dist = 0.02){
+                     dist = 0.02,
+                     ...){
   
   if(!is.unit(dist))
     dist <- unit(dist, "npc")
@@ -187,7 +192,7 @@ add_box <- function(prev_box = NULL,
 
   pre_cords <- get_coords(pre_box)
   
-  box <- textbox(txt, just = just, box_fn = rectGrob, name = "vertbox")
+  box <- textbox(txt, just = just, box_fn = rectGrob, name = "vertbox", ...)
   
   y_cords <- pre_cords$bottom - dist - get_coords(box)$half_height
   x <- get_coords(prev_vert)$x

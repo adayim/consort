@@ -56,7 +56,8 @@ add_split <- function(prev_box,
                       txt, 
                       coords = NULL,
                       dist = 0.02,
-                      text_width = NULL){
+                      text_width = NULL,
+                      ...){
   
   # Wrap text
   if(!is.null(text_width)){
@@ -101,11 +102,11 @@ add_split <- function(prev_box,
   prev_grob <-  grb_lst$vert_grob
   len_grobs <- length(prev_box)
   
-  .add_split <- function(prev_grob, txt, x, dist){
+  .add_split <- function(prev_grob, txt, x, dist, ...){
     
     pre_cords <- get_coords(prev_grob)
     
-    out_grob <- textbox(txt, x = x, box_fn = rectGrob, name = "vertbox")
+    out_grob <- textbox(txt, x = x, box_fn = rectGrob, name = "vertbox", ...)
     y_cords <- pre_cords$y - get_coords(out_grob)$half_height - 3*dist
     move_box(out_grob, y = y_cords)
   }
@@ -114,7 +115,8 @@ add_split <- function(prev_box,
     out_box <- .add_split(prev_grob,
                           txt  = txt[i],
                           x    = x_coords[i],
-                          dist = dist)
+                          dist = dist,
+                          ...)
     
     connect <- connect_box(prev_grob, out_box, connect = "bt", type = "p")
     

@@ -10,7 +10,8 @@ add_box(
   just = "center",
   dist = 0.02,
   y = unit(0.9, "npc"),
-  text_width = NULL
+  text_width = NULL,
+  ...
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ the diagram, default is 0.9npc. Will be ignored if \code{prev_box} is not null.}
 lines in the output. String will not be wrapped if not defined (default).
 The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
 package installed, otherwise \code{\link[base]{strwrap}} will be used.}
+
+\item{...}{Other parameters pass to \link{textbox},}
 }
 \value{
 A \code{consort} object.

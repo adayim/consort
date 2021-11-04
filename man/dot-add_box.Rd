@@ -4,7 +4,7 @@
 \alias{.add_box}
 \title{Create node vertically align with the previous one}
 \usage{
-.add_box(prev_vert, prev_side = NULL, txt, just = "center", dist = 0.02)
+.add_box(prev_vert, prev_side = NULL, txt, just = "center", dist = 0.02, ...)
 }
 \arguments{
 \item{txt}{Text in the node. If the `prev_box` is a horizontally aligned multiple
@@ -14,6 +14,8 @@ nodes, a vector of with the same length must be provided.}
 
 \item{dist}{Distance between previous node, including the distance between the
 side node.}
+
+\item{...}{Other parameters pass to \link{textbox},}
 }
 \description{
 Create node vertically align with the previous one
