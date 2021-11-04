@@ -12,12 +12,14 @@ URL: https://github.com/adayim/consort/
 BugReports: https://github.com/adayim/consort/issues
 Encoding: UTF-8
 Imports:
-    grid
+    grid,
+    gtable
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    covr
+    covr,
+    stringi
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Config/testthat/edition: 3
