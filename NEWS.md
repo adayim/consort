@@ -3,6 +3,7 @@
 -   Many updates and changes in the consort building process.
 -   Removed `Gmisc` dependencies and added some functions for the replacement.
 -   Added some unit tests.
+-   Added option for text width.
 -   Fixed some typos.
 -   Fixed alignment issues and error if side box is blank.
 -   `build_consort` has been deprecated.
