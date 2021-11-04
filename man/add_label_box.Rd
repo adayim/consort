@@ -4,12 +4,21 @@
 \alias{add_label_box}
 \title{Add a vertically aligned label nodes on the left side.}
 \usage{
-add_label_box(ref_box, txt, ...)
+add_label_box(prev_box, txt, widths = c(0.1, 0.9), only_terminal = TRUE, ...)
 }
 \arguments{
-\item{ref_box}{Reference node to which the label will be horizontally aligned.}
+\item{prev_box}{A completed diagram created with \code{add_box}, \code{add_side_box} etc.}
 
-\item{txt}{Text in the node.}
+\item{txt}{Text in the node. If a character string is provided, the label will be aligned
+ to the last box if a character is provided. If a named vector, the labels will align to 
+corresponding row of the node. And the names is the number indicating row number of box to
+ horizontally align with and value is the text in the box.}
+
+\item{widths}{A numeric vector of length 2 specifying relative precentage 
+of the label and diagram in the final gprah.}
+
+\item{only_terminal}{If the txt is only for the terminal box, default. Otherwise, the side box will
+also be accounted for.}
 
 \item{...}{Other parameters pass to \link{textbox},}
 }
@@ -19,6 +28,10 @@ A \code{consort} object.
 \description{
 In a consort diagram, this can be used to indicate different stage.
 }
+\details{
+The \code{ref_box} parameter kept for the legacy reason, and should be avoided. This is 
+to create a box to horizontally aling with the \code{ref_box}.
+}
 \examples{
 txt1 <- "Population (n=300)"
 txt1_side <- "Excluded (n=15): \n
@@ -26,29 +39,23 @@ txt1_side <- "Excluded (n=15): \n
               \u2022 Tissues not collected (n=4)\n
               \u2022 Other (n=8)"
 
-node1 <- add_box(txt = txt1)
+g <- add_box(txt = txt1)
 
-node3 <- add_side_box(node1, txt = txt1_side)    
+g <- add_side_box(g, txt = txt1_side)    
 
-node4 <- add_box(node3, txt = "Randomized (n=200)")
+g <- add_box(g, txt = "Randomized (n=200)")
 
-node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
-side1_sp <- add_side_box(node1_sp, 
-                         txt = c("Excluded (n=15):\n
-                         \u2022 MRI not collected (n=3)\n
-                         \u2022 Tissues not collected (n=4)\n
-                         \u2022 Other (n=8)", 
-                         "Excluded (n=15):\n
-                         \u2022 MRI not collected (n=3)\n
-                         \u2022 Tissues not collected (n=4)"))
+g <- add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100"))
+g <- add_side_box(g, 
+                  txt = c("Excluded (n=15):\n
+                  \u2022 MRI not collected (n=3)\n
+                  \u2022 Tissues not collected (n=4)\n
+                   \u2022 Other (n=8)", 
+                   "Excluded (n=15):\n
+                   \u2022 MRI not collected (n=3)\n
+                   \u2022 Tissues not collected (n=4)"))
 
-node2_sp <- add_box(side1_sp, 
-                    txt = c("Final analysis (n=100)",
-                             "Final analysis (n=100"))#' 
-lab1 <- add_label_box(node1, txt = "Screening")
-lab2 <- add_label_box(node4, txt = "Randomized")
-lab3 <- add_label_box(node2_sp, txt = "Final analysis")
-build_consort(list(node1, node3, node4, node1_sp, side1_sp, node2_sp),
-              list(lab1, lab2, lab3))
+g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
+g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
               
 }

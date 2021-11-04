@@ -4,7 +4,14 @@
 \alias{add_box}
 \title{Add nodes}
 \usage{
-add_box(prev_box = NULL, txt, just = "center", dist = 0.02)
+add_box(
+  prev_box = NULL,
+  txt,
+  just = "center",
+  dist = 0.02,
+  y = unit(0.9, "npc"),
+  text_width = NULL
+)
 }
 \arguments{
 \item{prev_box}{Previous node object, the created new node will be vertically
@@ -18,9 +25,17 @@ nodes, a vector of with the same length must be provided.}
 
 \item{dist}{Distance between previous node, including the distance between the
 side node.}
+
+\item{y}{A number or unit object specifying y-location of the starting point of
+the diagram, default is 0.9npc. Will be ignored if \code{prev_box} is not null.}
+
+\item{text_width}{a positive integer giving the target column for wrapping 
+lines in the output. String will not be wrapped if not defined (default).
+The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
+package installed, otherwise \code{\link[base]{strwrap}} will be used.}
 }
 \value{
-A \code{consort.list} or \code{consort} object.
+A \code{consort} object.
 }
 \description{
 Create/add vertically aligned labeled nodes or side nodes.
@@ -32,32 +47,26 @@ txt1_side <- "Excluded (n=15): \n
               \u2022 Tissues not collected (n=4)\n
               \u2022 Other (n=8)"
 
-node1 <- add_box(txt = txt1)
+g <- add_box(txt = txt1)
 
-node3 <- add_side_box(node1, txt = txt1_side)    
+g <- add_side_box(g, txt = txt1_side)    
 
-node4 <- add_box(node3, txt = "Randomized (n=200)")
+g <- add_box(g, txt = "Randomized (n=200)")
 
-node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
-side1_sp <- add_side_box(node1_sp, 
-                         txt = c("Excluded (n=15):\n
-                         \u2022 MRI not collected (n=3)\n
-                         \u2022 Tissues not collected (n=4)\n
-                         \u2022 Other (n=8)", 
-                         "Excluded (n=15):\n
-                         \u2022 MRI not collected (n=3)\n
-                         \u2022 Tissues not collected (n=4)"))
+g <- add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100"))
+g <- add_side_box(g, 
+                  txt = c("Excluded (n=15):\n
+                  \u2022 MRI not collected (n=3)\n
+                   \u2022 Tissues not collected (n=4)\n
+                   \u2022 Other (n=8)", 
+                   "Excluded (n=15):\n
+                    \u2022 MRI not collected (n=3)\n
+                    \u2022 Tissues not collected (n=4)"))
 
-node2_sp <- add_box(side1_sp, 
-                    txt = c("Final analysis (n=100)",
-                             "Final analysis (n=100"))
+g <- add_box(g, 
+             txt = c("Final analysis (n=100)",
+                     "Final analysis (n=100"))
 
-node1
-node3
-node4
-node1_sp
-side1_sp
-node2_sp
 
 }
 \seealso{

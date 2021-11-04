@@ -4,13 +4,9 @@
 \alias{.add_box}
 \title{Create node vertically align with the previous one}
 \usage{
-.add_box(prev_box, txt, just = "center", dist = 0.02)
+.add_box(prev_vert, prev_side = NULL, txt, just = "center", dist = 0.02)
 }
 \arguments{
-\item{prev_box}{Previous node object, the created new node will be vertically
-aligned with this node. Left this as `NULL` if this is the first node. The first
-node will be aligned in the top center.}
-
 \item{txt}{Text in the node. If the `prev_box` is a horizontally aligned multiple
 nodes, a vector of with the same length must be provided.}
 

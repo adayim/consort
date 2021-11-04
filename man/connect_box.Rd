@@ -2,12 +2,9 @@
 % Please edit documentation in R/connect_box.R
 \name{connect_box}
 \alias{connect_box}
-\alias{print.connect_box}
 \title{Connect grob box with arrow.}
 \usage{
-connect_box(start, end, connect, type = c("s", "p"))
-
-\method{print}{connect_box}(x, ...)
+connect_box(start, end, connect, type = c("s", "p"), name = NULL)
 }
 \arguments{
 \item{start}{Starting point of the arrow.}
@@ -24,12 +21,10 @@ will be started in the middle point.}
 
 \item{type}{Should be one the \code{"s"} (strait line), or \code{"p"} (polyline).}
 
-\item{x}{The grob to print/plot}
-
-\item{...}{Passed to \code{\link[grid]{grid.draw}}}
+\item{name}{A character identifier of the line grob, passed to \code{\link[grid]{linesGrob}}.}
 }
 \value{
-An invisible line grob.
+A lines grob with arrow.
 }
 \description{
 This function is used to create an arrow line to connect two boxes. User should
@@ -37,10 +32,9 @@ provide the starting and ending side of the arrow.
 }
 \examples{
 fg1 <- textbox(text = "This is a test")
-fg2 <- textbox(text = "This is an other test", 0.6, 0.2)
+fg2 <- textbox(text = "This is an other test", 0.7, 0.2)
 grid::grid.draw(fg1)
 grid::grid.draw(fg2)
 connect_box(fg1, fg2, connect = "bl", type = "p")
-
 
 }

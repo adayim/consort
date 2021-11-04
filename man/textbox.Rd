@@ -2,7 +2,7 @@
 % Please edit documentation in R/textbox.R
 \name{textbox}
 \alias{textbox}
-\alias{print.box}
+\alias{grid.textbox}
 \title{Create a box with text}
 \usage{
 textbox(
@@ -13,15 +13,15 @@ textbox(
   txt_gp = getOption("txt_gp", default = gpar(color = "black", cex = 1)),
   box_fn = roundrectGrob,
   box_gp = getOption("box_gp", default = gpar(fill = "white")),
-  name = NULL
+  name = "textbox"
 )
 
-\method{print}{box}(x, ...)
+grid.textbox(...)
 }
 \arguments{
 \item{text}{A character text to be passed to \link[grid]{textGrob}.}
 
-\item{x}{The grob to print/plot}
+\item{x}{A number or unit object specifying x-location.}
 
 \item{y}{A number or unit object specifying y-location.}
 
@@ -33,25 +33,30 @@ text. This will also be read from global options of \code{"txt_gp"}. For
 example, if one wants to set a font size for all the text inside box, 
 \code{options(txt_gp = gpar(cex = 0.8))} will do the trick.}
 
-\item{box_fn}{An object of class \link[grid]{gpar} style to be applied to the
-box.}
-
-\item{box_gp}{Function to create box for the text. Parameters of `x=0.5`, 
+\item{box_fn}{Function to create box for the text. Parameters of `x=0.5`, 
 `y=0.5` and `box_gp` will be passed to this function and return a \code{grob}
 object. This will also be read from global options of \code{"box_gp"}.}
 
+\item{box_gp}{An object of class \link[grid]{gpar} style to be applied to the
+box.}
+
 \item{name}{A character identifier.}
 
-\item{...}{Passed to \code{\link[grid]{grid.draw}}}
+\item{...}{Parameters passed to \code{textbox}}
 }
 \value{
-A grob
+A text box grob. grid.textbox() returns the value invisibly.
 }
 \description{
-Create a \link[grid]{grob} with text inside. The exact positions of the grob
-is stored at the \code{attr(..., "args")}.
+Create a \link[grid]{grob} with text inside. To extract the units describing
+grob boundary location can be accessed with \link[grid]{grobX} and
+ \link[grid]{grobY}. The units describing width and height can be accessed with
+ \link[grid]{grobWidth} and \link[grid]{grobHeight}.
 }
 \examples{
 fg <- textbox(text = "This is a test")
+grid::grid.draw(fg)
+grid.textbox(text = "This is a test")
 
+grid.textbox(text = "This is a test")
 }

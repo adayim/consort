@@ -12,7 +12,9 @@ consort_plot(
   labels = NULL,
   coords = NULL,
   dist = 0.02,
-  cex = 0.8
+  cex = 0.8,
+  text_width = NULL,
+  widths = c(0.1, 0.9)
 )
 }
 \arguments{
@@ -27,15 +29,23 @@ box will be the subset of the missing values of these variables.}
 \item{allocation}{Name of the grouping/treatment variable (optional), the
 diagram will split into branches on this variables forward.}
 
-\item{labels}{Named vector, names is the location of the vertical node
-excluding the side box. The position location should plus 1 after the allocation
- variables if the allocation is defined.}
+\item{labels}{Named vector, names is the location of the terminal node. The 
+position location should plus 1 after the allocation variables if the allocation
+is defined.}
 
-\item{coords}{The horizontal coordinates of the boxes, see details.}
+\item{coords}{The horizontal coordinates of the boxes, see \link{add_split}.}
 
 \item{dist}{Optional, distance between boxes. Default is 0.02.}
 
 \item{cex}{Multiplier applied to font size, Default is 0.8}
+
+\item{text_width}{a positive integer giving the target column for wrapping 
+lines in the output. String will not be wrapped if not defined (default).
+The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
+package installed, otherwise \code{\link[base]{strwrap}} will be used.}
+
+\item{widths}{A numeric vector of length 2 specifying relative percentage 
+of the label and diagram in the final gprah.}
 }
 \value{
 A \code{consort.plot} object.
@@ -148,10 +158,8 @@ consort_plot(data = df,
              dist = 0.02,
              cex = 0.7)
 
-
-
 }
 \seealso{
 \code{\link{add_side_box}},\code{\link{add_split}},
-\code{\link{add_side_box}},\code{\link{build_consort}}
+\code{\link{add_side_box}}
 }

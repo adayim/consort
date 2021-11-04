@@ -22,8 +22,8 @@ box will be moved to or it's a \code{relative} position to it's current.}
 A box object with updated x and y coordinates.
 }
 \description{
-This function can be used to move the box to a given position by modifying
-it's \link[grid]{viewport}.
+This function can be used to move the box to a given position with 
+\link[grid]{editGrob} changing the \code{x} and \code{y} value.
 }
 \examples{
 fg <- textbox(text = "This is a test")

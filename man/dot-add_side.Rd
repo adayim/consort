@@ -4,13 +4,9 @@
 \alias{.add_side}
 \title{Create box grob at the right/left bottom of the previous node}
 \usage{
-.add_side(prev_box, txt, dist = 0.02, side = c("right", "left"))
+.add_side(prev_vert, txt, dist = 0.02, side = c("right", "left"))
 }
 \arguments{
-\item{prev_box}{Previous node object, the created new node will be vertically
-aligned with this node. Left this as `NULL` if this is the first node. The first
-node will be aligned in the top center.}
-
 \item{txt}{Text in the node. If the `prev_box` is a horizontally aligned multiple
 nodes, a vector of with the same length must be provided.}
 
