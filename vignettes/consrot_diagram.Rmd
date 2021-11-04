@@ -117,7 +117,7 @@ consort_plot(data,
 -   `cex`: Multiplier applied to font size, Default is 0.6
 -   `coords`: The horizontal coordinates for the nodes after split.
 -   `text_width`: A positive integer giving the target column for wrapping lines in the output.
--   `coords`: A numeric vector of length 2 specifying relative percentage of the label and diagram in the final gprah.
+-   `coords`: A numeric vector of length 2 specifying relative percentage of the label and diagram in the final graph.
 
 ## Manual 
 Functions are mainly in three categories, main box, side box and label box. Others include building function. These are the functions used by the self generating function. These box functions require the previous node and text label.

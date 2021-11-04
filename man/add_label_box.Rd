@@ -14,8 +14,8 @@ add_label_box(prev_box, txt, widths = c(0.1, 0.9), only_terminal = TRUE, ...)
 corresponding row of the node. And the names is the number indicating row number of box to
  horizontally align with and value is the text in the box.}
 
-\item{widths}{A numeric vector of length 2 specifying relative precentage
-of the label and diagram in the final gprah.}
+\item{widths}{A numeric vector of length 2 specifying relative percentage
+of the label and diagram in the final graph.}
 
 \item{only_terminal}{If the txt is only for the terminal box, default. Otherwise, the side box will
 also be accounted for.}
@@ -30,7 +30,7 @@ In a consort diagram, this can be used to indicate different stage.
 }
 \details{
 The \code{ref_box} parameter kept for the legacy reason, and should be avoided. This is
-to create a box to horizontally aling with the \code{ref_box}.
+to create a box to horizontally align with the \code{ref_box}.
 }
 \examples{
 txt1 <- "Population (n=300)"

@@ -9,13 +9,13 @@
 #'  horizontally align with and value is the text in the box.
 #' @param only_terminal If the txt is only for the terminal box, default. Otherwise, the side box will
 #' also be accounted for.
-#' @param widths A numeric vector of length 2 specifying relative precentage
-#' of the label and diagram in the final gprah.
+#' @param widths A numeric vector of length 2 specifying relative percentage
+#' of the label and diagram in the final graph.
 #' @param ... Other parameters pass to \link{textbox},
 #'
 #' @details
 #' The \code{ref_box} parameter kept for the legacy reason, and should be avoided. This is
-#' to create a box to horizontally aling with the \code{ref_box}.
+#' to create a box to horizontally align with the \code{ref_box}.
 #'
 #' @export
 #'
@@ -147,7 +147,7 @@ add_label_box <- function(prev_box,
     grobTree(prev_box),
     t = 1,
     l = 2,
-    name = "giagram",
+    name = "diagram",
     clip = "off"
   )
 
