@@ -43,7 +43,7 @@ test_that("Auto generate", {
                                "5" = "Final"),
                     cex = 0.9)
 
-  expect_s3_class(g, "consort.plot")
+  expect_s3_class(g, "consort")
   
   skip_on_cran()
   skip_on_ci()

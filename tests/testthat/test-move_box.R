@@ -15,7 +15,11 @@ test_that("Box width and height", {
   expect_equal(get_coords(bx1)$x, get_coords(bx3)$x)
   expect_equal(get_coords(bx3)$y, get_coords(bx3_r)$y)
   
-  expect_equal(get_coords(bx4), get_coords(bx5))
+  for(i in c('left','right','bottom','top',
+             'x','y','width','height','half_width','half_height')){
+    expect_equal(get_coords(bx4)[[i]], get_coords(bx5)[[i]])
+  }
+
 
 })
 

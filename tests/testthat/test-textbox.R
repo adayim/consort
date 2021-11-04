@@ -23,9 +23,9 @@ test_that("Box options", {
   bx1 <- textbox(text = "This is a test")
   
   # Text size
-  expect_equal(getGrob(bx1, "label")$gp$cex, 0.5)
+  expect_equal(bx1$txt_gp$cex, 0.5)
   # Box fill
-  expect_equal(getGrob(bx1, "box")$gp$fill, "red")
+  expect_equal(bx1$box_gp$fill, "red")
   
   options(txt_gp = gpar(),
           box_gp = gpar())
@@ -37,8 +37,8 @@ test_that("Expect class type", {
   tx <- textGrob(label = "text")
   bx1 <- textbox(text = "This is a test")
   
-  expect_error(get_coords(tx), "Object x must be box.")
-  expect_s3_class(bx1, "box")
+  expect_error(get_coords(tx), "Object x must be textbox.")
+  expect_s3_class(bx1, "textbox")
   
 })
 
