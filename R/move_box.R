@@ -1,8 +1,8 @@
 
 #' Move a box grob
 #' 
-#' This function can be used to move the box to a given position by modifying
-#' it's \link[grid]{viewport}. 
+#' This function can be used to move the box to a given position with 
+#' \link[grid]{editGrob} changing the \code{x} and \code{y} value. 
 #'
 #' @param obj A \code{box} object.
 #' @param x A unit element or a number that can be converted to \code{npc}, see 
@@ -24,10 +24,10 @@ move_box <- function(obj, x = NULL, y = NULL, pos_type = c('absolute', 'relative
   
   pos_type <- match.arg(pos_type)
   
-  if(!inherits(obj, "box"))
-    stop("Object obj must be box.")
-  
-  args <- attr(obj, "args")
+  if(!inherits(obj, "textbox"))
+    stop("Object obj must be textbox.")
+
+  args <- list(x = obj$x, y = obj$y, width = obj$width, height = obj$width)
   
   if(!is.null(x)){
     if(!is.unit(x))
@@ -49,9 +49,7 @@ move_box <- function(obj, x = NULL, y = NULL, pos_type = c('absolute', 'relative
       args$y <- y
   }
 
-  fg <- editGrob(obj, vp = do.call(viewport, args))
-  
-  attr(fg, "args") <- args
+  fg <- editGrob(obj, x = args$x, y = args$y)
   
   return(fg)
   
