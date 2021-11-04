@@ -10,6 +10,6 @@
 #' 
 build_consort <- function(consort_list, label_list = NULL){
   
-  warning("Function build_consort has deprecated, please check the vignettes")
+  warning("Function build_consort has deprecated in version 1.0, please check the vignettes")
   
 }
