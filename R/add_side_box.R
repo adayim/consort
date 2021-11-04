@@ -23,40 +23,56 @@
 #'               \u2022 Tissues not collected (n=4)\n
 #'               \u2022 Other (n=8)"
 #' 
-#' node1 <- add_box(txt = txt1)
+#' g <- add_box(txt = txt1)
 #' 
-#' node3 <- add_side_box(node1, txt = txt1_side)    
+#' g <- add_side_box(g, txt = txt1_side)    
 #' 
-#' node4 <- add_box(node3, txt = "Randomized (n=200)")
+#' g <- add_box(g, txt = "Randomized (n=200)")
 #' 
-#' node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
-#' side1_sp <- add_side_box(node1_sp, 
-#'                          txt = c("Excluded (n=15):\n
-#'                          \u2022 MRI not collected (n=3)\n
-#'                          \u2022 Tissues not collected (n=4)\n
-#'                          \u2022 Other (n=8)", 
-#'                          "Excluded (n=15):\n
-#'                          \u2022 MRI not collected (n=3)\n
-#'                          \u2022 Tissues not collected (n=4)"))
+#' g <- add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100"))
+#' g <- add_side_box(g, 
+#'                   txt = c("Excluded (n=15):\n
+#'                   \u2022 MRI not collected (n=3)\n
+#'                   \u2022 Tissues not collected (n=4)\n
+#'                    \u2022 Other (n=8)", 
+#'                    "Excluded (n=15):\n
+#'                    \u2022 MRI not collected (n=3)\n
+#'                    \u2022 Tissues not collected (n=4)"))
 #' 
-#' node2_sp <- add_box(side1_sp, 
-#'                     txt = c("Final analysis (n=100)",
-#'                              "Final analysis (n=100")) 
-#' node1
-#' node3
-#' node4
-#' node1_sp
-#' side1_sp
-#' node2_sp
+#' g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
+#' g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
 #' 
 
-add_side_box <- function(prev_box, txt, side = NULL, dist = 0.02){
+add_side_box <- function(prev_box,
+                         txt,
+                         side = NULL,
+                         dist = 0.02,
+                         text_width = NULL){
   
-  if(!inherits(prev_box, c("consort.list", "consort")))
-    stop("ref_box must be consort.list or consort object")
+  # Wrap text
+  if(!is.null(text_width)){
+    txt <- sapply(txt, function(tx){
+      text_wrap(unlist(tx), width = text_width)
+    })
+  }
   
-  if(inherits(prev_box, "consort.list") & length(txt) != length(prev_box))
-    stop("The previous node must be have same length as txt")
+  if(!inherits(prev_box, c("gList", "consort")))
+    stop("prev_box must be consort object")
+  
+  bx_lst <- Filter(is.textbox, prev_box)
+  
+  if(grepl("sidebox", bx_lst[[length(bx_lst)]]$name))
+    stop("The last box added is a side box, can not add side box after a sidebox!")
+  
+  sp_layout <- attr(prev_box, "split_layout")
+  
+  if(is.null(sp_layout) & length(txt) > 1)
+    stop("Text with length of 1 supplied for splitted diagram.")
+  
+  if(length(txt) > 1 | !is.null(sp_layout)){
+    if(!is.null(sp_layout) & length(txt) != ncol(sp_layout))
+      stop("The txt length must be same as splitted node number.")
+  }
   
   if(!is.null(side) & length(side) != length(txt))
     stop("The length of side must have the same length with txt.")
@@ -71,39 +87,87 @@ add_side_box <- function(prev_box, txt, side = NULL, dist = 0.02){
   }
   
   if(length(txt) > 1){
+
+    blnk_txt <- sapply(txt, function(x){
+      is.null(x) | x == "" | is.na(x)
+    })
+
+    # If all the text are blank
+    if(all(blnk_txt))
+      return(prev_box)
+    
+    # Get the length of grob before editing
+    len_grobs <- length(prev_box)
+    
+    grb_lst <- lapply(seq_along(txt), function(i){
+      get_prev_grobs(prev_box, col = i)
+    })
+    
+    # If allocation split
+    out_box <- vector("list", length = length(txt))
     
     # If more than one groups is given
-    out_box <- lapply(seq_along(txt), function(i).add_side(prev_box[[i]],
-                                                           txt = txt[i],
-                                                           dist = dist,
-                                                           side = side[i]))
-    out_box <- align_hori(out_box) # Horizontal align
-    
-    # Re-connect
     for(i in seq_along(txt)){
-      if(length(out_box[[i]]) == 0){
-        connect <- NULL
-      }else{
-        connect_pos <- switch(side[i],
-                              "right" = "bl",
-                              "left"  = "br")
-
-        connect <- connect_box(prev_box[[i]], out_box[[i]], connect = connect_pos, type = "p")
-      }
       
-      attr(out_box[[i]], "connect") <- connect
-      attr(out_box[[i]], "prev_box") <- prev_box[[i]]
+      # Any missing or blank.
+      if(i %in% which(blnk_txt))
+        next
+      
+      out_box[[i]] <- .add_side(prev_vert = grb_lst[[i]]$vert_grob,
+                                txt = txt[i],
+                                dist = dist,
+                                side = side[i])
     }
     
-    class(out_box) <- union("consort.list", class(out_box))
+    out_box <- align_hori(out_box) # Horizontal align
     
-  }else{
-    out_box <- .add_side(prev_box, txt = txt, dist = dist, side = side)
-    class(out_box) <- union("consort", class(out_box))
+    # Connect
+    for(i in seq_along(txt)){
+      
+      # Any missing or blank.
+      if(i %in% which(blnk_txt))
+        next
+      
+      connect_pos <- switch(side[i],
+                            "right" = "bl",
+                            "left"  = "br")
+      
+      connect <- connect_box(grb_lst[[i]]$vert_grob,
+                             out_box[[i]],
+                             connect = connect_pos,
+                             type = "p")
+      
+      prev_box <- gList(prev_box, out_box[[i]], connect)
+      
+    }
+    
+    # Skip counting the connection grob
+    spl <- rep(NA, length(txt))
+    spl[!blnk_txt] <- len_grobs + seq(length.out = length(txt[!blnk_txt]), by = 2)
+    
+    split_layout <- matrix(spl, ncol = length(txt))
+    row.names(split_layout) <- "sidebox"
+    
+    class(prev_box) <- union("consort", class(prev_box))
+    
+    structure(prev_box, 
+              split_layout = rbind(sp_layout, split_layout))
+      
+    }else{
+      prev_grob <- get_prev_grobs(prev_box)$vert_grob
+      
+      out_box <- .add_side(prev_grob, txt = txt, dist = dist, side = side)
+        
+      connect <- connect_box(prev_grob, out_box, connect = "bl", type = "p")
+
+      prev_box <- gList(prev_box, out_box, connect)
+      
+      class(prev_box) <- union("consort", class(prev_box))
+      
+      structure(prev_box, 
+                split_layout = NULL)
     
   }
-  
-  return(out_box)
 }
 
 
@@ -113,50 +177,33 @@ add_side_box <- function(prev_box, txt, side = NULL, dist = 0.02){
 #' @inheritParams add_box
 #' @keywords internal
 
-.add_side <- function(prev_box, txt, dist = 0.02, side = c("right", "left")){
+.add_side <- function(prev_vert, 
+                      txt, 
+                      dist = 0.02, 
+                      side = c("right", "left")){
   
   side <- match.arg(side)
   
-  # Incase the txt is a list
+  if(!is.unit(dist))
+    dist <- unit(dist, "npc")
+  
+  # In case the text is a list
   txt <- unlist(txt)
   
-  # Any missing or blank, return a blank list. No side box will be drawn.
-  if(is.null(txt) | txt == "" | is.na(txt)){
-    return(structure(list(),
-                     connect  =  NULL,
-                     prev_box =  prev_box,
-                     type     = "side_box"))
-  }
+  pre_cords <- get_coords(prev_vert)
   
-    
+  box <- textbox(txt, 
+                 just = "left",
+                 box_fn = rectGrob,
+                 name = "sidebox")
   
-  pre_cords <- get_coords(prev_box)
-  
-  # Define the name of the side box
-  bx_name <- switch(side,
-                    "right" = "right_side_box",
-                    "left"  = "left_side_box")
-  
-  box <- textbox(txt, just = "left", name = bx_name, box_fn = rectGrob)
-  y_cords <- pre_cords$bottom - get_coords(box)$half_height - unit(dist, "npc")
+  y_cords <- pre_cords$bottom - get_coords(box)$half_height - dist
   
   if(side == "right")
     x <- pre_cords$x + get_coords(box)$half_width + unit(6, "mm")
   else
     x <- pre_cords$x - get_coords(box)$half_width - unit(6, "mm")
   
-  out_box <- move_box(box, x = x, y = y_cords)
-
-  connect_pos <- switch(side,
-                        "right" = "bl",
-                        "left"  = "br")
+  move_box(box, x = x, y = y_cords)
   
-  connect <- connect_box(prev_box, out_box, connect = connect_pos, type = "p")
-  
-  class(out_box) <- union("consort", class(out_box))
-  
-  structure(out_box,
-            connect  =  connect,
-            prev_box =  prev_box,
-            type     = "side_box")
 }
