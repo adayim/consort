@@ -35,16 +35,10 @@ align_hori <- function(boxlist) {
   # Align other boxes
   boxlist[y_oth] <- lapply(boxlist[y_oth],
                            FUN = function(box, ref_pos) {
-                             if(length(box) == 0){
-                               return(structure(list(),
-                                                type =  attr(box, "type")))
-                             }else{
+                             if(length(box) != 0){
                                box_pos <- get_coords(box)
                                new_y <- ref_pos$top - box_pos$half_height
-                               out_box <- move_box(box, y = new_y)
-                               
-                               structure(out_box,
-                                         type =  attr(box, "type"))
+                               move_box(box, y = new_y)
                              }
                              
                            },
