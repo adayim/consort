@@ -101,8 +101,11 @@ consort_plot(data,
              side_box,
              allocation = NULL,
              labels = NULL,
+             coords = NULL,
              dist = 0.05,
-             cex = 0.8)
+             cex = 0.8,
+             text_width = NULL,
+             widths = c(0.1, 0.9))
 ```
 
 -   `data`: Dataset prepared above
@@ -111,7 +114,10 @@ consort_plot(data,
 -   `allocation`: Name of the grouping/treatment variable (optional), the diagram will split into branches on this variables.
 -   `labels`: Named vector, names is the location of the vertical node excluding the side box. The position location should plus 1 after the allocation variables if the allocation is defined.
 -   `dist`: Optional, distance between boxes. Default is 0.05.
--   `cex`: Multiplier applied to fontsize, Default is 0.6
+-   `cex`: Multiplier applied to font size, Default is 0.6
+-   `coords`: The horizontal coordinates for the nodes after split.
+-   `text_width`: A positive integer giving the target column for wrapping lines in the output.
+-   `coords`: A numeric vector of length 2 specifying relative percentage of the label and diagram in the final gprah.
 
 ## Manual 
 Functions are mainly in three categories, main box, side box and label box. Others include building function. These are the functions used by the self generating function. These box functions require the previous node and text label.
@@ -119,29 +125,8 @@ Functions are mainly in three categories, main box, side box and label box. Othe
 -   `add_side_box`: add exclusion box.
 -   `add_split`: add allocation box, all nodes will be split into groups. The label text for this node and following nodes should be a vector with a length larger than 1. 
 -   `add_label_box`: add visiting or phasing label given a reference node.
--   `build_consort`: combine the consort diagram nodes and label nodes into one plot. The labels will be vertically align on the left, diagram nodes on the right. 
-
-```{r eval=FALSE}
-add_box(prev_box = NULL, # Previous node, left blank if this is the first node.
-        txt,             # Text in the node
-        dist = 0.02)     # Distance between box
 
 
-add_side_box(prev_box,
-             txt,
-             dist = 0.02)
-
-add_split(prev_box,
-          txt,
-          dist = 0.02)
-
-add_label_box(ref_box, # Reference node to horizontally align with
-              txt)
-
-build_consort(consort_list,      # A list of flow chart nodes
-              label_list = NULL), # A list of node labels
-
-```
 
 # Working example (self generation)
 ## Single arm
@@ -157,7 +142,7 @@ out <- consort_plot(data = df,
                           trialno = "Final Analysis"),
              side_box = c("exc1", "fow1", "fow2"),
              cex = 0.9)
-out
+plot(out)
 
 ```
 
@@ -174,16 +159,17 @@ out <- consort_plot(data = df,
                           trialno = "Final Analysis"),
              side_box = c("exc", "fow1", "fow2"),
              allocation = "arm",
+             coords = c(0.4, 0.6),
              labels = c("1" = "Screening", "2" = "Randomization",
                         "5" = "Final"))
 
-out
+plot(out)
 ```
 
 ## Three arms
 
 ```{r fig.width  = 9.5, fig.height = 7}
-consort_plot(data = df,
+g <- consort_plot(data = df,
              orders = c(trialno = "Population",
                           exc    = "Excluded",
                           arm3     = "Randomized patient",
@@ -195,12 +181,13 @@ consort_plot(data = df,
              allocation = "arm3",
              labels = c("1" = "Screening", "2" = "Randomization",
                         "5" = "Final"))
+plot(g)
 ```
 
 ## Multiple phase
 
 ```{r fig.width  = 9, fig.height = 9}
-consort_plot(data = df,
+g <- consort_plot(data = df,
              orders = list(trialno = "Population",
                           exc1    = "Excluded",
                           induc   = "Induction",
@@ -217,7 +204,7 @@ consort_plot(data = df,
                         "6" = "End of study"),
              dist = 0.02,
              cex = 0.7)
-
+plot(g)
 ```
 
 
@@ -233,30 +220,18 @@ options(txt_gp = gpar(cex = 0.8))
 txt1 <- "Population (n=300)"
 txt1_side <- "Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)"
 
-node1 <- add_box(txt = txt1)
-
-node3 <- add_side_box(node1, txt = txt1_side)    
-
-node4 <- add_box(node3, txt = "Randomized (n=200)")
-
-node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100)"))
-side1_sp <- add_side_box(node1_sp, txt = c("Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)",
-                                           "Excluded (n=7):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)"))
-
-node2_sp <- add_box(side1_sp, txt = c("Final analysis (n=85)", "Final analysis (n=93)"))
-
-lab1 <- add_label_box(node1, txt = "Screening")
-lab2 <- add_label_box(node4, txt = "Randomized")
-lab3 <- add_label_box(node2_sp, txt = "Final analysis")
-
-g <- build_consort(list(node1,
-                   node3,
-                   node4,
-                   node1_sp,
-                   side1_sp,
-                   node2_sp),
-              list(lab1, lab2, lab3))
-g
+# supports pipeline operator
+g <- add_box(txt = txt1) |>
+  add_side_box(txt = txt1_side) |> 
+  add_box(txt = "Randomized (n=200)") |> 
+  add_split(txt = c("Arm A (n=100)", "Arm B (n=100)")) |> 
+  add_side_box(txt = c("Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)",
+                       "Excluded (n=7):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)")) |> 
+  add_box(txt = c("Final analysis (n=85)", "Final analysis (n=93)")) |> 
+  add_label_box(txt = c("1" = "Screening",
+                        "3" = "Randomized",
+                        "4" = "Final analysis"))
+plot(g)
 ```
 
 ## Using disposition table
@@ -265,40 +240,32 @@ g
 df$arm <- factor(df$arm)
 
 txt <- gen_text(df$trialno, label = "Patient consented")
-node1 <- add_box(txt = txt)
+g <- add_box(txt = txt)
 
 txt <- gen_text(df$exc, label = "Excluded", bullet = TRUE)
-node_sd1 <- add_side_box(node1, txt = txt)   
+g <- add_side_box(g, txt = txt)   
 
 # Exclude subjects
 df <- df[is.na(df$exc), ]
 
-node2 <- add_box(node_sd1, txt = gen_text(df$arm, label = "Patients randomised")) 
+g <- add_box(g, txt = gen_text(df$arm, label = "Patients randomised")) 
 
 txt <- gen_text(df$arm)
-node3 <- add_split(node2, txt = txt)
+g <- add_split(g, txt = txt)
 
 txt <- gen_text(split(df$fow1, df$arm),
                 label = "Lost to follow-up", bullet = TRUE)
-node4 <- add_box(node3, txt = txt, just = "left")
+g <- add_box(g, txt = txt, just = "left")
 
 df <- df[is.na(df$fow1), ]
 txt <- gen_text(split(df$trialno, df$arm),
                 label = "Primary analysis")
-node5 <- add_box(node4, txt = txt)
+g <- add_box(g, txt = txt)
 
-lab1 <- add_label_box(node4, txt = "Baseline")
-lab2 <- add_label_box(node5, txt = "First Stage")
+g <- add_label_box(g, txt = c("3" = "Baseline",
+                              "4" = "First Stage"))
 
-
-g <- build_consort(list(node1,
-                        node_sd1,
-                        node2,
-                        node3,
-                        node4,
-                        node5),
-                   list(lab1, lab2))
-g
+plot(g)
 ```
 
 # Saving plot
@@ -307,13 +274,13 @@ In order to export the plot to fit a page properly, you need to provide the widt
 # save plots
 png("consort_diagram.png", width = 29, 
     height = 21, res = 300, units = "cm", type = "cairo") 
-out
+plot(g)
 dev.off() 
 
 ```
 
 Or you can use `ggplot2::ggsave` function to save the plot object:
 ```{r eval=FALSE}
-ggplot2::ggsave("consort_diagram.pdf", plot = p)
+ggplot2::ggsave("consort_diagram.pdf", plot = g)
 ```
 
