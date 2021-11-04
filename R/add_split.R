@@ -32,43 +32,51 @@
 #'               \u2022 Tissues not collected (n=4)\n
 #'               \u2022 Other (n=8)"
 #' 
-#' node1 <- add_box(txt = txt1)
+#' g <- add_box(txt = txt1)
 #' 
-#' node3 <- add_side_box(node1, txt = txt1_side)    
+#' g <- add_side_box(g, txt = txt1_side)    
 #' 
-#' node4 <- add_box(node3, txt = "Randomized (n=200)")
+#' g <- add_box(g, txt = "Randomized (n=200)")
 #' 
-#' node1_sp <- add_split(node4, txt = c("Arm A (n=100)", "Arm B (n=100"))
-#' side1_sp <- add_side_box(node1_sp, 
-#'                          txt = c("Excluded (n=15):\n
-#'                          \u2022 MRI not collected (n=3)\n
-#'                          \u2022 Tissues not collected (n=4)\n
-#'                          \u2022 Other (n=8)", 
-#'                          "Excluded (n=15):\n
-#'                          \u2022 MRI not collected (n=3)\n
-#'                          \u2022 Tissues not collected (n=4)"))
+#' g <- add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100"))
+#' g <- add_side_box(g, 
+#'                   txt = c("Excluded (n=15):\n
+#'                   \u2022 MRI not collected (n=3)\n
+#'                   \u2022 Tissues not collected (n=4)\n
+#'                    \u2022 Other (n=8)", 
+#'                    "Excluded (n=15):\n
+#'                    \u2022 MRI not collected (n=3)\n
+#'                    \u2022 Tissues not collected (n=4)"))
 #' 
-#' node2_sp <- add_box(side1_sp, 
-#'                     txt = c("Final analysis (n=100)",
-#'                              "Final analysis (n=100"))#' 
-#' node1
-#' node3
-#' node4
-#' node1_sp
-#' side1_sp
-#' node2_sp
+#' g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
+#' g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
 #' 
 #'
-add_split <- function(prev_box, txt, coords = NULL, dist = 0.02){
+add_split <- function(prev_box,
+                      txt, 
+                      coords = NULL,
+                      dist = 0.02,
+                      text_width = NULL){
   
-  if(inherits(prev_box, "consort.list"))
+  # Wrap text
+  if(!is.null(text_width)){
+    txt <- sapply(txt, function(tx){
+      text_wrap(unlist(tx), width = text_width)
+    })
+  }
+  
+  if(!is.unit(dist))
+    dist <- unit(dist, "npc")
+  
+  if(!is.null(attr(prev_box, "split_layout")))
     stop("Nested splits are not supported in the current version")
-  
-  if(inherits(prev_box, "consort.list") & length(prev_box) != 1)
-    stop("The package does not support multiple split.")
   
   if(length(txt) == 1)
     stop("The length of txt should be larger than 1, please use add_box instead.")
+  
+  grb_lst <- get_prev_grobs(prev_box)
+  if(!is.null(grb_lst$side_grob))
+    stop("The last box added is not a terminal box!")
   
   # Define coordinates for the splits
   if(is.null(coords)){
@@ -90,25 +98,36 @@ add_split <- function(prev_box, txt, coords = NULL, dist = 0.02){
     x_coords <- coords
   }
   
-  .add_split <- function(prev_box, txt, x, dist){
-    pre_cords <- get_coords(prev_box)
+  prev_grob <-  grb_lst$vert_grob
+  len_grobs <- length(prev_box)
+  
+  .add_split <- function(prev_grob, txt, x, dist){
     
-    out_box <- textbox(txt, x = x, box_fn = rectGrob)
-    y_cords <- pre_cords$bottom - get_coords(out_box)$half_height - unit(dist+0.02, "npc")
-    out_box <- move_box(out_box, y = y_cords)
-    connect <- connect_box(prev_box, out_box, connect = "bt", type = "p")
+    pre_cords <- get_coords(prev_grob)
     
-    class(out_box) <- union("consort", class(out_box))
+    out_grob <- textbox(txt, x = x, box_fn = rectGrob, name = "vertbox")
+    y_cords <- pre_cords$y - get_coords(out_grob)$half_height - 3*dist
+    move_box(out_grob, y = y_cords)
+  }
+
+  for(i in seq_len(length(txt))){
+    out_box <- .add_split(prev_grob,
+                          txt  = txt[i],
+                          x    = x_coords[i],
+                          dist = dist)
     
-    structure(out_box,
-              connect =  connect,
-              type = "box")
+    connect <- connect_box(prev_grob, out_box, connect = "bt", type = "p")
+    
+    prev_box <- gList(prev_box, out_box, connect)
   }
   
-  out_box <- lapply(seq_along(txt), function(i).add_split(prev_box,
-                                                          txt[i],
-                                                          x_coords[i],
-                                                          dist))
-  class(out_box) <- union("consort.list", class(out_box))
-  return(out_box)
+  # Skip counting the connection grob
+  split_layout <- matrix(len_grobs + seq(length.out = length(txt), by = 2),
+                         ncol = length(txt))
+  row.names(split_layout) <- "splitbox"
+
+  class(prev_box) <- union("consort", class(prev_box))
+  
+  structure(prev_box, split_layout = split_layout)
+
 }
