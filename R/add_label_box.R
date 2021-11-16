@@ -151,6 +151,7 @@ add_label_box <- function(prev_box,
     clip = "off"
   )
 
+  gt <- gtable::gtable_add_padding(gt, unit(c(1, 4, 1, 4), "cm"))
 
   class(gt) <- union("consort", class(gt))
 
