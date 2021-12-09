@@ -107,8 +107,8 @@ makeContent.textbox <- function(x) {
 
   # Align text
   tx_x <- switch(x$just,
-    "right" = unit(1, "npc") - padding / 2,
-    "left"  = padding / 2,
+    "right" = unit(1, "npc") - 0.5 * padding,
+    "left"  = 0.5 * padding,
     "center" = unit(.5, "npc")
   )
 

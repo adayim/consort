@@ -83,10 +83,10 @@ connect_box <- function(start, end,
   get_dist <- function(a, b) {
     res <- a - b
     # Consider the arrow head
-    if (as.numeric(res) < 0) {
-      (res + unit(0.1, "inches")) / 2
+    if (as.numeric(convertUnit(res, "mm", valueOnly = TRUE)) < 0) {
+      0.5 * (res + unit(0.1, "inches"))
     } else {
-      (res - unit(0.1, "inches")) / 2
+      0.5 * (res - unit(0.1, "inches"))
     }
   }
 

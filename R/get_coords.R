@@ -33,8 +33,8 @@ get_coords <- function(x) {
   width <- convertWidth(grobWidth(x), "mm", valueOnly = TRUE)
   height <- convertHeight(grobHeight(x), "mm", valueOnly = TRUE)
 
-  half_height <- unit(height / 2, "mm")
-  half_width <- unit(width / 2, "mm")
+  half_height <- unit(0.5 * height, "mm")
+  half_width <- unit(0.5 * width, "mm")
 
   list(
     left = x$x - half_width,
