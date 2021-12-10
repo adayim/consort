@@ -2,9 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{plot.consort}
 \alias{plot.consort}
+\alias{print.consort}
 \title{Add methods to print function}
 \usage{
 \method{plot}{consort}(x, ...)
+
+\method{print}{consort}(x, ...)
 }
 \arguments{
 \item{x}{A \code{consort} object.}

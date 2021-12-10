@@ -3,7 +3,7 @@ save_png <- function(p, width, height) {
   path <- tempfile(fileext = ".png")
   png(path, width = width, height = height, units = "in", res = 300)
   on.exit(dev.off())
-  p
+  plot(p)
   path
 }
 
