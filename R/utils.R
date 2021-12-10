@@ -10,13 +10,16 @@
 #'
 #' @return None.
 #'
-#' @export
 #' @rdname plot.consort
 #' @export
 plot.consort <- function(x, ...) {
   grid::grid.newpage()
   grid::grid.draw(x, ...)
 }
+
+#' @rdname plot.consort
+#' @export
+print.consort <- plot.consort
 
 # Wrap text
 #' @keywords internal
@@ -36,7 +39,7 @@ text_wrap <- function(txt, width = 0.9 * getOption("width")) {
   paste(s_txt, collapse = "\n")
 }
 
-# Get previous twoo grobs
+# Get previous two grobs
 #' @keywords internal
 #'
 get_prev_grobs <- function(x, col = NULL) {
