@@ -80,17 +80,22 @@ add_split <- function(prev_box,
   }
 
   grb_lst <- get_prev_grobs(prev_box)
+  prev_grob <- grb_lst$vert_grob
+
   if (!is.null(grb_lst$side_grob)) {
     stop("The last box added is not a terminal box!")
   }
+
+  mid_cord <- get_coords(prev_grob)$x
+  mid_cord <- convertX(mid_cord, "npc", valueOnly = TRUE)
 
   # Define coordinates for the splits
   if (is.null(coords)) {
     n_gp <- length(txt)
     if (n_gp == 2) {
-      x_coords <- c(0.35, 0.65)
+      x_coords <- c(mid_cord - 0.15, mid_cord + 0.15)
     } else {
-      x_coords <- 0.5 / n_gp
+      x_coords <- mid_cord / n_gp
       x_coords <- c(x_coords, rep(2 * x_coords, times = n_gp - 1))
       x_coords <- cumsum(x_coords)
     }
@@ -106,7 +111,6 @@ add_split <- function(prev_box,
     x_coords <- coords
   }
 
-  prev_grob <- grb_lst$vert_grob
   len_grobs <- length(prev_box)
 
   .add_split <- function(prev_grob, txt, x, dist, ...) {
