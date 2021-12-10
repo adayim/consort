@@ -21,8 +21,6 @@
 #'
 #' @return A \code{consort} object.
 #'
-#' @importFrom gtable gtable gtable_add_grob
-#'
 #' @examples
 #' txt1 <- "Population (n=300)"
 #' txt1_side <- "Excluded (n=15): \n
@@ -133,29 +131,24 @@ add_label_box <- function(prev_box,
       }
     }
   }
+  
+  layout <- grid.layout(1, 2, 
+                        widths = unit(widths, "null"),
+                        heights = unit(c(1,1), "null"))
+  ful_grob <- frameGrob(layout = layout)
+  
+  ful_grob <- placeGrob(ful_grob, 
+                        grobTree(grob_list, name = "label"),
+                        row = 1, col = 1)
+  ful_grob <- placeGrob(ful_grob,
+                        grobTree(prev_box, name = "nodes"),
+                        row = 1, col = 2)
 
-  gt <- gtable::gtable(unit(widths, "null"), unit(1, "null"))
+  res <- packGrob(frameGrob(), ful_grob, dynamic = TRUE)
+  
+  class(res) <- union("consort", class(res))
 
-  gt <- gtable::gtable_add_grob(gt,
-    grobTree(grob_list),
-    t = 1,
-    l = 1,
-    name = "label",
-    clip = "off"
-  )
-  gt <- gtable::gtable_add_grob(gt,
-    grobTree(prev_box),
-    t = 1,
-    l = 2,
-    name = "diagram",
-    clip = "off"
-  )
-
-  gt <- gtable::gtable_add_padding(gt, unit(c(1, 4, 1, 4), "cm"))
-
-  class(gt) <- union("consort", class(gt))
-
-  return(gt)
+  return(res)
 }
 
 
