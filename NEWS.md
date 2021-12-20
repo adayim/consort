@@ -1,3 +1,9 @@
+# consort 1.0.1
+
+-   Fixed error in lower `grid` version.
+-   Removed `gtable` dependency.
+-   Fixed auto align with middle.
+
 # consort 1.0.0
 
 -   Many updates and changes in the consort building process.
