@@ -135,7 +135,7 @@ Functions are mainly in three categories, main box, side box and label box. Othe
 out <- consort_plot(data = df,
              orders = c(trialno = "Population",
                           exc1    = "Excluded",
-                          arm     = "Allocated",
+                          trialno = "Allocated",
                           fow1    = "Lost of Follow-up",
                           trialno = "Finished Followup",
                           fow2    = "Not evaluable for the final analysis",
