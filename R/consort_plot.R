@@ -209,10 +209,15 @@ consort_plot <- function(data,
       allocation <- NULL
     } else {
       pos_arm <- which(allocation == names(orders))
-      orders <- c(orders[c(1:pos_arm)],
-        "split_data_variable" = "Group",
-        orders[(pos_arm + 1):length(orders)]
-      )
+
+      if(pos_arm == length(orders)){
+        orders <- c(orders[c(1:pos_arm)])
+      }else {
+        orders <- c(orders[c(1:pos_arm)],
+                    "split_data_variable" = "Group",
+                    orders[(pos_arm + 1):length(orders)])
+      }
+      
 
       data$split_data_variable <- data[[allocation]]
     }
