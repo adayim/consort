@@ -40,6 +40,9 @@ vignettes/*.pdf
 
 # pkgdown site
 docs/
+data-raw/
 
 # translation temp files
 po/*~
+/doc/
+/Meta/
