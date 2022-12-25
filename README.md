@@ -90,10 +90,30 @@ out <- consort_plot(data = df,
              allocation = "arm",
              labels = c("1" = "Screening", "2" = "Randomization",
                         "5" = "Final"),
-             dist = 0.02,
              cex = 0.6)
 
 plot(out)
 ```
 
 <img src="man/figures/README-diagram-1.png" width="100%" />
+
+As the `grid` plotting is not very ideal, calculation of the coodinates
+for the nodes are not easy job and tried my best. Feel free to PR if you
+want to improve. Or you can produce `Graphviz` plot by setting
+`grViz = TRUE` in `plot`. This will use `DiagrammeR` to print the plot.
+The plot is ideal for shinny or HTML output.
+
+``` r
+plot(out, grViz = TRUE)
+```
+
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+
+Or save this `Graphviz` plot to `png` or `pdf`
+
+``` r
+plot(g, grViz = TRUE) |> 
+    DiagrammeRsvg::export_svg() |> 
+    charToRaw() |> 
+    rsvg::rsvg_pdf("svg_graph.pdf")
+```

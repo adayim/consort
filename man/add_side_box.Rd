@@ -4,7 +4,7 @@
 \alias{add_side_box}
 \title{Add a side node}
 \usage{
-add_side_box(prev_box, txt, side = NULL, dist = 0.02, text_width = NULL, ...)
+add_side_box(prev_box, txt, side = NULL, text_width = NULL, ...)
 }
 \arguments{
 \item{prev_box}{Previous node object, the created new node will be aligned
@@ -16,9 +16,6 @@ nodes, a vector of with the same length must be provided.}
 \item{side}{Position of the side box, `left` or `right` side of the terminal box.
 Will be aligned on the left and right side if only two groups, right otherwise.}
 
-\item{dist}{Distance between previous node, including the distance between the
-side node.}
-
 \item{text_width}{a positive integer giving the target column for wrapping
 lines in the output. String will not be wrapped if not defined (default).
 The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
@@ -27,7 +24,7 @@ package installed, otherwise \code{\link[base]{strwrap}} will be used.}
 \item{...}{Other parameters pass to \link{textbox},}
 }
 \value{
-A \code{consort.list} or \code{consort} object.
+A \code{consort} object.
 }
 \description{
 Add an exclusion node on the right side. If the length of text label is two, then
@@ -64,5 +61,5 @@ g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
 g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
 }
 \seealso{
-\code{\link{add_box}},\code{\link{add_split}}
+\code{\link{add_box}} \code{\link{add_split}} \code{\link{textbox}}
 }

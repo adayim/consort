@@ -1,6 +1,8 @@
 ---
 title: "Self-generating CONSORT diagram"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
 vignette: >
   %\VignetteIndexEntry{Self-generating CONSORT diagram}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,7 +22,7 @@ library(consort)
 
 The goal of this package is to make it easy to create CONSORT diagrams for the transparent reporting of participant allocation in randomized, controlled clinical trials. This is done by creating a standardized disposition data, and using this data as the source for the creation a standard CONSORT diagram. Human effort by supplying text labels on the node can also be achieved. Below is the illustration of the CONSORT diagram creating process for the two different methods.
 
-## Prepare test data
+# Prepare test data
 In a clinical research, we normally will have a participants disposition data. One column is the participants' ID, and the following columns indicating the status of the participants at different stage of the study. One can easily derive the number of participants at different stage by counting the number of participants on-study excluding the participants who are excluded. 
 
 ```{r}
@@ -56,14 +58,20 @@ fow2[!is.na(arm) & is.na(fow1)] <- sample(c("Protocol deviation", "Outcome missi
                                           sum(!is.na(arm) & is.na(fow1)), replace = T, 
                                           prob = c(0.05, 0.05, 0.9))
 
-
 df <- data.frame(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2)
+
+df$reas1[!is.na(arm)] <- sample(c("Protocol deviation", "Outcome missing", NA),
+                                sum(!is.na(arm)), replace = T, 
+                                prob = c(0.08, 0.07, 0.85))
+
+df$reas2[!is.na(df$reas1)] <- sample(c("Withdraw", "Discontinued", "Death", "Other"),
+                                     sum(!is.na(df$reas1)), replace = T, 
+                                     prob = c(0.05, 0.05, 0.05, 0.05))
+
 rm(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2, N)
-
-
 ```
 
-## Description
+# Description
 
 This function developed to populate consort diagram automatically. But to do so, a population disposition data should be prepared. The following data is prepared for demonstration.
 
@@ -91,7 +99,7 @@ Basic logic:
 4.  The node labels, for example visit number or phase, can only horizontally align to a vertical main nodes, not an exclusion box.
 5.  If more than 2 treatment allocation is present, all the exclusion box after the allocation will be aligned to the right
 
-## Self-generating function
+# Self-generating function
 
 To generate consort diagram with data.frame, one should prepare a disposition data.frame.
 
@@ -101,8 +109,6 @@ consort_plot(data,
              side_box,
              allocation = NULL,
              labels = NULL,
-             coords = NULL,
-             dist = 0.05,
              cex = 0.8,
              text_width = NULL,
              widths = c(0.1, 0.9))
@@ -113,25 +119,22 @@ consort_plot(data,
 -   `side_box`: Variable vector, appeared as side box in the diagram. The next box will be the subset of the missing values of these variables. The subject id variable can be used multiple times, since only the number of non-missing is calculated for the vertical box.
 -   `allocation`: Name of the grouping/treatment variable (optional), the diagram will split into branches on this variables.
 -   `labels`: Named vector, names is the location of the vertical node excluding the side box. The position location should plus 1 after the allocation variables if the allocation is defined.
--   `dist`: Optional, distance between boxes. Default is 0.05.
 -   `cex`: Multiplier applied to font size, Default is 0.6
--   `coords`: The horizontal coordinates for the nodes after split.
 -   `text_width`: A positive integer giving the target column for wrapping lines in the output.
--   `coords`: A numeric vector of length 2 specifying relative percentage of the label and diagram in the final graph.
 
-## Manual 
+# Manual 
 Functions are mainly in three categories, main box, side box and label box. Others include building function. These are the functions used by the self generating function. These box functions require the previous node and text label.
 -   `add_box`: add main box, no previous nodes should be provided if this is the first node.
 -   `add_side_box`: add exclusion box.
 -   `add_split`: add allocation box, all nodes will be split into groups. The label text for this node and following nodes should be a vector with a length larger than 1. 
 -   `add_label_box`: add visiting or phasing label given a reference node.
-
-
+-   `build_grid`: you don't need this unless you want the `grob` object.
+-   `build_grviz`: you don't need this unless you want the `Graphviz` code.
 
 # Working example (self generation)
 ## Single arm
 
-```{r message=FALSE, fig.width  = 7, fig.height = 6}
+```{r message=FALSE, fig.width  = 6, fig.height = 6}
 out <- consort_plot(data = df,
              orders = c(trialno = "Population",
                           exc1    = "Excluded",
@@ -148,7 +151,7 @@ plot(out)
 
 ## Two arms
 
-```{r fig.width  = 8, fig.height = 7}
+```{r fig.width  = 7, fig.height = 6}
 out <- consort_plot(data = df,
              orders = c(trialno = "Population",
                           exc    = "Excluded",
@@ -159,7 +162,6 @@ out <- consort_plot(data = df,
                           trialno = "Final Analysis"),
              side_box = c("exc", "fow1", "fow2"),
              allocation = "arm",
-             coords = c(0.4, 0.6),
              labels = c("1" = "Screening", "2" = "Randomization",
                         "5" = "Final"))
 
@@ -168,7 +170,7 @@ plot(out)
 
 ## Three arms
 
-```{r fig.width  = 9.5, fig.height = 7}
+```{r fig.width  = 9, fig.height = 7}
 g <- consort_plot(data = df,
              orders = c(trialno = "Population",
                           exc    = "Excluded",
@@ -186,7 +188,7 @@ plot(g)
 
 ## Multiple phase
 
-```{r fig.width  = 9, fig.height = 9}
+```{r fig.width  = 9, fig.height = 6}
 g <- consort_plot(data = df,
              orders = list(trialno = "Population",
                           exc1    = "Excluded",
@@ -202,7 +204,6 @@ g <- consort_plot(data = df,
              labels = c("1" = "Screening", "2" = "Month 4",
                         "3" = "Randomization", "5" = "Month 24",
                         "6" = "End of study"),
-             dist = 0.02,
              cex = 0.7)
 plot(g)
 ```
@@ -212,16 +213,18 @@ plot(g)
 The previous is to easily generate a consort diagram based on a disposition data, here we show how to create a consort diagram by providing the label text manually. 
 
 ## Provide text
-```{r fig.width  = 7, fig.height = 5}
+```{r fig.width  = 7, fig.height = 4}
 library(grid)
 # Might want to change some settings
 options(txt_gp = gpar(cex = 0.8))
 
+txt0 <- c("Study 1 (n=160)", "Study 2 (n=140)")
 txt1 <- "Population (n=300)"
 txt1_side <- "Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)"
 
 # supports pipeline operator
-g <- add_box(txt = txt1) |>
+g <- add_box(txt = txt0) |>
+  add_box(txt = txt1) |>
   add_side_box(txt = txt1_side) |> 
   add_box(txt = "Randomized (n=200)") |> 
   add_split(txt = c("Arm A (n=100)", "Arm B (n=100)")) |> 
@@ -235,7 +238,7 @@ plot(g)
 ```
 
 ## Using disposition table
-```{r fig.width  = 7, fig.height = 7}
+```{r fig.width  = 7, fig.height = 6}
 
 df$arm <- factor(df$arm)
 
@@ -253,20 +256,27 @@ g <- add_box(g, txt = gen_text(df$arm, label = "Patients randomised"))
 txt <- gen_text(df$arm)
 g <- add_split(g, txt = txt)
 
-txt <- gen_text(split(df$fow1, df$arm),
-                label = "Lost to follow-up", bullet = TRUE)
+txt <- gen_text(split(df[,c("reas1", "reas2")], df$arm),
+                label = "Lost to follow-up")
 g <- add_box(g, txt = txt, just = "left")
 
-df <- df[is.na(df$fow1), ]
+df <- df[complete.cases(df[,c("reas1", "reas2")]), ]
 txt <- gen_text(split(df$trialno, df$arm),
                 label = "Primary analysis")
 g <- add_box(g, txt = txt)
 
-g <- add_label_box(g, txt = c("3" = "Baseline",
-                              "4" = "First Stage"))
+g <- add_label_box(g, txt = c("1" = "Baseline",
+                              "3" = "First Stage"))
 
 plot(g)
 ```
+
+## For Shinny and HTML
+Although all the efforts has been made to precisely calculate the coordinates of the nodes, it is not very accurate due to limit of my own knowledge. But you can utilize the [DiagrammeR](https://CRAN.R-project.org/package=DiagrammeR) to produce plots for Shinny and HTML by setting `grViz = TRUE` in `plot`. You can get `Graphviz` code `build_grviz` of the plot. In addition, use [DiagrammeRsvg](https://CRAN.R-project.org/package=DiagrammeRsvg) and [rsvg](https://CRAN.R-project.org/package=rsvg) save plot in various formats.
+```{r}
+plot(g, grViz = TRUE)
+```
+
 
 # Saving plot
 In order to export the plot to fit a page properly, you need to provide the width and height of the output plot. You might need to try different width and height to get a satisfying plot.You can use R basic device destination for the output. Below is how to save a plot in `png` format:
@@ -281,6 +291,13 @@ dev.off()
 
 Or you can use `ggplot2::ggsave` function to save the plot object:
 ```{r eval=FALSE}
-ggplot2::ggsave("consort_diagram.pdf", plot = g)
+ggplot2::ggsave("consort_diagram.pdf", plot = build_grid(g))
 ```
 
+Or save with [DiagrammeRsvg](https://CRAN.R-project.org/package=DiagrammeRsvg) and [rsvg](https://CRAN.R-project.org/package=rsvg) to `png` or `pdf`
+```{r eval=FALSE}
+plot(g, grViz = TRUE) |> 
+    DiagrammeRsvg::export_svg() |> 
+    charToRaw() |> 
+    rsvg::rsvg_pdf("svg_graph.pdf")
+```
