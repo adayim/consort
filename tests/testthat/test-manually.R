@@ -1,11 +1,3 @@
-# Plot checking helper
-save_png <- function(p, width, height) {
-  path <- tempfile(fileext = ".png")
-  png(path, width = width, height = height, units = "in", res = 300)
-  on.exit(dev.off())
-  plot(p)
-  path
-}
 
 test_that("Generate consort manually", {
   txt1 <- "Population (n=300)"
@@ -24,7 +16,7 @@ test_that("Generate consort manually", {
   ))
 
   # Multiple split
-  expect_error(add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100)")))
+  expect_error(print(add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100)"))))
   # Length 1
   expect_error(add_split(g, txt = "Arm A (n=100)"))
 
@@ -39,11 +31,5 @@ test_that("Generate consort manually", {
 
   expect_s3_class(g, "consort")
 
-  skip_on_cran()
-  skip_on_ci()
-
-  expect_snapshot_file(save_png(g, width = 8, height = 5),
-    "full_text.png",
-    compare = compare_file_text
-  )
+  vdiffr::expect_doppelganger("Generate consort manually", g)
 })

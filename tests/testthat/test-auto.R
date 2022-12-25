@@ -1,12 +1,3 @@
-# Plot checking helper
-save_png <- function(p, width, height) {
-  path <- tempfile(fileext = ".png")
-  png(path, width = width, height = height, units = "in", res = 300)
-  on.exit(dev.off())
-  plot(p)
-  path
-}
-
 set.seed(1001)
 N <- 300
 
@@ -21,18 +12,20 @@ arm[is.na(exc)] <- sample(c("Conc", "Seq"), sum(is.na(exc)), replace = T)
 
 fow1 <- rep(NA, N)
 fow1[!is.na(arm)] <- sample(c("Withdraw", "Discontinued", "Death", "Other", NA),
-  sum(!is.na(arm)),
-  replace = T,
-  prob = c(0.05, 0.05, 0.05, 0.05, 0.8)
+                            sum(!is.na(arm)),
+                            replace = T,
+                            prob = c(0.05, 0.05, 0.05, 0.05, 0.8)
 )
 fow2 <- rep(NA, N)
 fow2[!is.na(arm) & is.na(fow1)] <- sample(c("Protocol deviation", "Outcome missing", NA),
-  sum(!is.na(arm) & is.na(fow1)),
-  replace = T,
-  prob = c(0.05, 0.05, 0.9)
+                                          sum(!is.na(arm) & is.na(fow1)),
+                                          replace = T,
+                                          prob = c(0.05, 0.05, 0.9)
 )
 
 df <- data.frame(trialno, exc, arm, fow1, fow2)
+
+tmp_dir <- tempdir()
 
 test_that("Auto generate", {
   g <- consort_plot(
@@ -57,11 +50,43 @@ test_that("Auto generate", {
 
   expect_s3_class(g, "consort")
 
-  skip_on_cran()
-  skip_on_ci()
+  vdiffr::expect_doppelganger("Auto generate", g)
+  
+  cat(build_grviz(g), file = file.path(tmp_dir, "auto-grviz.dot"))
+  
+  expect_true(compare_file_text(test_path("ref", "auto-grviz.dot"),
+                                file.path(tmp_dir, "auto-grviz.dot")))
 
-  expect_snapshot_file(save_png(g, width = 9, height = 8),
-    "auto_text.png",
-    compare = compare_file_text
+})
+
+test_that("Allocation last node", {
+  r <- read.csv("exmaple-data1.csv")
+  g <- consort_plot(r,
+                    orders = c(id      = 'Screened',
+                               exc     = 'Excluded',
+                               qual    = 'Qualified for Randomization',
+                               consent = 'Consented',
+                               tx      = 'Randomized'),
+                    side_box   = 'exc',
+                    allocation = 'tx',
+                    labels=c('1'='Screening', '2'='Consent') #, '3'='Randomization')
   )
+  expect_s3_class(g, "consort")
+  
+  vdiffr::expect_doppelganger("Allocation last node", g)
+  
+  # No label
+  g <- consort_plot(r,
+                    orders = c(id      = 'Screened',
+                               exc     = 'Excluded',
+                               qual    = 'Qualified for Randomization',
+                               consent = 'Consented',
+                               tx      = 'Randomized'),
+                    side_box = 'exc',
+                    allocation = 'tx'
+  )
+  
+  vdiffr::expect_doppelganger("no label node", g)
+  
+
 })

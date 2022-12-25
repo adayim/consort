@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<rect x='282.57' y='27.61' width='113.09' height='19.60' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='339.11' y='41.54' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='101.75px' lengthAdjust='spacingAndGlyphs'>Population (n=300)</text>
+<rect x='391.17' y='106.41' width='162.64' height='71.44' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='395.43' y='120.34' style='font-size: 12.00px; font-family: sans;' textLength='91.07px' lengthAdjust='spacingAndGlyphs'>Excluded (n=15):</text>
+<text x='395.43' y='137.62' style='font-size: 12.00px; font-family: sans;' textLength='131.95px' lengthAdjust='spacingAndGlyphs'>• MRI not collected (n=3)</text>
+<text x='395.43' y='154.90' style='font-size: 12.00px; font-family: sans;' textLength='151.30px' lengthAdjust='spacingAndGlyphs'>• Tissues not collected (n=4)</text>
+<text x='395.43' y='172.18' style='font-size: 12.00px; font-family: sans;' textLength='69.24px' lengthAdjust='spacingAndGlyphs'>• Other (n=8)</text>
+<rect x='277.23' y='237.05' width='123.76' height='19.60' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='339.11' y='250.98' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='112.42px' lengthAdjust='spacingAndGlyphs'>Randomized (n=200)</text>
+<rect x='199.14' y='319.36' width='89.72' height='19.60' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='243.99' y='333.28' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='78.38px' lengthAdjust='spacingAndGlyphs'>Arm A (n=100)</text>
+<rect x='438.07' y='319.36' width='89.72' height='19.60' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='482.93' y='333.28' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='78.38px' lengthAdjust='spacingAndGlyphs'>Arm B (n=100)</text>
+<rect x='29.29' y='398.15' width='162.64' height='71.44' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='33.55' y='412.08' style='font-size: 12.00px; font-family: sans;' textLength='91.07px' lengthAdjust='spacingAndGlyphs'>Excluded (n=15):</text>
+<text x='33.55' y='429.36' style='font-size: 12.00px; font-family: sans;' textLength='131.95px' lengthAdjust='spacingAndGlyphs'>• MRI not collected (n=3)</text>
+<text x='33.55' y='446.64' style='font-size: 12.00px; font-family: sans;' textLength='151.30px' lengthAdjust='spacingAndGlyphs'>• Tissues not collected (n=4)</text>
+<text x='33.55' y='463.92' style='font-size: 12.00px; font-family: sans;' textLength='69.24px' lengthAdjust='spacingAndGlyphs'>• Other (n=8)</text>
+<rect x='182.79' y='528.79' width='122.41' height='19.60' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='243.99' y='542.72' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='111.07px' lengthAdjust='spacingAndGlyphs'>Final analysis (n=85)</text>
+<rect x='418.39' y='528.79' width='129.08' height='19.60' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='482.93' y='542.72' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='117.74px' lengthAdjust='spacingAndGlyphs'>Final analysis (n=100)</text>
+<polyline points='339.11,47.21 339.11,142.13 391.17,142.13 ' style='stroke-width: 0.75;' />
+<polygon points='384.94,145.73 391.17,142.13 384.94,138.53 ' style='stroke-width: 0.75; fill: #000000;' />
+<polyline points='339.11,47.21 339.11,138.53 339.11,138.53 339.11,237.05 ' style='stroke-width: 0.75;' />
+<polygon points='335.51,230.81 339.11,237.05 342.71,230.81 ' style='stroke-width: 0.75; fill: #000000;' />
+<polyline points='339.11,256.64 339.11,284.40 243.99,284.40 243.99,319.36 ' style='stroke-width: 0.75;' />
+<polygon points='240.39,313.12 243.99,319.36 247.59,313.12 ' style='stroke-width: 0.75; fill: #000000;' />
+<polyline points='339.11,256.64 339.11,284.40 482.93,284.40 482.93,319.36 ' style='stroke-width: 0.75;' />
+<polygon points='479.33,313.12 482.93,319.36 486.53,313.12 ' style='stroke-width: 0.75; fill: #000000;' />
+<polyline points='243.99,338.95 243.99,433.87 191.93,433.87 ' style='stroke-width: 0.75;' />
+<polygon points='198.17,430.27 191.93,433.87 198.17,437.47 ' style='stroke-width: 0.75; fill: #000000;' />
+<polyline points='243.99,338.95 243.99,430.27 243.99,430.27 243.99,528.79 ' style='stroke-width: 0.75;' />
+<polygon points='240.39,522.55 243.99,528.79 247.59,522.55 ' style='stroke-width: 0.75; fill: #000000;' />
+<polyline points='482.93,338.95 482.93,430.27 482.93,430.27 482.93,528.79 ' style='stroke-width: 0.75;' />
+<polygon points='479.33,522.55 482.93,528.79 486.53,522.55 ' style='stroke-width: 0.75; fill: #000000;' />
+<polygon points='20.38,47.70 81.84,47.70 81.76,47.70 82.08,47.69 82.39,47.63 82.68,47.51 82.95,47.36 83.20,47.16 83.41,46.92 83.58,46.65 83.70,46.36 83.77,46.06 83.80,45.74 83.80,45.74 83.80,30.07 83.80,30.07 83.77,29.75 83.70,29.45 83.58,29.16 83.41,28.89 83.20,28.65 82.95,28.45 82.68,28.30 82.39,28.18 82.08,28.12 81.84,28.11 20.38,28.11 20.61,28.12 20.30,28.11 19.99,28.15 19.68,28.23 19.40,28.37 19.14,28.55 18.91,28.77 18.72,29.02 18.58,29.30 18.48,29.60 18.42,29.91 18.42,30.07 18.42,45.74 18.42,45.59 18.42,45.90 18.48,46.21 18.58,46.51 18.72,46.79 18.91,47.04 19.14,47.26 19.40,47.44 19.68,47.58 19.99,47.66 20.30,47.70 ' style='stroke-width: 0.75; fill: #A9C7FD;' />
+<text x='51.11' y='42.03' text-anchor='middle' style='font-size: 12.00px; font-weight: bold; fill: #4F81BD; font-family: sans;' textLength='54.04px' lengthAdjust='spacingAndGlyphs'>Screening</text>
+<polygon points='23.61,335.70 98.42,335.70 98.34,335.70 98.65,335.69 98.96,335.63 99.26,335.51 99.53,335.36 99.77,335.16 99.98,334.92 100.15,334.65 100.27,334.36 100.35,334.06 100.37,333.74 100.37,333.74 100.37,318.07 100.37,318.07 100.35,317.75 100.27,317.45 100.15,317.16 99.98,316.89 99.77,316.65 99.53,316.45 99.26,316.30 98.96,316.18 98.65,316.12 98.42,316.11 23.61,316.11 23.85,316.12 23.53,316.11 23.22,316.15 22.92,316.23 22.63,316.37 22.37,316.55 22.14,316.77 21.95,317.02 21.81,317.30 21.71,317.60 21.66,317.91 21.65,318.07 21.65,333.74 21.66,333.59 21.66,333.90 21.71,334.21 21.81,334.51 21.95,334.79 22.14,335.04 22.37,335.26 22.63,335.44 22.92,335.58 23.22,335.66 23.53,335.70 ' style='stroke-width: 0.75; fill: #A9C7FD;' />
+<text x='61.01' y='330.03' text-anchor='middle' style='font-size: 12.00px; font-weight: bold; fill: #4F81BD; font-family: sans;' textLength='67.38px' lengthAdjust='spacingAndGlyphs'>Randomized</text>
+<polygon points='26.16,547.89 106.28,547.89 106.21,547.89 106.52,547.88 106.83,547.82 107.12,547.70 107.40,547.55 107.64,547.35 107.85,547.11 108.02,546.84 108.14,546.55 108.22,546.25 108.24,545.93 108.24,545.93 108.24,530.26 108.24,530.26 108.22,529.94 108.14,529.64 108.02,529.35 107.85,529.08 107.64,528.84 107.40,528.64 107.12,528.49 106.83,528.37 106.52,528.31 106.28,528.30 26.16,528.30 26.40,528.31 26.08,528.30 25.77,528.34 25.46,528.42 25.18,528.56 24.92,528.74 24.69,528.96 24.50,529.21 24.36,529.49 24.26,529.79 24.21,530.10 24.20,530.26 24.20,545.93 24.21,545.78 24.21,546.09 24.26,546.40 24.36,546.70 24.50,546.98 24.69,547.23 24.92,547.45 25.18,547.63 25.46,547.77 25.77,547.85 26.08,547.89 ' style='stroke-width: 0.75; fill: #A9C7FD;' />
+<text x='66.22' y='542.22' text-anchor='middle' style='font-size: 12.00px; font-weight: bold; fill: #4F81BD; font-family: sans;' textLength='72.71px' lengthAdjust='spacingAndGlyphs'>Final analysis</text>
+</g>
+</svg>
