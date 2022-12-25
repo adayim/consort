@@ -30,9 +30,9 @@ connect_box <- function(start, end,
                         connect,
                         type = c("s", "p"),
                         name = NULL) {
-  if (!all(inherits(start, "textbox"), inherits(end, "textbox"))) {
-    stop("Start and end must be a textbox object.")
-  }
+  # if (!all(inherits(start, "textbox"), inherits(end, "textbox"))) {
+  #   stop("Start and end must be a textbox object.")
+  # }
 
   type <- match.arg(type)
 
@@ -122,12 +122,6 @@ connect_box <- function(start, end,
       x = unit.c(x_s, x_mid, x_e),
       y = unit.c(y_s, y_mid, y_e)
     )
-  }
-
-  if (is.null(start$name) & is.null(end$name)) {
-    name <- NULL
-  } else {
-    name <- paste(start$name, end$name, sep = "-")
   }
 
   linesGrob(

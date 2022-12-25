@@ -10,9 +10,9 @@
 #' Will be aligned on the left and right side if only two groups, right otherwise.
 #' @inheritParams add_box
 #'
-#' @seealso \code{\link{add_box}},\code{\link{add_split}}
+#' @seealso \code{\link{add_box}} \code{\link{add_split}} \code{\link{textbox}} 
 #'
-#' @return A \code{consort.list} or \code{consort} object.
+#' @return A \code{consort} object.
 #'
 #' @export
 #'
@@ -47,9 +47,10 @@
 add_side_box <- function(prev_box,
                          txt,
                          side = NULL,
-                         dist = 0.02,
                          text_width = NULL,
                          ...) {
+
+  dots <- list(...)
 
   # Wrap text
   if (!is.null(text_width)) {
@@ -58,27 +59,19 @@ add_side_box <- function(prev_box,
     })
   }
 
-  if (!inherits(prev_box, c("gList", "consort"))) {
+  if (!inherits(prev_box, c("consort"))) {
     stop("prev_box must be consort object")
   }
 
-  bx_lst <- Filter(is.textbox, prev_box)
+  prev_nodes <- attr(prev_box, "nodes.current")
+  num_nodes <- attr(prev_box, "nodes.num")
 
-  if (grepl("sidebox", bx_lst[[length(bx_lst)]]$name)) {
-    stop("The last box added is a side box, can not add side box after a sidebox!")
+  if (all(attr(prev_box, "nodes.type") %in% c("sidebox", "label"))) {
+    stop("The last box added is a side box or label, can not add side box after a sidebox!")
   }
 
-  sp_layout <- attr(prev_box, "split_layout")
-
-  if (is.null(sp_layout) & length(txt) > 1) {
-    stop("Text with length of 1 supplied for splitted diagram.")
-  }
-
-  if (length(txt) > 1 | !is.null(sp_layout)) {
-    if (!is.null(sp_layout) & length(txt) != ncol(sp_layout)) {
-      stop("The txt length must be same as splitted node number.")
-    }
-  }
+  if (length(prev_nodes) != length(txt)) 
+    stop("The txt length must be same as previous node number.")
 
   if (!is.null(side) & length(side) != length(txt)) {
     stop("The length of side must have the same length with txt.")
@@ -94,133 +87,40 @@ add_side_box <- function(prev_box,
     }
   }
 
-  if (length(txt) > 1) {
-    blnk_txt <- sapply(txt, function(x) {
-      is.null(x) | x == "" | is.na(x)
-    })
+  nodes <- lapply(seq_along(txt), function(i){
+    box <- do.call(textbox, c(list(text = txt[i], just = "left", box_fn = rectGrob, name = "sidebox"), dots))
 
-    # If all the text are blank
-    if (all(blnk_txt)) {
-      return(prev_box)
-    }
+    # Add width to the side box, calculate horizontal width
+    prev_box <- prev_box[[prev_nodes[i]]]$box_hw
+    box_hw <- get_coords(box)
+    # Add extra width to account for side box 
+    box_hw$width <- box_hw$width + convertWidth(prev_box$half_width, "mm", valueOnly = TRUE)*1.5
+    # Don't know why this is too large in the plot
+    box_hw$height <- box_hw$height/2 
 
-    # Get the length of grob before editing
-    len_grobs <- length(prev_box)
-
-    grb_lst <- lapply(seq_along(txt), function(i) {
-      get_prev_grobs(prev_box, col = i)
-    })
-
-    # If allocation split
-    out_box <- vector("list", length = length(txt))
-
-    # If more than one groups is given
-    for (i in seq_along(txt)) {
-
-      # Any missing or blank.
-      if (i %in% which(blnk_txt)) {
-        next
-      }
-
-      out_box[[i]] <- .add_side(
-        prev_vert = grb_lst[[i]]$vert_grob,
-        txt = txt[i],
-        dist = dist,
-        side = side[i],
-        ...
-      )
-    }
-
-    out_box <- align_hori(out_box) # Horizontal align
-
-    # Connect
-    for (i in seq_along(txt)) {
-
-      # Any missing or blank.
-      if (i %in% which(blnk_txt)) {
-        next
-      }
-
-      connect_pos <- switch(side[i],
-        "right" = "bl",
-        "left"  = "br"
-      )
-
-      connect <- connect_box(grb_lst[[i]]$vert_grob,
-        out_box[[i]],
-        connect = connect_pos,
-        type = "p"
-      )
-
-      prev_box <- gList(prev_box, out_box[[i]], connect)
-    }
-
-    # Skip counting the connection grob
-    spl <- rep(NA, length(txt))
-    spl[!blnk_txt] <- len_grobs + seq(length.out = length(txt[!blnk_txt]), by = 2)
-
-    split_layout <- matrix(spl, ncol = length(txt))
-    row.names(split_layout) <- "sidebox"
-
-    class(prev_box) <- union("consort", class(prev_box))
-
-    structure(prev_box,
-      split_layout = rbind(sp_layout, split_layout)
+    list(
+      text = txt[i],
+      node_type = "sidebox",
+      box = box,
+      box_hw = box_hw,
+      side = side[i],
+      just = "left",
+      prev_node = prev_nodes[i]
     )
-  } else {
-    prev_grob <- get_prev_grobs(prev_box)$vert_grob
+  })
 
-    out_box <- .add_side(prev_grob, txt = txt, dist = dist, side = side, ...)
+    names(nodes) <- paste0("node", num_nodes + seq_along(txt))
 
-    connect <- connect_box(prev_grob, out_box, connect = "bl", type = "p")
+    node_list <- c(prev_box, nodes)
 
-    prev_box <- gList(prev_box, out_box, connect)
+    class(node_list) <- union("consort", class(node_list))
 
-    class(prev_box) <- union("consort", class(prev_box))
-
-    structure(prev_box,
-      split_layout = NULL
+    structure(node_list,
+      nodes.num = length(txt) + num_nodes,
+      nodes.current = prev_nodes,
+      nodes.type = "sidebox",
+      nodes.list = c(attr(prev_box, "nodes.list"), list(names(nodes)))
     )
-  }
+
 }
 
-
-#' Create box grob at the right/left bottom of the previous node
-#'
-#' @param side Position of the side box.
-#' @inheritParams add_box
-#' @keywords internal
-
-.add_side <- function(prev_vert,
-                      txt,
-                      dist = 0.02,
-                      side = c("right", "left"),
-                      ...) {
-  side <- match.arg(side)
-
-  if (!is.unit(dist)) {
-    dist <- unit(dist, "npc")
-  }
-
-  # In case the text is a list
-  txt <- unlist(txt)
-
-  pre_cords <- get_coords(prev_vert)
-
-  box <- textbox(txt,
-    just = "left",
-    box_fn = rectGrob,
-    name = "sidebox",
-    ...
-  )
-
-  y_cords <- pre_cords$bottom - get_coords(box)$half_height - dist
-
-  if (side == "right") {
-    x <- pre_cords$x + get_coords(box)$half_width + unit(6, "mm")
-  } else {
-    x <- pre_cords$x - get_coords(box)$half_width - unit(6, "mm")
-  }
-
-  move_box(box, x = x, y = y_cords)
-}

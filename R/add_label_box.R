@@ -9,17 +9,14 @@
 #'  horizontally align with and value is the text in the box.
 #' @param only_terminal If the txt is only for the terminal box, default. Otherwise, the side box will
 #' also be accounted for.
-#' @param widths A numeric vector of length 2 specifying relative percentage
-#' of the label and diagram in the final graph.
+#' @param just The justification for the text: center (default), left or right.
 #' @param ... Other parameters pass to \link{textbox},
 #'
-#' @details
-#' The \code{ref_box} parameter kept for the legacy reason, and should be avoided. This is
-#' to create a box to horizontally align with the \code{ref_box}.
-#'
 #' @export
-#'
+#' @seealso \code{\link{add_side_box}} \code{\link{add_split}} \code{\link{textbox}} 
 #' @return A \code{consort} object.
+#' 
+#' @importFrom utils modifyList
 #'
 #' @examples
 #' txt1 <- "Population (n=300)"
@@ -51,16 +48,11 @@
 #' g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
 add_label_box <- function(prev_box,
                           txt,
-                          widths = c(0.1, 0.9),
                           only_terminal = TRUE,
+                          just = c("center", "left", "right"),
                           ...) {
-  ot_input <- list(...)
 
-  if (length(widths) != 2) {
-    stop("The widths should be a length of two.")
-  }
-
-  widths <- as.numeric(widths)
+  just <- match.arg(just)
 
   if (length(txt) > 1 & is.null(names(txt))) {
     stop("txt must be a named vector.")
@@ -71,7 +63,7 @@ add_label_box <- function(prev_box,
           node to be aligned.")
   }
 
-  if (!inherits(prev_box, c("gList", "consort"))) {
+  if (!inherits(prev_box, c("consort"))) {
     stop("prev_box must be consort object")
   }
 
@@ -84,81 +76,55 @@ add_label_box <- function(prev_box,
   args_list$box_fn <- roundrectGrob
   args_list$name <- "label"
 
-  if (!is.null(names(ot_input))) {
-    args_list <- c(
-      args_list[!names(args_list) %in% names(ot_input)],
-      ot_input
-    )
-  }
-
+  args_list <- modifyList(args_list, list(...))
+  
+  # Node type of each
+  nodes_layout <- attr(prev_box, "nodes.list")
+  nd_type <- sapply(nodes_layout, function(x) 
+    unique(sapply(prev_box[x], "[[", "node_type"))
+  )
+  
   if (only_terminal) {
     # Get the index of the vertical box
-    grob_index <- sapply(prev_box, function(x) grepl("vertbox|splitbox", x$name) & is.textbox(x))
-    grob_index <- which(grob_index)
+    grob_index <- which(nd_type %in% c("vertbox", "splitbox"))
   } else {
-    grob_index <- which(sapply(prev_box, is.textbox))
-  }
-
-
-  # For only one label to create, legacy code.
-  if (length(txt) == 1 & is.null(names(txt))) {
-    args_list$text <- txt
-
-    ref_pos <- get_coords(prev_box[[max(grob_index)]])
-
-    grob_list <- .add_label_box(ref_pos, args_list)
-  } else {
-    if (!is.null(attr(prev_box, "split_layout"))) {
-      lay <- attr(prev_box, "split_layout")
-      if (only_terminal) {
-        lay <- lay[grepl("vertbox|splitbox", row.names(lay)), ]
-      }
-
-      grob_index <- c(grob_index[grob_index < min(lay)], lay[, 1])
-    }
-
-    grob_index <- grob_index[as.numeric(names(txt))]
-
-    for (i in seq_len(length(txt))) {
-      args_list$text <- txt[i]
-      ref_pos <- get_coords(prev_box[[grob_index[i]]])
-      out_box <- .add_label_box(ref_pos, args_list)
-
-      if (i == 1) {
-        grob_list <- gList(gList(), out_box)
-      } else {
-        grob_list <- gList(grob_list, out_box)
-      }
-    }
+    grob_index <- seq_along(nodes_layout)
   }
   
-  layout <- grid.layout(1, 2, 
-                        widths = unit(widths, "null"),
-                        heights = unit(c(1,1), "null"))
-  ful_grob <- frameGrob(layout = layout)
+  num_nodes <- attr(prev_box, "nodes.num")
+
+  if (length(txt) == 1 & is.null(names(txt)))
+    names(txt) <- 1
+
+  if(length(txt) > length(nd_type))
+    stop("provided text is larger than diagram node numbers.")
+
+  nodes <- lapply(seq_along(txt), function(i){
+    box <- do.call(textbox, c(list(text = txt[i]), args_list))
+    list(
+      text = txt[i],
+      node_type = "label",
+      box = box,
+      box_hw = get_coords(box),
+      side = NULL,
+      just = just,
+      gpar = args_list[c("txt_gp", "box_gp")],
+      prev_node = grob_index[as.numeric(names(txt[i]))]
+    )
+  })
   
-  ful_grob <- placeGrob(ful_grob, 
-                        grobTree(grob_list, name = "label"),
-                        row = 1, col = 1)
-  ful_grob <- placeGrob(ful_grob,
-                        grobTree(prev_box, name = "nodes"),
-                        row = 1, col = 2)
-
-  res <- packGrob(frameGrob(), ful_grob, dynamic = TRUE)
+  names(nodes) <- paste0("label", num_nodes + seq_along(txt))
   
-  class(res) <- union("consort", class(res))
-
-  return(res)
-}
-
-
-.add_label_box <- function(ref_pos, args_list) {
-  out_box <- do.call(textbox, args_list)
-
-  # Align with the reference box
-  box_pos <- get_coords(out_box)
-  move_box(out_box,
-    x = unit(0.5, "npc") + box_pos$half_width,
-    y = ref_pos$top - box_pos$half_height
+  node_list <- c(prev_box, nodes)
+  
+  class(node_list) <- union("consort", class(node_list))
+  
+  structure(node_list,
+            nodes.num = length(txt) + num_nodes,
+            nodes.current = names(nodes),
+            nodes.type = "label",
+            nodes.list = attr(prev_box, "nodes.list")
   )
 }
+
+
