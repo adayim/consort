@@ -1,4 +1,12 @@
 
+save_png <- function(x, width = 800, height = 800) {
+  path <- tempfile(fileext = ".png")
+  png(path, width = width, height = height)
+  on.exit(dev.off())
+  plot(x)
+  path
+}
+
 test_that("Generate consort manually", {
   txt1 <- "Population (n=300)"
   txt1_side <- "Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)"
@@ -30,6 +38,7 @@ test_that("Generate consort manually", {
   ))
 
   expect_s3_class(g, "consort")
+  
+  expect_snapshot_file(save_png(g), "manually-gen.png")
 
-  vdiffr::expect_doppelganger("Generate consort manually", g)
 })
