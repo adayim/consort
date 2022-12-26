@@ -108,7 +108,12 @@ build_grid <- function(x) {
     
   }
   
-  return(grobs_list)
+  grobTree(grobs_list, 
+           name = "consort",
+           vp = viewport(width = unit(0.98, "npc"),
+                         height = unit(0.98, "npc")))
+  
+  # return(grobs_list)
   
 }
 

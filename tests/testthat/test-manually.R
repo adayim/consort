@@ -1,7 +1,8 @@
 
-save_png <- function(x, width = 800, height = 800) {
+save_png <- function(x, width = 9, height = 9) {
   path <- tempfile(fileext = ".png")
-  png(path, width = width, height = height, type = "cairo-png")
+  png(path, width = width, height = height, 
+      units = "in", type = "cairo-png", res = 300)
   on.exit(dev.off())
   plot(x)
   path
