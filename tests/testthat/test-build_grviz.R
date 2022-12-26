@@ -30,8 +30,8 @@ test_that("Check plot creation", {
                      txt = c("1" = "Screening", "3" = "Randomized", "6" = "Final analysis"))
 
   expect_snapshot_file(save_png(g), "build-grviz.png")
-  
-  txt <- build_grviz(g)
-  expect_snapshot_file(to_grviz(txt), "grviz.gv")
+  expect_snapshot(build_grviz(g))
+  # txt <- build_grviz(g)
+  # expect_snapshot_file(to_grviz(txt), "grviz.gv")
   
 })

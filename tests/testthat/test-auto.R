@@ -40,8 +40,9 @@ test_that("Auto generate", {
 
   expect_snapshot_file(save_png(g), "autogen.png")
   
-  txt <- build_grviz(g)
-  expect_snapshot_file(to_grviz(txt), "auto-grviz.gv")
+  # txt <- build_grviz(g)
+  # expect_snapshot_file(to_grviz(txt), "auto-grviz.gv")
+  expect_snapshot(build_grviz(g))
 
 
 })
@@ -62,11 +63,11 @@ test_that("Allocation last node", {
 
   expect_snapshot_file(save_png(g), "autogen-last.png")
   
-  txt <- build_grviz(g)
-  expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
+  expect_snapshot(build_grviz(g))
   
-  txt <- build_grviz(g)
-  expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
+  # txt <- build_grviz(g)
+  # expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
+
   
   # No label
   g <- consort_plot(r,
@@ -80,12 +81,10 @@ test_that("Allocation last node", {
   )
 
   expect_snapshot_file(save_png(g), "autogen-nolab.png")
+  expect_snapshot(build_grviz(g))
   
-  txt <- build_grviz(g)
-  expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
-  
-  txt <- build_grviz(g)
-  expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
+  # txt <- build_grviz(g)
+  # expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
   
 
 })
