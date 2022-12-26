@@ -1,5 +1,6 @@
 to_grviz <- function(x) {
   path <- tempfile(fileext = ".gv")
+  x <- gsub("\u2022", "", x) 
   cat(x, file = path)
   path
 }
@@ -30,8 +31,8 @@ test_that("Check plot creation", {
                      txt = c("1" = "Screening", "3" = "Randomized", "6" = "Final analysis"))
 
   expect_snapshot_file(save_png(g), "build-grviz.png")
-  expect_snapshot(build_grviz(g))
-  # txt <- build_grviz(g)
-  # expect_snapshot_file(to_grviz(txt), "grviz.gv")
+
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "grviz.gv")
   
 })

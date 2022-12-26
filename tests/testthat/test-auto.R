@@ -1,6 +1,7 @@
 
 to_grviz <- function(x) {
   path <- tempfile(fileext = ".gv")
+  x <- gsub("\u2022", "", x) 
   cat(x, file = path)
   path
 }
@@ -40,9 +41,8 @@ test_that("Auto generate", {
 
   expect_snapshot_file(save_png(g), "autogen.png")
   
-  # txt <- build_grviz(g)
-  # expect_snapshot_file(to_grviz(txt), "auto-grviz.gv")
-  expect_snapshot(build_grviz(g))
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-grviz.gv")
 
 
 })
@@ -63,10 +63,8 @@ test_that("Allocation last node", {
 
   expect_snapshot_file(save_png(g), "autogen-last.png")
   
-  expect_snapshot(build_grviz(g))
-  
-  # txt <- build_grviz(g)
-  # expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
 
   
   # No label
@@ -81,10 +79,9 @@ test_that("Allocation last node", {
   )
 
   expect_snapshot_file(save_png(g), "autogen-nolab.png")
-  expect_snapshot(build_grviz(g))
   
-  # txt <- build_grviz(g)
-  # expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
   
 
 })
