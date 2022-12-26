@@ -1,4 +1,3 @@
-
 to_grviz <- function(x) {
   path <- tempfile(fileext = ".gv")
   cat(x, file = path)

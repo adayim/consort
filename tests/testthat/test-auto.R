@@ -65,6 +65,9 @@ test_that("Allocation last node", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
   
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
+  
   # No label
   g <- consort_plot(r,
                     orders = c(id      = 'Screened',
@@ -77,6 +80,9 @@ test_that("Allocation last node", {
   )
 
   expect_snapshot_file(save_png(g), "autogen-nolab.png")
+  
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
   
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
