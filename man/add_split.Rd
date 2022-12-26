@@ -4,17 +4,13 @@
 \alias{add_split}
 \title{Add a splitting box}
 \usage{
-add_split(prev_box, txt, coords = NULL, dist = 0.02, text_width = NULL, ...)
+add_split(prev_box, txt, text_width = NULL, ...)
 }
 \arguments{
 \item{prev_box}{Previous node that the newly created split box will be aligned.}
 
-\item{txt}{A vector of text labels for each nodes.}
-
-\item{coords}{The horizontal coordinates of the boxes, see details.}
-
-\item{dist}{Distance between previous node, including the distance between the
-side node.}
+\item{txt}{Text in the node. If the `prev_box` is a horizontally aligned multiple
+nodes, a vector of with the same length must be provided.}
 
 \item{text_width}{a positive integer giving the target column for wrapping
 lines in the output. String will not be wrapped if not defined (default).
@@ -29,14 +25,6 @@ A \code{consort.list} object.
 \description{
 This function will create a horizontally aligned nodes. The horizontal coordinate
 will be automatically calculated if the coordinates not provided.
-}
-\details{
-The `coords` will be used to set the horizontal coordinates of the nodes. The
-`coords` should be within 0 and 1 to avoid the nodes is aligned outside of the
- final figure. If the `coords` is `NULL`, not given. The function will calculate
- the `coords`. If the the length of the `txt` is two, then a coordinates of
- 0.35 and 0.65 will be used. Once the split box is added, all the following nodes
- will be split accordingly.
 }
 \examples{
 txt1 <- "Population (n=300)"
@@ -68,5 +56,5 @@ g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
 g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
 }
 \seealso{
-\code{\link{add_box}}, \code{\link{add_side_box}}
+\code{\link{add_box}}, \code{\link{add_side_box}} \code{\link{textbox}}
 }

@@ -7,9 +7,7 @@
 add_box(
   prev_box = NULL,
   txt,
-  just = "center",
-  dist = 0.02,
-  y = unit(0.9, "npc"),
+  just = c("center", "left", "right"),
   text_width = NULL,
   ...
 )
@@ -23,12 +21,6 @@ node will be aligned in the top center.}
 nodes, a vector of with the same length must be provided.}
 
 \item{just}{The justification for the text: left, center or right.}
-
-\item{dist}{Distance between previous node, including the distance between the
-side node.}
-
-\item{y}{A number or unit object specifying y-location of the starting point of
-the diagram, default is 0.9npc. Will be ignored if \code{prev_box} is not null.}
 
 \item{text_width}{a positive integer giving the target column for wrapping
 lines in the output. String will not be wrapped if not defined (default).
@@ -75,7 +67,9 @@ g <- add_box(g,
     "Final analysis (n=100"
   )
 )
+
+
 }
 \seealso{
-\code{\link{add_side_box}},\code{\link{add_split}}
+\code{\link{add_side_box}} \code{\link{add_split}} \code{\link{textbox}}
 }

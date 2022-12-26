@@ -1,9 +1,10 @@
-# Plot checking helper
-save_png <- function(p, width, height) {
+
+save_png <- function(x, width = 9, height = 9) {
   path <- tempfile(fileext = ".png")
-  png(path, width = width, height = height, units = "in", res = 300)
+  png(path, width = width, height = height, 
+      units = "in", type = "cairo-png", res = 300)
   on.exit(dev.off())
-  plot(p)
+  plot(x)
   path
 }
 
@@ -24,7 +25,7 @@ test_that("Generate consort manually", {
   ))
 
   # Multiple split
-  expect_error(add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100)")))
+  expect_error(print(add_split(g, txt = c("Arm A (n=100)", "Arm B (n=100)"))))
   # Length 1
   expect_error(add_split(g, txt = "Arm A (n=100)"))
 
@@ -38,12 +39,8 @@ test_that("Generate consort manually", {
   ))
 
   expect_s3_class(g, "consort")
+  
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "manually-gen.png")
 
-  skip_on_cran()
-  skip_on_ci()
-
-  expect_snapshot_file(save_png(g, width = 8, height = 5),
-    "full_text.png",
-    compare = compare_file_text
-  )
 })

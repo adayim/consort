@@ -1,40 +1,23 @@
-# Plot checking helper
-save_png <- function(p, width, height) {
-  path <- tempfile(fileext = ".png")
-  png(path, width = width, height = height, units = "in", res = 300)
-  on.exit(dev.off())
-  plot(p)
+
+to_grviz <- function(x) {
+  path <- tempfile(fileext = ".gv")
+  x <- gsub("\u2022", "", x) 
+  cat(x, file = path)
   path
 }
 
-set.seed(1001)
-N <- 300
-
-trialno <- sample(c(1000:2000), N)
-exc <- rep(NA, N)
-exc[sample(1:N, 15)] <- sample(c(
-  "Sample not collected", "MRI not collected",
-  "Other"
-), 15, replace = T, prob = c(0.4, 0.4, 0.2))
-arm <- rep(NA, N)
-arm[is.na(exc)] <- sample(c("Conc", "Seq"), sum(is.na(exc)), replace = T)
-
-fow1 <- rep(NA, N)
-fow1[!is.na(arm)] <- sample(c("Withdraw", "Discontinued", "Death", "Other", NA),
-  sum(!is.na(arm)),
-  replace = T,
-  prob = c(0.05, 0.05, 0.05, 0.05, 0.8)
-)
-fow2 <- rep(NA, N)
-fow2[!is.na(arm) & is.na(fow1)] <- sample(c("Protocol deviation", "Outcome missing", NA),
-  sum(!is.na(arm) & is.na(fow1)),
-  replace = T,
-  prob = c(0.05, 0.05, 0.9)
-)
-
-df <- data.frame(trialno, exc, arm, fow1, fow2)
+save_png <- function(x, width = 9, height = 9) {
+  path <- tempfile(fileext = ".png")
+  png(path, width = width, height = height, 
+      units = "in", type = "cairo-png", res = 300)
+  on.exit(dev.off())
+  plot(x)
+  path
+}
 
 test_that("Auto generate", {
+
+  df <- readRDS('dat1.rds')
   g <- consort_plot(
     data = df,
     orders = c(
@@ -56,12 +39,56 @@ test_that("Auto generate", {
   )
 
   expect_s3_class(g, "consort")
+  
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-grviz.gv")
 
-  skip_on_cran()
-  skip_on_ci()
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "autogen.png")
 
-  expect_snapshot_file(save_png(g, width = 9, height = 8),
-    "auto_text.png",
-    compare = compare_file_text
+})
+
+test_that("Allocation last node", {
+  r <- readRDS('dat2.rds')
+  g <- consort_plot(r,
+                    orders = c(id      = 'Screened',
+                               exc     = 'Excluded',
+                               qual    = 'Qualified for Randomization',
+                               consent = 'Consented',
+                               tx      = 'Randomized'),
+                    side_box   = 'exc',
+                    allocation = 'tx',
+                    labels=c('1'='Screening', '2'='Consent') #, '3'='Randomization')
   )
+  expect_s3_class(g, "consort")
+  
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
+  
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "autogen-last.png")
+  
+})
+
+
+test_that("Allocation no label", {
+
+  r <- readRDS('dat2.rds')
+  # No label
+  g <- consort_plot(r,
+                    orders = c(id      = 'Screened',
+                               exc     = 'Excluded',
+                               qual    = 'Qualified for Randomization',
+                               consent = 'Consented',
+                               tx      = 'Randomized'),
+                    side_box = 'exc',
+                    allocation = 'tx'
+  )
+  
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
+  
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "autogen-nolab.png")
+  
 })

@@ -5,12 +5,15 @@
 \alias{print.consort}
 \title{Add methods to print function}
 \usage{
-\method{plot}{consort}(x, ...)
+\method{plot}{consort}(x, grViz = FALSE, ...)
 
-\method{print}{consort}(x, ...)
+\method{print}{consort}(x, grViz = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{consort} object.}
+
+\item{grViz}{If use \link[DiagrammeR]{grViz} to print the plot. 
+Default is \code{FALSE} to use \link[grid]{grid.draw}}
 
 \item{...}{Not used.}
 }

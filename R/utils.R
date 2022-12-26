@@ -3,6 +3,8 @@
 #' Method for plot objects and display the output in on a grid device.
 #'
 #' @param x A \code{consort} object.
+#' @param grViz If use \link[DiagrammeR]{grViz} to print the plot. 
+#' Default is \code{FALSE} to use \link[grid]{grid.draw}
 #' @param ... Not used.
 #'
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}},
@@ -12,9 +14,19 @@
 #'
 #' @rdname plot.consort
 #' @export
-plot.consort <- function(x, ...) {
-  grid::grid.newpage()
-  grid::grid.draw(x, ...)
+plot.consort <- function(x, grViz = FALSE, ...) {
+  if(!grViz){
+    r <- build_grid(x)
+    grid.newpage()
+    grid.draw(r)
+  }else{
+    if (requireNamespace("DiagrammeR", quietly = TRUE)) {
+      grviz_txt <- build_grviz(x)
+      DiagrammeR::grViz(grviz_txt)
+    } else {
+      stop("package `DiagrammeR` is needed to draw grViz plot.")
+    }
+  }
 }
 
 #' @rdname plot.consort
@@ -37,46 +49,6 @@ text_wrap <- function(txt, width = 0.9 * getOption("width")) {
     s_txt <- strwrap(s_txt, width)
   }
   paste(s_txt, collapse = "\n")
-}
-
-# Get previous two grobs
-#' @keywords internal
-#'
-get_prev_grobs <- function(x, col = NULL) {
-  nd_list <- which(sapply(x, is.textbox))
-
-  if (is.null(col)) {
-    mx <- max(nd_list)
-    if (grepl("sidebox", x[[mx]]$name)) {
-      side_grob <- x[[mx]]
-      vert_grob <- x[[nd_list[length(nd_list) - 1]]] # The previous one is a terminal node
-    } else {
-      side_grob <- NULL
-      vert_grob <- x[[mx]]
-    }
-  } else {
-    sp_layout <- attr(x, "split_layout")
-    sp_layout <- sp_layout[, col]
-    last_pos <- sp_layout[length(sp_layout)]
-
-    if (length(sp_layout) == 1 | grepl("vertbox|splitbox", names(last_pos))) {
-      side_grob <- NULL
-      vert_grob <- x[[last_pos]]
-    } else if ((is.na(last_pos) & grepl("sidebox", names(last_pos)))) {
-      side_grob <- NULL
-      vert_grob <- x[[sp_layout[length(sp_layout) - 1]]] # The previous one is a terminal node
-    } else {
-      side_grob <- x[[last_pos]]
-      vert_grob <- x[[sp_layout[length(sp_layout) - 1]]] # The previous one is a terminal node
-    }
-  }
-
-  return(list(vert_grob = vert_grob, side_grob = side_grob))
-}
-
-#' @keywords internal
-is.textbox <- function(x) {
-  inherits(x, "textbox")
 }
 
 #' @keywords internal

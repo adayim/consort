@@ -26,9 +26,9 @@
 #' fg <- textbox(text = "This is a test")
 #' get_coords(fg)
 get_coords <- function(x) {
-  if (!inherits(x, "textbox")) {
-    stop("Object x must be textbox.")
-  }
+  # if (!inherits(x, "textbox")) {
+  #   stop("Object x must be textbox.")
+  # }
 
   width <- convertWidth(grobWidth(x), "mm", valueOnly = TRUE)
   height <- convertHeight(grobHeight(x), "mm", valueOnly = TRUE)
@@ -37,16 +37,16 @@ get_coords <- function(x) {
   half_width <- unit(0.5 * width, "mm")
 
   list(
-    left = x$x - half_width,
-    right = x$x + half_width,
-    bottom = x$y - half_height,
-    top = x$y + half_height,
+    left = convertX(grobX(x, 90), "npc") - half_width,
+    right = convertX(grobX(x, 90), "npc") + half_width,
+    bottom = convertY(grobY(x, 0), "npc") - half_height,
+    top = convertY(grobY(x, 0), "npc") + half_height,
     top.mid = unit.c(grobX(x, 90), grobY(x, 90)),
     left.mid = unit.c(grobX(x, 180), grobY(x, 180)),
     bottom.mid = unit.c(grobX(x, 90), grobY(x, 270)),
     right.mid = unit.c(grobX(x, 0), grobY(x, 0)),
-    x = x$x,
-    y = x$y,
+    x = convertX(grobX(x, 90), "npc"),
+    y = convertY(grobY(x, 0), "npc"),
     width = width,
     height = height,
     half_width = half_width,

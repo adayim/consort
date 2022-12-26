@@ -1,3 +1,11 @@
+# consort 1.1.0
+
+-   Re-write most of the codes, there's some changes with the parameters.
+-   Improved the alignment of the nodes.
+-   Now the plots will be drawn at the final stage.
+-   New function `build_grviz` and `build_grid`.
+-   Print the diagram with Shinny and HTML.
+
 # consort 1.0.1
 
 -   Fixed error in lower `grid` version.

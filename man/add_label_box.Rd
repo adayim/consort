@@ -4,7 +4,13 @@
 \alias{add_label_box}
 \title{Add a vertically aligned label nodes on the left side.}
 \usage{
-add_label_box(prev_box, txt, widths = c(0.1, 0.9), only_terminal = TRUE, ...)
+add_label_box(
+  prev_box,
+  txt,
+  only_terminal = TRUE,
+  just = c("center", "left", "right"),
+  ...
+)
 }
 \arguments{
 \item{prev_box}{A completed diagram created with \code{add_box}, \code{add_side_box} etc.}
@@ -14,11 +20,10 @@ add_label_box(prev_box, txt, widths = c(0.1, 0.9), only_terminal = TRUE, ...)
 corresponding row of the node. And the names is the number indicating row number of box to
  horizontally align with and value is the text in the box.}
 
-\item{widths}{A numeric vector of length 2 specifying relative percentage
-of the label and diagram in the final graph.}
-
 \item{only_terminal}{If the txt is only for the terminal box, default. Otherwise, the side box will
 also be accounted for.}
+
+\item{just}{The justification for the text: center (default), left or right.}
 
 \item{...}{Other parameters pass to \link{textbox},}
 }
@@ -27,10 +32,6 @@ A \code{consort} object.
 }
 \description{
 In a consort diagram, this can be used to indicate different stage.
-}
-\details{
-The \code{ref_box} parameter kept for the legacy reason, and should be avoided. This is
-to create a box to horizontally align with the \code{ref_box}.
 }
 \examples{
 txt1 <- "Population (n=300)"
@@ -60,4 +61,7 @@ g <- add_side_box(g,
 
 g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
 g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
+}
+\seealso{
+\code{\link{add_side_box}} \code{\link{add_split}} \code{\link{textbox}}
 }

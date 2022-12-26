@@ -14,15 +14,11 @@
 #' @param labels Named vector, names is the location of the terminal node. The
 #' position location should plus 1 after the allocation variables if the allocation
 #' is defined.
-#' @param coords The horizontal coordinates of the boxes, see \link{add_split}.
-#' @param dist Optional, distance between boxes. Default is 0.02.
 #' @param cex Multiplier applied to font size, Default is 0.8
 #' @param text_width a positive integer giving the target column for wrapping
 #' lines in the output. String will not be wrapped if not defined (default).
 #' The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
 #' package installed, otherwise \code{\link[base]{strwrap}} will be used.
-#' @param widths A numeric vector of length 2 specifying relative percentage
-#' of the label and diagram in the final gprah.
 #'
 #' @details
 #' The calculation of numbers is as in an analogous to Kirchhoff's Laws of
@@ -31,12 +27,12 @@
 #'   from the official CONSORT diagram template, which has dropout inside a
 #'   vertical node.
 #'
-#' @return A \code{consort.plot} object.
+#' @return A \code{consort} object.
 #'
 #' @export
 #'
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}},
-#' \code{\link{add_side_box}}
+#' \code{\link{add_side_box}} \code{\link{textbox}}
 #'
 #' @examples
 #' ## Prepare test data
@@ -163,7 +159,6 @@
 #'     "3" = "Randomization", "5" = "Month 24",
 #'     "6" = "End of study"
 #'   ),
-#'   dist = 0.02,
 #'   cex = 0.7
 #' )
 #' @import grid
@@ -174,11 +169,8 @@ consort_plot <- function(data,
                          side_box,
                          allocation = NULL,
                          labels = NULL,
-                         coords = NULL,
-                         dist = 0.02,
                          cex = 0.8,
-                         text_width = NULL,
-                         widths = c(0.1, 0.9)) {
+                         text_width = NULL) {
   options(txt_gp = gpar(cex = cex))
   on.exit(options(txt_gp = gpar()))
 
@@ -230,7 +222,7 @@ consort_plot <- function(data,
 
     if (indx == 1) {
       txt <- paste0(orders[indx], " (n=", sum(!is.na(data[[i]])), ")")
-      gp_list <- add_box(txt = txt, dist = dist, text_width = text_width)
+      gp_list <- add_box(txt = txt, text_width = text_width)
       data <- data[!is.na(data[[i]]), ]
     } else {
       if (is.data.frame(data)) {
@@ -240,32 +232,28 @@ consort_plot <- function(data,
       }
 
       if (i %in% side_box) {
-        txt <- box_text(x = val, label = orders[indx], bullet = TRUE)
+        txt <- gen_text(x = val, label = orders[indx], bullet = TRUE)
 
         gp_list <- add_side_box(gp_list,
           txt = txt,
-          dist = dist,
           text_width = text_width
         )
 
         data <- sub_data(data, i)
       } else if (i == "split_data_variable") {
-        txt <- box_text(data[[i]])
+        txt <- gen_text(data[[i]])
         gp_list <- add_split(gp_list,
           txt = txt,
-          dist = dist,
-          coords = coords,
           text_width = text_width
         )
 
         data <- data[!is.na(data[[i]]), ]
         data <- split(data, as.factor(data[[i]]))
       } else {
-        txt <- box_text(x = val, label = orders[indx], bullet = FALSE)
+        txt <- gen_text(x = val, label = orders[indx], bullet = FALSE)
 
         gp_list <- add_box(gp_list,
           txt = txt,
-          dist = dist,
           text_width = text_width
         )
       }
@@ -278,10 +266,8 @@ consort_plot <- function(data,
            the node excluding side node.")
     }
 
-    gp_list <- add_label_box(gp_list, txt = labels, only_terminal = TRUE, widths = widths)
+    gp_list <- add_label_box(gp_list, txt = labels, only_terminal = TRUE)
   }
-
-  class(gp_list) <- union("consort", class(gp_list))
 
   return(gp_list)
 }

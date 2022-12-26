@@ -9,17 +9,13 @@
 #' @param txt Text in the node. If the `prev_box` is a horizontally aligned multiple
 #' nodes, a vector of with the same length must be provided.
 #' @param just The justification for the text: left, center or right.
-#' @param dist Distance between previous node, including the distance between the
-#' side node.
-#' @param y A number or unit object specifying y-location of the starting point of
-#' the diagram, default is 0.9npc. Will be ignored if \code{prev_box} is not null.
 #' @param text_width a positive integer giving the target column for wrapping
 #' lines in the output. String will not be wrapped if not defined (default).
 #' The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
 #' package installed, otherwise \code{\link[base]{strwrap}} will be used.
 #' @param ... Other parameters pass to \link{textbox},
 #'
-#' @seealso \code{\link{add_side_box}},\code{\link{add_split}}
+#' @seealso \code{\link{add_side_box}} \code{\link{add_split}} \code{\link{textbox}} 
 #' @return A \code{consort} object.
 #'
 #' @export
@@ -56,14 +52,18 @@
 #'     "Final analysis (n=100"
 #'   )
 #' )
+#' 
+#' 
 add_box <- function(prev_box = NULL,
                     txt,
-                    just = "center",
-                    dist = 0.02,
-                    y = unit(0.9, "npc"),
+                    just = c("center", "left", "right"),
                     text_width = NULL,
                     ...) {
 
+  dots <- list(...)
+
+  just <- match.arg(just)
+  
   # Wrap text
   if (!is.null(text_width)) {
     txt <- sapply(txt, function(tx) {
@@ -71,141 +71,88 @@ add_box <- function(prev_box = NULL,
     })
   }
 
-
   if (!is.null(prev_box)) {
-    if (!inherits(prev_box, c("consort", "gList"))) {
+    if (!inherits(prev_box, c("consort"))) {
       stop("prev_box must be consort object")
     }
 
-    sp_layout <- attr(prev_box, "split_layout")
+    if(attr(prev_box, "nodes.type") == "label")
+      stop("The last box added is a label, can not add box after a label!")
 
-    if (is.null(sp_layout) & length(txt) > 1) {
-      stop("Text with length of 1 supplied for splitted diagram.")
+    prev_nodes <- attr(prev_box, "nodes.current")
+    num_nodes <- attr(prev_box, "nodes.num")
+
+    if (length(txt) != 1 & !length(prev_nodes) %in% c(1, length(txt))) {
+      stop("Text with length of 1 or same node number as `prev_box`.")
     }
 
-    if (length(txt) > 1 | !is.null(sp_layout)) {
-      if (!is.null(sp_layout) & length(txt) != ncol(sp_layout)) {
-        stop("The txt length must be same as splitted node number.")
+    if(length(prev_nodes) != length(txt))
+      prev_nodes <- rep(prev_nodes, length(txt))
+
+    # Create node
+
+    nodes <- lapply(seq_along(txt), function(i){
+      box <- do.call(textbox, c(list(text = txt[i], just = just, 
+                                     box_fn = rectGrob, 
+                                     name = "vertbox"), dots))
+      if(length(txt) == 1){
+        prev_nd <- prev_nodes
+      }else{
+        prev_nd <- prev_nodes[i]
       }
-    }
+        
 
-    # No allocation split
-    if (length(txt) == 1) {
-
-      # Get the previous terminal node and side node
-      grb_lst <- get_prev_grobs(prev_box)
-
-      out_box <- .add_box(
-        prev_vert = grb_lst$vert_grob,
-        prev_side = grb_lst$side_grob,
-        txt = txt,
+      list(
+        text = txt[i],
+        node_type = "vertbox",
+        box = box,
+        box_hw = get_coords(box),
         just = just,
-        dist = dist,
-        ...
+        side = NULL,
+        prev_node = prev_nd
       )
+    })
 
-      connect <- connect_box(grb_lst$vert_grob, out_box, connect = "bt")
+    names(nodes) <- paste0("node", num_nodes + seq_along(txt))
 
-      grob_list <- gList(prev_box, out_box, connect)
+    node_list <- c(prev_box, nodes)
 
-      class(grob_list) <- union("consort", class(grob_list))
+    class(node_list) <- union("consort", class(node_list))
 
-      structure(grob_list,
-        split_layout = NULL
-      )
-    } else {
+    structure(node_list,
+      nodes.num = length(txt) + num_nodes,
+      nodes.current = names(nodes),
+      nodes.type = "vertbox",
+      nodes.list = c(attr(prev_box, "nodes.list"), list(names(nodes)))
+    )
 
-      # Get the length of grob before editing
-      len_grobs <- length(prev_box)
-
-      grb_lst <- lapply(seq_along(txt), function(i) {
-        get_prev_grobs(prev_box, col = i)
-      })
-
-      # If allocation split
-      out_box <- vector("list", length = length(txt))
-
-      # Create terminal box
-      for (i in seq_along(txt)) {
-        out_box[[i]] <- .add_box(
-          prev_vert = grb_lst[[i]]$vert_grob,
-          prev_side = grb_lst[[i]]$side_grob,
-          txt = txt[i],
-          just = just,
-          dist = dist,
-          ...
-        )
-      }
-
-      out_box <- align_hori(out_box) # Horizontal align terminal box
-
-      # Connect grobs
-      for (i in seq_along(txt)) {
-        connect <- connect_box(grb_lst[[i]]$vert_grob,
-          out_box[[i]],
-          connect = "bt"
-        )
-
-        prev_box <- gList(prev_box, out_box[[i]], connect)
-      }
-
-      # Skip counting the connection grob
-      split_layout <- matrix(len_grobs + seq(length.out = length(txt), by = 2),
-        ncol = length(txt)
-      )
-      row.names(split_layout) <- "vertbox"
-
-      class(prev_box) <- union("consort", class(prev_box))
-
-      structure(prev_box,
-        split_layout = rbind(sp_layout, split_layout)
-      )
-    }
   } else {
-    out_box <- textbox(txt,
-      x = 0.5, y = y,
-      box_fn = rectGrob,
-      name = "vertbox"
+
+    nodes <- lapply(txt, function(x){
+      box <- do.call(textbox, c(list(text = x, just = just, box_fn = rectGrob, name = "vertbox"), dots))
+      list(
+        text = x,
+        node_type = "vertbox",
+        box = box,
+        box_hw = get_coords(box),
+        side = NULL,
+        just = just,
+        inv_join = NULL,
+        prev_node = NULL
+      )
+    })
+
+    names(nodes) <- paste0("node", seq_along(txt))
+
+    class(nodes) <- union("consort", class(nodes))
+
+    structure(nodes,
+      nodes.num = length(txt),
+      nodes.current = names(nodes),
+      nodes.type = "vertbox",
+      nodes.list = list(names(nodes))
     )
 
-    grob_list <- gList(gList(), out_box)
-
-    class(grob_list) <- union("consort", class(grob_list))
-
-    structure(grob_list,
-      split_layout = NULL
-    )
   }
 }
 
-#' Create node vertically align with the previous one
-#'
-#' @inheritParams add_box
-#' @keywords internal
-.add_box <- function(prev_vert,
-                     prev_side = NULL,
-                     txt,
-                     just = "center",
-                     dist = 0.02,
-                     ...) {
-  if (!is.unit(dist)) {
-    dist <- unit(dist, "npc")
-  }
-
-  # If previous box is not a side box
-  if (is.null(prev_side)) {
-    pre_box <- prev_vert
-    dist <- 2 * dist # Add more distance
-  } else {
-    pre_box <- prev_side
-  }
-
-  pre_cords <- get_coords(pre_box)
-
-  box <- textbox(txt, just = just, box_fn = rectGrob, name = "vertbox", ...)
-
-  y_cords <- pre_cords$bottom - dist - get_coords(box)$half_height
-  x <- get_coords(prev_vert)$x
-
-  move_box(box, x = x, y = y_cords)
-}

@@ -10,11 +10,8 @@ consort_plot(
   side_box,
   allocation = NULL,
   labels = NULL,
-  coords = NULL,
-  dist = 0.02,
   cex = 0.8,
-  text_width = NULL,
-  widths = c(0.1, 0.9)
+  text_width = NULL
 )
 }
 \arguments{
@@ -33,22 +30,15 @@ diagram will split into branches on this variables forward.}
 position location should plus 1 after the allocation variables if the allocation
 is defined.}
 
-\item{coords}{The horizontal coordinates of the boxes, see \link{add_split}.}
-
-\item{dist}{Optional, distance between boxes. Default is 0.02.}
-
 \item{cex}{Multiplier applied to font size, Default is 0.8}
 
 \item{text_width}{a positive integer giving the target column for wrapping
 lines in the output. String will not be wrapped if not defined (default).
 The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
 package installed, otherwise \code{\link[base]{strwrap}} will be used.}
-
-\item{widths}{A numeric vector of length 2 specifying relative percentage
-of the label and diagram in the final gprah.}
 }
 \value{
-A \code{consort.plot} object.
+A \code{consort} object.
 }
 \description{
 Create CONSORT diagram from a participant disposition data.
@@ -185,11 +175,10 @@ consort_plot(
     "3" = "Randomization", "5" = "Month 24",
     "6" = "End of study"
   ),
-  dist = 0.02,
   cex = 0.7
 )
 }
 \seealso{
 \code{\link{add_side_box}},\code{\link{add_split}},
-\code{\link{add_side_box}}
+\code{\link{add_side_box}} \code{\link{textbox}}
 }

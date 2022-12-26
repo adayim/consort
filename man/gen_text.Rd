@@ -2,15 +2,15 @@
 % Please edit documentation in R/gen_text.R
 \name{gen_text}
 \alias{gen_text}
-\alias{box_text}
 \title{Generate label and bullet points}
 \usage{
 gen_text(x, label = NULL, bullet = FALSE)
-
-box_text(x, label = NULL, bullet = FALSE)
 }
 \arguments{
-\item{x}{A list or a vector to be used.}
+\item{x}{A list or a vector to be used. \code{x} can be atomic vector, a 
+\code{data.frame} or a \code{list}. A \code{data.frame} is particular useful
+ if the there's a nested reason or a \code{list} split nested reasons by group.
+The nested reasons only support two columns and the \code{bullet} will be ignored.}
 
 \item{label}{A character string as a label at the beginning of the text label.
 The count for each categories will be returned if no label is provided.}
@@ -26,7 +26,8 @@ This function use the data to generate label and bullet points for the box.
 }
 \examples{
 val <- data.frame(
-  am = factor(ifelse(mtcars$am == 1, "Automatic", "Manual")),
+  am = factor(ifelse(mtcars$am == 1, "Automatic", "Manual"), ordered = TRUE),
+  vs = factor(ifelse(mtcars$vs == 1, "Straight", "V-shaped"), ordered = TRUE),
   car = row.names(mtcars)
 )
 
@@ -34,4 +35,6 @@ gen_text(val$car, label = "Cars in the data")
 gen_text(val$car, label = "Cars in the data", bullet = FALSE)
 gen_text(split(val$car, val$am), label = "Cars in the data")
 gen_text(split(val$car, val$am), label = "Cars in the data", bullet = FALSE)
+gen_text(split(val[,c("vs", "car")], val$am), label = "Cars in the data", bullet = FALSE)
+gen_text(val[,c("vs", "car")], label = "Cars in the data", bullet = FALSE)
 }
