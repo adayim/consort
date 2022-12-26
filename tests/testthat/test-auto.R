@@ -39,12 +39,12 @@ test_that("Auto generate", {
   )
 
   expect_s3_class(g, "consort")
-
-  expect_snapshot_file(save_png(g), "autogen.png")
   
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "auto-grviz.gv")
 
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "autogen.png")
 
 })
 
@@ -61,13 +61,19 @@ test_that("Allocation last node", {
                     labels=c('1'='Screening', '2'='Consent') #, '3'='Randomization')
   )
   expect_s3_class(g, "consort")
-
-  expect_snapshot_file(save_png(g), "autogen-last.png")
   
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
-
   
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "autogen-last.png")
+  
+})
+
+
+test_that("Allocation no label", {
+
+  r <- readRDS('dat2.rds')
   # No label
   g <- consort_plot(r,
                     orders = c(id      = 'Screened',
@@ -78,11 +84,11 @@ test_that("Allocation last node", {
                     side_box = 'exc',
                     allocation = 'tx'
   )
-
-  expect_snapshot_file(save_png(g), "autogen-nolab.png")
   
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
   
-
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "autogen-nolab.png")
+  
 })

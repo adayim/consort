@@ -31,9 +31,10 @@ test_that("Check plot creation", {
   g <- add_label_box(g,
                      txt = c("1" = "Screening", "3" = "Randomized", "6" = "Final analysis"))
 
-  expect_snapshot_file(save_png(g), "build-grviz.png")
-
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "grviz.gv")
+  
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "build-grviz.png")
   
 })
