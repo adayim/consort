@@ -1,33 +1,13 @@
-set.seed(1001)
-N <- 300
 
-trialno <- sample(c(1000:2000), N)
-exc <- rep(NA, N)
-exc[sample(1:N, 15)] <- sample(c(
-  "Sample not collected", "MRI not collected",
-  "Other"
-), 15, replace = T, prob = c(0.4, 0.4, 0.2))
-arm <- rep(NA, N)
-arm[is.na(exc)] <- sample(c("Conc", "Seq"), sum(is.na(exc)), replace = T)
-
-fow1 <- rep(NA, N)
-fow1[!is.na(arm)] <- sample(c("Withdraw", "Discontinued", "Death", "Other", NA),
-                            sum(!is.na(arm)),
-                            replace = T,
-                            prob = c(0.05, 0.05, 0.05, 0.05, 0.8)
-)
-fow2 <- rep(NA, N)
-fow2[!is.na(arm) & is.na(fow1)] <- sample(c("Protocol deviation", "Outcome missing", NA),
-                                          sum(!is.na(arm) & is.na(fow1)),
-                                          replace = T,
-                                          prob = c(0.05, 0.05, 0.9)
-)
-
-df <- data.frame(trialno, exc, arm, fow1, fow2)
-
-tmp_dir <- tempdir()
+to_grviz <- function(x) {
+  path <- tempfile(fileext = ".gv")
+  cat(x, file = path)
+  path
+}
 
 test_that("Auto generate", {
+
+  df <- readRDS('dat1.rds')
   g <- consort_plot(
     data = df,
     orders = c(
@@ -51,16 +31,16 @@ test_that("Auto generate", {
   expect_s3_class(g, "consort")
 
   vdiffr::expect_doppelganger("Auto generate", g)
+
   
-  cat(build_grviz(g), file = file.path(tmp_dir, "auto-grviz.dot"))
-  
-  expect_true(compare_file_text(test_path("ref", "auto-grviz.dot"),
-                                file.path(tmp_dir, "auto-grviz.dot")))
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-grviz.gv")
+
 
 })
 
 test_that("Allocation last node", {
-  r <- read.csv("exmaple-data1.csv")
+  r <- readRDS('dat2.rds')
   g <- consort_plot(r,
                     orders = c(id      = 'Screened',
                                exc     = 'Excluded',
@@ -75,6 +55,9 @@ test_that("Allocation last node", {
   
   vdiffr::expect_doppelganger("Allocation last node", g)
   
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
+  
   # No label
   g <- consort_plot(r,
                     orders = c(id      = 'Screened',
@@ -87,6 +70,9 @@ test_that("Allocation last node", {
   )
   
   vdiffr::expect_doppelganger("no label node", g)
+  
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
   
 
 })

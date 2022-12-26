@@ -1,5 +1,8 @@
-
-tmp_dir <- tempdir()
+to_grviz <- function(x) {
+  path <- tempfile(fileext = ".gv")
+  cat(x, file = path)
+  path
+}
 
 test_that("Check plot creation", {
   g <- add_box(txt = c("Study 1 (n=8)", "Study 2 (n=12)"))
@@ -20,9 +23,7 @@ test_that("Check plot creation", {
   
   vdiffr::expect_doppelganger("with build grid", g)
   
-  cat(build_grviz(g), file = file.path(tmp_dir, "grviz.dot"))
-  
-  expect_true(compare_file_text(test_path("ref", "grviz.dot"),
-                                file.path(tmp_dir, "grviz.dot")))
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "grviz.gv")
   
 })
