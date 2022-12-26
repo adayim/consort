@@ -8,7 +8,7 @@ to_grviz <- function(x) {
 
 save_png <- function(x, width = 800, height = 800) {
   path <- tempfile(fileext = ".png")
-  png(path, width = width, height = height)
+  png(path, width = width, height = height, type = "cairo-png")
   on.exit(dev.off())
   plot(x)
   path
