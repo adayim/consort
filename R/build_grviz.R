@@ -8,6 +8,7 @@
 #' @return A \code{Graphviz} code
 #'
 #' @seealso \code{\link[DiagrammeR]{grViz}}
+#' @export 
 #' @examples
 #' txt1 <- "Population (n=300)"
 #' txt1_side <- "Excluded (n=15): \n

@@ -4,4 +4,9 @@
 - R-hub fedora-clang-devel (r-devel)
 
 ## R CMD check results
-0 errors 
+
+There were no ERRORs or WARNINGs. 
+
+---
+
+This version includes 1 bug fix and 2 improvement. 

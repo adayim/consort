@@ -272,7 +272,7 @@ plot(g)
 ```
 
 ## For Shinny and HTML
-Although all the efforts has been made to precisely calculate the coordinates of the nodes, it is not very accurate due to limit of my own knowledge. But you can utilize the [DiagrammeR](https://CRAN.R-project.org/package=DiagrammeR) to produce plots for Shinny and HTML by setting `grViz = TRUE` in `plot`. You can get `Graphviz` code `build_grviz` of the plot. In addition, use [DiagrammeRsvg](https://CRAN.R-project.org/package=DiagrammeRsvg) and [rsvg](https://CRAN.R-project.org/package=rsvg) save plot in various formats.
+Although all the efforts has been made to precisely calculate the coordinates of the nodes, it is not very accurate due to limit of my own knowledge. But you can utilize the [DiagrammeR](https://CRAN.R-project.org/package=DiagrammeR) to produce plots for Shinny and HTML by setting `grViz = TRUE` in `plot`. You can get `Graphviz` code with `build_grviz` of the plot. In addition, use [DiagrammeRsvg](https://CRAN.R-project.org/package=DiagrammeRsvg) and [rsvg](https://CRAN.R-project.org/package=rsvg) save plot in various formats.
 ```{r}
 plot(g, grViz = TRUE)
 ```

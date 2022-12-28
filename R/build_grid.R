@@ -6,6 +6,7 @@
 #' @param x A conosrt object.
 #' 
 #' @return A \code{gList} object
+#' @export 
 #'
 #' @seealso \code{\link[grid]{gList}}
 #' @examples

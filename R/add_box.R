@@ -12,7 +12,8 @@
 #' @param text_width a positive integer giving the target column for wrapping
 #' lines in the output. String will not be wrapped if not defined (default).
 #' The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
-#' package installed, otherwise \code{\link[base]{strwrap}} will be used.
+#' package installed as it is a better options for non-Latin language, otherwise
+#'  \code{\link[base]{strwrap}} will be used.
 #' @param ... Other parameters pass to \link{textbox},
 #'
 #' @seealso \code{\link{add_side_box}} \code{\link{add_split}} \code{\link{textbox}} 

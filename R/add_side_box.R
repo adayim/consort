@@ -8,6 +8,7 @@
 #' at the right bottom of the `prev_box`.
 #' @param side Position of the side box, `left` or `right` side of the terminal box.
 #' Will be aligned on the left and right side if only two groups, right otherwise.
+#' This will be ignored for for `grViz` plot, see \link[DiagrammeR]{grViz}.
 #' @inheritParams add_box
 #'
 #' @seealso \code{\link{add_box}} \code{\link{add_split}} \code{\link{textbox}} 

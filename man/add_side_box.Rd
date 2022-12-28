@@ -14,12 +14,14 @@ at the right bottom of the `prev_box`.}
 nodes, a vector of with the same length must be provided.}
 
 \item{side}{Position of the side box, `left` or `right` side of the terminal box.
-Will be aligned on the left and right side if only two groups, right otherwise.}
+Will be aligned on the left and right side if only two groups, right otherwise.
+This will be ignored for for `grViz` plot, see \link[DiagrammeR]{grViz}.}
 
 \item{text_width}{a positive integer giving the target column for wrapping
 lines in the output. String will not be wrapped if not defined (default).
 The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
-package installed, otherwise \code{\link[base]{strwrap}} will be used.}
+package installed as it is a better options for non-Latin language, otherwise
+ \code{\link[base]{strwrap}} will be used.}
 
 \item{...}{Other parameters pass to \link{textbox},}
 }
