@@ -101,7 +101,7 @@ As the `grid` plotting is not very ideal, calculation of the coodinates
 for the nodes are not easy job and tried my best. Feel free to PR if you
 want to improve. Or you can produce `Graphviz` plot by setting
 `grViz = TRUE` in `plot`. This will use `DiagrammeR` to print the plot.
-The plot is ideal for shinny or HTML output.
+The plot is ideal for Shiny or HTML output.
 
 ``` r
 plot(out, grViz = TRUE)

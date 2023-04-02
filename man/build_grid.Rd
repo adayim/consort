@@ -14,7 +14,10 @@ A \code{gList} object
 }
 \description{
 Build a \code{grob} consort diagram, use this if you want
-to save plots with \code{\link[ggplot2]{ggsave}}
+to save plots with \code{\link[ggplot2]{ggsave}}. \code{build_grid}
+does not support multiple split for the moment, please use 
+ \code{\link{build_grviz}} or \code{plot(g, grViz = TRUE)} for 
+multiple split nodes instead.
 }
 \examples{
 txt1 <- "Population (n=300)"

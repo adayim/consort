@@ -2,8 +2,8 @@ digraph consort_diagram {
   graph [layout = dot]
 
 node [shape = rectangle, style = 'rounded,filled', fillcolor = '#A9C7FD' color = '#4F81BD']
-label6 [label = 'Screening']
-label7 [label = 'Consent']
+label6 [label = "Screening"]
+label7 [label = "Consent"]
 
 
 edge[style=invis];
@@ -13,11 +13,11 @@ label6 -> label7;
 # node definitions with substituted label text
   node [shape = rectangle, fillcolor = Biege, style='', fillcolor = '', color = '']
 
-node1 [label = 'Screened (n=1000)']
-node2 [label = 'Excluded (n=286):\l Hx medication (n=48)\l age < 40 (n=82)\l pain-free (n=156)\l']
-node3 [label = 'Qualified for Randomization (n=714)']
-node4 [label = 'Consented (n=634)']
-node5 [label = 'Randomized (n=534)']
+node1 [label = "Screened (n=1000)"]
+node2 [label = "Excluded (n=286):\l Hx medication (n=48)\l age < 40 (n=82)\l pain-free (n=156)\l"]
+node3 [label = "Qualified for Randomization (n=714)"]
+node4 [label = "Consented (n=634)"]
+node5 [label = "Randomized (n=534)"]
 
 
 ## Invisible point node for joints

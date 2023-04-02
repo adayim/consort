@@ -1,10 +1,18 @@
+# consort 1.2.0
+
+-   Able to have multiple split with `grViz`
+-   Bug in producing nodes for blank text.
+-   Bug in not drawing arrow after split.
+-   Bug in quotation for `grViz`
+-   Fixed some typos
+
 # consort 1.1.0
 
 -   Re-write most of the codes, there's some changes with the parameters.
 -   Improved the alignment of the nodes, no need to provide a coordinates.
 -   Now the plots will be drawn at the final stage.
 -   New function `build_grviz` and `build_grid`.
--   Print the diagram with Shinny and HTML.
+-   Print the diagram with Shiny and HTML.
 
 # consort 1.0.1
 

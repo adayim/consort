@@ -33,6 +33,14 @@ plot.consort <- function(x, grViz = FALSE, ...) {
 #' @export
 print.consort <- plot.consort
 
+# Check if empty
+#' @keywords internal
+#'
+is_empty <- function(x){
+  x <- gsub("[[:space:]]", "", x)
+  is.null(x) | x == "" | is.na(x)
+}
+
 # Wrap text
 #' @keywords internal
 #'

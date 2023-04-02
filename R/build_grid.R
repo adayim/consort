@@ -1,7 +1,10 @@
 #' Build consort diagram
 #'
 #' Build a \code{grob} consort diagram, use this if you want
-#' to save plots with \code{\link[ggplot2]{ggsave}}
+#' to save plots with \code{\link[ggplot2]{ggsave}}. \code{build_grid}
+#' does not support multiple split for the moment, please use 
+#'  \code{\link{build_grviz}} or \code{plot(g, grViz = TRUE)} for 
+#' multiple split nodes instead.
 #'
 #' @param x A conosrt object.
 #' 
@@ -38,7 +41,7 @@ build_grid <- function(x) {
   
   node_tp <- which(sapply(consort_plot, "[[", "node_type")  == "splitbox")
   if(!all(abs(diff(node_tp)) == 1))
-    stop("Multiple splitts are not supportted")
+    stop("Multiple splitts are not supported, use `grViz` method instead. See `build_grviz` for details.")
   
   # Coordination
   nodes_coord <- calc_coords(consort_plot)
@@ -54,12 +57,25 @@ build_grid <- function(x) {
     r$name <- i
     
     # Skep empty side box
-    txt <- consort_plot[[i]]$text
-    if(consort_plot[[i]]$node_type == "sidebox" & (is.null(txt) | txt == "" | is.na(txt)))
+    if(is_empty(consort_plot[[i]]$text))
       return(NULL)
       
     return(r)
   }, simplify = FALSE)
+  
+  # Remove empty node from connection
+  node_empty <- sapply(names(consort_plot), function(i)is_empty(consort_plot[[i]]$text))
+  node_empty <- names(node_empty)[node_empty]
+  node_sd <- which(sapply(consort_plot, "[[", "node_type")  == "sidebox")
+  if(length(node_empty) > 0){
+    node_empty <- node_empty[!node_empty %in% names(node_sd)]
+    for(i in node_empty){
+      node_empty_prev <- nodes_connect[[i]]$node[2]
+      node_empty_con <- sapply(nodes_connect, function(x)x$node[2] == i)
+      node_empty_con <- names(node_empty_con)[node_empty_con]
+      nodes_connect[[node_empty_con]]$node[2] <- node_empty_prev
+    }
+  }
   
   for (i in seq_along(nodes)) {
     if(is.null(nodes[[i]]))

@@ -1,0 +1,91 @@
+digraph consort_diagram {
+  graph [layout = dot]
+
+
+
+
+
+# node definitions with substituted label text
+  node [shape = rectangle, fillcolor = Biege, style='', fillcolor = '', color = '']
+
+node1 [label = "Study 1 (n=8)"]
+node2 [label = "Study 2 And this is long (n=12)"]
+node3 [label = "Study 3 (n=12)"]
+node4 [label = "Study 3 (n=12)"]
+node5 [label = "Study 3 (n=12)"]
+node6 [label = "Included All (n=20)"]
+node7 [label = "Excluded (n=7):\l MRI not collected (n=3)\l"]
+node8 [label = "Randomised"]
+node9 [label = "Arm A (n=143)"]
+node10 [label = "Arm B (n=142)"]
+node12 [label = "From Arm B"]
+node13 [label = "Combine all"]
+node14 [label = "Process 1 (n=140)"]
+node15 [label = "Process 2 (n=140)"]
+node16 [label = "Process 3 (n=142)"]
+
+
+## Invisible point node for joints
+
+node [shape = point, width = 0]
+
+P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 P13 P14 P15
+
+subgraph {
+  rank = same; rankdir = LR; P1; P2; P3; P4; P5;
+  }
+subgraph {
+  rank = same; rankdir = LR; node1; node2; node3; node4; node5;
+  }
+subgraph {
+  rank = same; rankdir = LR; P6; node7;
+  }
+subgraph {
+  rank = same; rankdir = LR; P7; P8; P9;
+  }
+subgraph {
+  rank = same; rankdir = LR; node9; node10;
+  }
+subgraph {
+  rank = same; rankdir = LR; node11; node12;
+  }
+subgraph {
+  rank = same; rankdir = LR; P10; P11; P12;
+  }
+subgraph {
+  rank = same; rankdir = LR; P13; P14; P15;
+  }
+subgraph {
+  rank = same; rankdir = LR; node14; node15; node16;
+  }
+
+edge[style=''];
+
+P3 -> node6;
+node1 -> P1 [arrowhead = none];
+node2 -> P2 [arrowhead = none];
+node3 -> P3 [arrowhead = none];
+node4 -> P4 [arrowhead = none];
+node5 -> P5 [arrowhead = none];
+P1 -> P2 -> P3 -> P4 -> P5 [arrowhead = none, minlen = 10];
+node6 -> P6 [arrowhead = none];
+P6 -> node7;
+P6 -> node8;
+node8 -> P8 [arrowhead = none];
+P7 -> node9;
+P9 -> node10;
+P7 -> P8 -> P9 [arrowhead = none, minlen = 10];
+node9 -> node11 [arrowhead = none];
+node10 -> node12;
+P11 -> node13;
+node11 -> P10 [arrowhead = none];
+node12 -> P12 [arrowhead = none];
+P10 -> P11 -> P12 [arrowhead = none, minlen = 10];
+node13 -> P14 [arrowhead = none];
+P13 -> node14;
+P14 -> node15;
+P15 -> node16;
+P13 -> P14 -> P15 [arrowhead = none, minlen = 10];
+
+
+}

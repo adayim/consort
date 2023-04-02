@@ -17,6 +17,10 @@ mk_invs_connect <- function(x){
 # Make text alignment
 #' @keywords internal
 mk_text_align <- function(text, just){
+  # If empty
+  if(is_empty(text))
+    return(NA)
+
   jst <- ifelse(just == "center", "", 
                 ifelse(just == "left", "\\l", "\r"))
   
@@ -27,7 +31,7 @@ mk_text_align <- function(text, just){
                    paste(text, collapse = "\r"))
   }
   
-  sprintf("[label = '%s%s']", text, jst)
+  sprintf("[label = \"%s%s\"]", text, jst)
 }
 
 # Make invisible nodes
@@ -42,21 +46,25 @@ mk_invs_node <- function(node1, node2, node3 = NULL){
     if(length(node1) == 1 & length(node2) > 1){
       if((length(node2) %% 2) == 0) {
         invs_nd <- paste0("P", seq_len(length(node2)+1) + get_invs())
+        inv2nd <- sprintf("%s -> %s;", invs_nd[-mid_pos(invs_nd)], node2)
       } else {
         invs_nd <- paste0("P", seq_len(length(node2)) + get_invs())
+        inv2nd <- sprintf("%s -> %s;", invs_nd, node2)
       }
       nd2inv <- sprintf("%s -> %s [arrowhead = none];", node1, invs_nd[mid_pos(invs_nd)])
-      inv2nd <- sprintf("%s -> %s [arrowhead = none];", invs_nd[-mid_pos(invs_nd)], node2)
+      
       nd2inv <- c(nd2inv, inv2nd, mk_invs_connect(invs_nd))
       nd_rank <- mk_subgraph_rank(node2)
     }else{
       if((length(node1) %% 2) == 0) {
         invs_nd <- paste0("P", seq_len(length(node1)+1) + get_invs())
+        inv2nd <- sprintf("%s -> %s [arrowhead = none];", node1, invs_nd[-mid_pos(invs_nd)])
       } else {
         invs_nd <- paste0("P", seq_len(length(node1)) + get_invs())
+        inv2nd <- sprintf("%s -> %s [arrowhead = none];", node1, invs_nd)
       }
       nd2inv <- sprintf("%s -> %s;", invs_nd[mid_pos(invs_nd)], node2)
-      inv2nd <- sprintf("%s -> %s [arrowhead = none];", node1, invs_nd[-mid_pos(invs_nd)])
+      
       nd2inv <- c(nd2inv, inv2nd, mk_invs_connect(invs_nd))
       nd_rank <- mk_subgraph_rank(node1)
     }

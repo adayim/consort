@@ -168,24 +168,6 @@ out <- consort_plot(data = df,
 plot(out)
 ```
 
-## Three arms
-
-```{r fig.width  = 9, fig.height = 7}
-g <- consort_plot(data = df,
-             orders = c(trialno = "Population",
-                          exc    = "Excluded",
-                          arm3     = "Randomized patient",
-                          fow1    = "Lost of Follow-up",
-                          trialno = "Finished Followup",
-                          fow2    = "Not evaluable",
-                          trialno = "Final Analysis"),
-             side_box = c("exc", "fow1", "fow2"),
-             allocation = "arm3",
-             labels = c("1" = "Screening", "2" = "Randomization",
-                        "5" = "Final"))
-plot(g)
-```
-
 ## Multiple phase
 
 ```{r fig.width  = 9, fig.height = 6}
@@ -237,6 +219,23 @@ g <- add_box(txt = txt0) |>
 plot(g)
 ```
 
+## Missing nodes and multiple split
+There might be some cases that the nodes will be missing, this can be handled as well. You can also have multiple splits, but multiple splits for the `grid` hasn't been implemented yet. You can use `plot(g, grViz = TRUE)` to produce the consort plot.
+
+```{r}
+g <- add_box(txt = c("Study 1 (n=8)", "Study 2 (n=12)", "Study 3 (n=12)"))
+g <- add_box(g, txt = "Included All (n=20)")
+g <- add_side_box(g, txt = "Excluded (n=7):\n\u2022 MRI not collected (n=3)")
+g <- add_box(g, txt = "Randomised")
+g <- add_split(g, txt = c("Arm A (n=143)", "Arm B (n=142)"))
+g <- add_box(g, txt = c("", "From Arm B"))
+g <- add_box(g, txt = "Combine all")
+g <- add_split(g, txt = c("Process 1 (n=140)", "Process 2 (n=140)", "Process 3 (n=142)"))
+
+plot(g, grViz = TRUE)
+
+```
+
 ## Using disposition table
 ```{r fig.width  = 7, fig.height = 6}
 
@@ -271,8 +270,8 @@ g <- add_label_box(g, txt = c("1" = "Baseline",
 plot(g)
 ```
 
-## For Shinny and HTML
-Although all the efforts has been made to precisely calculate the coordinates of the nodes, it is not very accurate due to limit of my own knowledge. But you can utilize the [DiagrammeR](https://CRAN.R-project.org/package=DiagrammeR) to produce plots for Shinny and HTML by setting `grViz = TRUE` in `plot`. You can get `Graphviz` code with `build_grviz` of the plot. In addition, use [DiagrammeRsvg](https://CRAN.R-project.org/package=DiagrammeRsvg) and [rsvg](https://CRAN.R-project.org/package=rsvg) save plot in various formats.
+## For Shiny and HTML
+Although all the efforts has been made to precisely calculate the coordinates of the nodes, it is not very accurate due to limit of my own knowledge. But you can utilize the [DiagrammeR](https://CRAN.R-project.org/package=DiagrammeR) to produce plots for Shiny and HTML by setting `grViz = TRUE` in `plot`. You can get `Graphviz` code with `build_grviz` of the plot. In addition, use [DiagrammeRsvg](https://CRAN.R-project.org/package=DiagrammeRsvg) and [rsvg](https://CRAN.R-project.org/package=rsvg) save plot in various formats.
 ```{r}
 plot(g, grViz = TRUE)
 ```

@@ -2,9 +2,9 @@ digraph consort_diagram {
   graph [layout = dot]
 
 node [shape = rectangle, style = 'rounded,filled', fillcolor = '#A9C7FD' color = '#4F81BD']
-label14 [label = 'Screening']
-label15 [label = 'Randomization']
-label16 [label = 'Final']
+label14 [label = "Screening"]
+label15 [label = "Randomization"]
+label16 [label = "Final"]
 
 
 edge[style=invis];
@@ -14,19 +14,19 @@ label14 -> label15 -> label16;
 # node definitions with substituted label text
   node [shape = rectangle, fillcolor = Biege, style='', fillcolor = '', color = '']
 
-node1 [label = 'Population (n=300)']
-node2 [label = 'Excluded (n=15):\l MRI not collected (n=3)\l Other (n=4)\l Sample not collected (n=8)\l']
-node3 [label = 'Allocated (n=285)']
-node4 [label = 'Conc (n=158)']
-node5 [label = 'Seq (n=127)']
-node6 [label = 'Lost of Follow-up (n=33):\l Death (n=12)\l Discontinued (n=4)\l Other (n=11)\l Withdraw (n=6)\l']
-node7 [label = 'Lost of Follow-up (n=26):\l Death (n=5)\l Discontinued (n=6)\l Other (n=11)\l Withdraw (n=4)\l']
-node8 [label = 'Finished Followup (n=125)']
-node9 [label = 'Finished Followup (n=101)']
-node10 [label = 'Not evaluable for the final analysis (n=6):\l Outcome missing (n=4)\l Protocol deviation (n=2)\l']
-node11 [label = 'Not evaluable for the final analysis (n=5):\l Outcome missing (n=4)\l Protocol deviation (n=1)\l']
-node12 [label = 'Final Analysis (n=119)']
-node13 [label = 'Final Analysis (n=96)']
+node1 [label = "Population (n=300)"]
+node2 [label = "Excluded (n=15):\l MRI not collected (n=3)\l Other (n=4)\l Sample not collected (n=8)\l"]
+node3 [label = "Allocated (n=285)"]
+node4 [label = "Conc (n=158)"]
+node5 [label = "Seq (n=127)"]
+node6 [label = "Lost of Follow-up (n=33):\l Death (n=12)\l Discontinued (n=4)\l Other (n=11)\l Withdraw (n=6)\l"]
+node7 [label = "Lost of Follow-up (n=26):\l Death (n=5)\l Discontinued (n=6)\l Other (n=11)\l Withdraw (n=4)\l"]
+node8 [label = "Finished Followup (n=125)"]
+node9 [label = "Finished Followup (n=101)"]
+node10 [label = "Not evaluable for the final analysis (n=6):\l Outcome missing (n=4)\l Protocol deviation (n=2)\l"]
+node11 [label = "Not evaluable for the final analysis (n=5):\l Outcome missing (n=4)\l Protocol deviation (n=1)\l"]
+node12 [label = "Final Analysis (n=119)"]
+node13 [label = "Final Analysis (n=96)"]
 
 
 ## Invisible point node for joints
@@ -81,8 +81,8 @@ node1 -> P1 [arrowhead = none];
 P1 -> node2;
 P1 -> node3;
 node3 -> P3 [arrowhead = none];
-P2 -> node4 [arrowhead = none];
-P4 -> node5 [arrowhead = none];
+P2 -> node4;
+P4 -> node5;
 P2 -> P3 -> P4 [arrowhead = none, minlen = 10];
 node4 -> P5 [arrowhead = none];
 P5 -> node6;
