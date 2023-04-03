@@ -276,6 +276,21 @@ Although all the efforts has been made to precisely calculate the coordinates of
 plot(g, grViz = TRUE)
 ```
 
+## Use with Quarto 
+Quarto has native [support](https://quarto.org/docs/authoring/diagrams.html) for embedding Graphviz diagrams. You can plot the flowchart without any printing method. 
+
+````{verbatim, lang = "markdown"}
+```{r}
+cat(build_grviz(g), file = "consort.gv")
+```
+
+```{dot}
+//| label: consort-diagram
+//| fig-cap: "CONSORT diagram of study XXX"
+//| file: consort.gv
+```
+
+````
 
 # Saving plot
 In order to export the plot to fit a page properly, you need to provide the width and height of the output plot. You might need to try different width and height to get a satisfying plot.You can use R basic device destination for the output. Below is how to save a plot in `png` format:
