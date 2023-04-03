@@ -30,6 +30,10 @@ build_grviz <- function(x) {
   
   # Get the maximum of height and width of each node
   nodes_layout <- attr(x, "nodes.list")
+
+  # Generate connection
+  nodes_connect <- get_connect(x)
+  nodes_connect <- sapply(nodes_connect, function(x)x$node[2])
   
   if(any(grepl("label", names(x)))){
     consort_plot <- x[grepl("node", names(x))]
@@ -108,17 +112,21 @@ build_grviz <- function(x) {
     if(length(nodes_layout[[i+1]]) == length(nd) & all(!c(nd_type[i], nd_type[i+1]) %in% "sidebox")){
       
       for(j in seq_along(nd)){
-        
-        if(is_empty(consort_plot[[nodes_layout[[i+1]][j]]]$text)){
-          # No arrow if next one has blank text
-          con_nd <- c(con_nd, sprintf("%s -> %s [arrowhead = none];",
-                                      nodes_layout[[i]][j],
-                                      nodes_layout[[i+1]][j]))
-        }else{
-          con_nd <- c(con_nd, sprintf("%s -> %s;", 
-                                      nodes_layout[[i]][j],
-                                      nodes_layout[[i+1]][j]))
+
+        current_nd <- nodes_layout[[i]][j]
+        if(current_nd %in% nodes_connect & !is_empty(consort_plot[[current_nd]]$text)){
+          connect_to <- max(which(nodes_connect == current_nd))
+          connect_to <- names(nodes_connect[connect_to])
+          if(!is_empty(consort_plot[[connect_to]]$text))
+            con_nd <- c(con_nd, sprintf("%s -> %s;", 
+                                          current_nd,
+                                          connect_to))
+          else
+            con_nd <- c(con_nd, sprintf("%s -> %s [arrowhead = none];", 
+                                          current_nd,
+                                          connect_to))
         }
+        
       }
       rnk_nd <- c(rnk_nd, mk_subgraph_rank(nd))
       rnk_nd <- c(rnk_nd, mk_subgraph_rank(nodes_layout[[i+1]]))
@@ -144,16 +152,14 @@ build_grviz <- function(x) {
 
           # Skip if text is blank
           if(is_empty(consort_plot[[nd[j]]]$text)){
-            nd_next <- nodes_layout[[i+1]][j]
+            # nd_next <- nodes_layout[[i+1]][j]
+            nd_next <- max(which(nodes_connect == nodes_layout[[i-1]][j]))
+            nd_next <- names(nodes_connect[nd_next])
             # No arrow if next link has no text
-            if(is_empty(consort_plot[[nd_next]]$text)){
-              con_nd <- c(con_nd, sprintf("%s -> %s [arrowhead = none];", 
-                                          nodes_layout[[i-1]][j], 
-                                          nodes_layout[[i+1]][j]))
-            }else{
+            if(!is_empty(consort_plot[[nd_next]]$text)){
               con_nd <- c(con_nd, sprintf("%s -> %s;", 
                                           nodes_layout[[i-1]][j],
-                                          nodes_layout[[i+1]][j]))
+                                          nd_next))
             }
             sp_box <- sp_box[-j]
           }else{

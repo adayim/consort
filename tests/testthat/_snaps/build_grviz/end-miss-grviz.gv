@@ -17,8 +17,6 @@ node6 [label = "Arm A (n=143)"]
 node7 [label = "Arm B (n=142)"]
 node9 [label = "Exclude (n=3\l"]
 node11 [label = "From Arm B"]
-node12 [label = "This is it"]
-node13 [label = "From Arm B"]
 
 
 ## Invisible point node for joints
@@ -48,9 +46,6 @@ subgraph {
 subgraph {
   rank = same; rankdir = LR; P8; node9;
   }
-subgraph {
-  rank = same; rankdir = LR; node12; node13;
-  }
 
 edge[style=''];
 
@@ -65,11 +60,9 @@ node5 -> P6 [arrowhead = none];
 P5 -> node6;
 P7 -> node7;
 P5 -> P6 -> P7 [arrowhead = none, minlen = 10];
-node6 -> node12;
 node7 -> P8 [arrowhead = none];
 P8 -> node9;
 P8 -> node11;
-node11 -> node13;
 
 
 }

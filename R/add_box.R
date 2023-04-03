@@ -91,7 +91,6 @@ add_box <- function(prev_box = NULL,
       prev_nodes <- rep(prev_nodes, length(txt))
 
     # Create node
-
     nodes <- lapply(seq_along(txt), function(i){
       box <- do.call(textbox, c(list(text = txt[i], just = just, 
                                      box_fn = rectGrob, 
@@ -101,6 +100,9 @@ add_box <- function(prev_box = NULL,
       }else{
         prev_nd <- prev_nodes[i]
       }
+
+      if(length(txt) == length(prev_nodes) && is_empty(prev_box[[prev_nd]]$text))
+        prev_nd <- prev_box[[prev_nd]]$prev_node
         
 
       list(

@@ -64,18 +64,25 @@ build_grid <- function(x) {
   }, simplify = FALSE)
   
   # Remove empty node from connection
-  node_empty <- sapply(names(consort_plot), function(i)is_empty(consort_plot[[i]]$text))
-  node_empty <- names(node_empty)[node_empty]
-  node_sd <- which(sapply(consort_plot, "[[", "node_type")  == "sidebox")
-  if(length(node_empty) > 0){
-    node_empty <- node_empty[!node_empty %in% names(node_sd)]
-    for(i in node_empty){
-      node_empty_prev <- nodes_connect[[i]]$node[2]
-      node_empty_con <- sapply(nodes_connect, function(x)x$node[2] == i)
-      node_empty_con <- names(node_empty_con)[node_empty_con]
-      nodes_connect[[node_empty_con]]$node[2] <- node_empty_prev
-    }
-  }
+  # node_empty <- sapply(names(consort_plot), function(i)is_empty(consort_plot[[i]]$text))
+  # node_empty <- names(node_empty)[node_empty]
+  # node_sd <- which(sapply(consort_plot, "[[", "node_type")  == "sidebox")
+  # if(length(node_empty) > 0){
+  #   node_empty <- node_empty[!node_empty %in% names(node_sd)]
+  #   for(i in node_empty){
+  #     node_empty_prev <- nodes_connect[[i]]$node[2]
+  #     node_empty_con <- sapply(nodes_connect, function(x)x$node[2] == i)
+  #     node_empty_con <- names(node_empty_con)[node_empty_con]
+  #     
+  #     # If the next node is the last and empty
+  #     if(length(node_empty_con) == 0){
+  #       nodes_connect[node_empty_con] <- NULL
+  #     }else{
+  #       nodes_connect[[node_empty_con]]$node[2] <- node_empty_prev
+  #     }
+  #     
+  #   }
+  # }
   
   for (i in seq_along(nodes)) {
     if(is.null(nodes[[i]]))

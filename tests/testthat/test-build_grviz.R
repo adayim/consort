@@ -58,6 +58,25 @@ test_that("Missing in some nodes", {
   
 })
 
+
+test_that("End with missing", {
+  g <- add_box(txt = c("Study 1 (n=8)", "Study 2 (n=12)"))
+  g <- add_box(g, txt = "Included All (n=20)")
+  g <- add_side_box(g, txt = "Excluded (n=7):\n\u2022 MRI not collected (n=3)")
+  g <- add_box(g, txt = "Randomised")
+  g <- add_split(g, txt = c("Arm A (n=143)", "Arm B (n=142)"))
+  g <- add_side_box(g, txt = c("", "Exclude (n=3"))
+  g <- add_box(g, txt = c("", "From Arm B"))
+  
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "end-miss-grviz.gv")
+  
+  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  expect_snapshot_file(save_png(g), "end-miss-grviz.png")
+  
+})
+
+
 test_that("Split and combine", {
   g <- add_box(txt = c("Study 1 (n=8)", "Study 2 And this is long (n=12)", "Study 3 (n=12)", "Study 3 (n=12)", "Study 3 (n=12)"))
   g <- add_box(g, txt = "Included All (n=20)")
