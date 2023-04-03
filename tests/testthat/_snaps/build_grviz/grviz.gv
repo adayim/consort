@@ -1,7 +1,7 @@
 digraph consort_diagram {
   graph [layout = dot]
 
-node [shape = rectangle, style = 'rounded,filled', fillcolor = '#A9C7FD' color = '#4F81BD']
+node [shape = rectangle, style = "rounded,filled", fillcolor = "#A9C7FD" color = "#4F81BD"]
 label14 [label = "Screening"]
 label15 [label = "Randomized"]
 label16 [label = "Final analysis"]
@@ -12,7 +12,7 @@ label14 -> label15 -> label16;
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style='', fillcolor = '', color = '']
+  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
 node1 [label = "Study 1 (n=8)"]
 node2 [label = "Study 2 (n=12)"]
@@ -69,7 +69,7 @@ subgraph {
   rank = same; rankdir = LR; label15; node5;
   }
 
-edge[style=''];
+edge[style=""];
 
 P2 -> node3;
 node1 -> P1 [arrowhead = none];

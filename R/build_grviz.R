@@ -49,7 +49,7 @@ build_grviz <- function(x) {
     
     lab_gpar <- label_plot[[1]]$gpar
     
-    lab_nd <- sprintf("node [shape = rectangle, style = 'rounded,filled', fillcolor = '%s' color = '%s']\n%s\n",
+    lab_nd <- sprintf("node [shape = rectangle, style = \"rounded,filled\", fillcolor = \"%s\" color = \"%s\"]\n%s\n",
                       lab_gpar$box_gp$fill, 
                       lab_gpar$txt_gp$col, 
                       paste(lab_txt[,"node"], collapse = "\n"))
@@ -210,13 +210,13 @@ build_grviz <- function(x) {
   lab_nd,
   lab_edge,
   "# node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style='', fillcolor = '', color = '']",
+  node [shape = rectangle, fillcolor = Biege, style=\"\", fillcolor = \"\", color = \"\"]",
   paste(main_txt[,"node"], collapse = "\n"), # Node 
   "\n## Invisible point node for joints",
   "node [shape = point, width = 0]",
   paste(inv_nd, collapse = " "),             # Invisible node 
   paste(rnk_nd, collapse = "\n"),            # Ranks
-  "edge[style=''];",
+  "edge[style=\"\"];",
   paste(con_nd, collapse = "\n"),            # Connections
   "\n}\n",
   # paste(main_txt[,"txt"], collapse = "\n"),  # Text 
