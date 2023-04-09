@@ -162,10 +162,24 @@ yDetails.textbox <- function(x, theta) {
 
 #' @export
 widthDetails.textbox <- function(x) {
-  get_hw(x)$width
+  hw <- get_hw(x)
+  rr <- do.call(x$box_fn, list(
+    x = .5,
+    y = .5,
+    width = hw$width,
+    height = hw$height
+  ))
+  grobWidth(rr)
 }
 
 #' @export
 heightDetails.textbox <- function(x) {
-  get_hw(x)$height
+  hw <- get_hw(x)
+  rr <- do.call(x$box_fn, list(
+    x = .5,
+    y = .5,
+    width = hw$width,
+    height = hw$height
+  ))
+  grobHeight(rr)
 }

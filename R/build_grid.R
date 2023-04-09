@@ -48,6 +48,24 @@ build_grid <- function(x) {
   
   # Generate connection
   nodes_connect <- get_connect(consort_plot)
+
+  # Move all nodes to the left if there are labels nodes
+  # based on the width of the label nodes
+  vp_height <- nodes_coord$max_height
+  vp_width <- nodes_coord$max_width
+  nodes_coord$y <- (vp_height - nodes_coord$y)/vp_height
+
+  if(any(grepl("label", names(x)))){
+    label_coord <- calc_coords_label(label_plot, 
+                                     nodes_coord$nd_y, 
+                                     max_h = nodes_coord$max_height)
+    vp_width <- sum(label_coord$width[1], vp_width)
+
+    nodes_coord$x <- (nodes_coord$x + label_coord$width[1])/vp_width
+    
+  }else{
+    nodes_coord$x <- (nodes_coord$x)/vp_width
+  }
   
   # Change nodes coordinates
   nodes <- sapply(names(consort_plot), function(i){
@@ -62,27 +80,6 @@ build_grid <- function(x) {
       
     return(r)
   }, simplify = FALSE)
-  
-  # Remove empty node from connection
-  # node_empty <- sapply(names(consort_plot), function(i)is_empty(consort_plot[[i]]$text))
-  # node_empty <- names(node_empty)[node_empty]
-  # node_sd <- which(sapply(consort_plot, "[[", "node_type")  == "sidebox")
-  # if(length(node_empty) > 0){
-  #   node_empty <- node_empty[!node_empty %in% names(node_sd)]
-  #   for(i in node_empty){
-  #     node_empty_prev <- nodes_connect[[i]]$node[2]
-  #     node_empty_con <- sapply(nodes_connect, function(x)x$node[2] == i)
-  #     node_empty_con <- names(node_empty_con)[node_empty_con]
-  #     
-  #     # If the next node is the last and empty
-  #     if(length(node_empty_con) == 0){
-  #       nodes_connect[node_empty_con] <- NULL
-  #     }else{
-  #       nodes_connect[[node_empty_con]]$node[2] <- node_empty_prev
-  #     }
-  #     
-  #   }
-  # }
   
   for (i in seq_along(nodes)) {
     if(is.null(nodes[[i]]))
@@ -110,14 +107,12 @@ build_grid <- function(x) {
   }
   
   if(any(grepl("label", names(x)))){
-    label_coord <- calc_coords_label(label_plot, nodes_coord$nodes_hw)
-    # width_vp <- label_coord$lab_nd_width/sum(label_coord$lab_nd_width)
     
     # Align labels
     for(i in seq_along(label_plot)){
       nam <- names(label_plot)[i]
       r <- move_box(label_plot[[nam]]$box,
-                    x = unit(label_coord$x[nam], "npc"),
+                    x = unit(label_coord$x[nam], "mm"),
                     y = unit(label_coord$y[nam], "npc"))
       r$name <- nam
       
