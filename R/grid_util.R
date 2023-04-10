@@ -17,16 +17,18 @@ calc_coords <- function(consort_plot){
   
   nd_y <- vector("list", length = length(nodes_layout))
   for(i in seq_along(nodes_layout)){
-    nd <- sapply(consort_plot[nodes_layout[[i]]], function(x)x$box_hw$height)
+    nd <- sapply(consort_plot[nodes_layout[[i]]], function(x)
+      get_coords(x$box)$height
+    )
     if(i == 1){
       nd_y[[i]] <- nd/2
       prev_bt <- max(nd)
     }else{
       
       if(length(nd_y[[i]]) != length(nd_y[[i-1]]))
-        add_padd <- pad_u
-      else
         add_padd <- 2*pad_u
+      else
+        add_padd <- pad_u
       
       nd_y[[i]] <- prev_bt + add_padd + nd/2
       prev_bt <- prev_bt + add_padd + max(nd)
@@ -41,7 +43,9 @@ calc_coords <- function(consort_plot){
   
   # Nodes width
   nd_wd <- lapply(nodes_layout, function(nd){
-    sapply(consort_plot[nd], function(nd)nd$box_hw$width)
+    sapply(consort_plot[nd], function(x){
+      get_coords(x$box)$width
+    })
   })
   
   # Nodes side
@@ -74,7 +78,7 @@ calc_coords <- function(consort_plot){
     }else{
       
       if(any(nd_tp %in% "sidebox")){
-        pos_tmp <- 1.2*apply(sb_wd[!nd_tp %in% "sidebox",], 2, max)
+        pos_tmp <- apply(sb_wd[!nd_tp %in% "sidebox",], 2, max)
         pos_x <- vector("numeric", length = sub_len)
         
         # Calculate x for splits
@@ -85,39 +89,40 @@ calc_coords <- function(consort_plot){
               # Width of the left
               lt_max <- sb_wd[nd_tp %in% "sidebox", 1][nd_sd[,1] %in% "left"]
               
-              if(max(lt_max) + pad_u > pos_tmp[1]/2)
-                pos_x[1] <- max(lt_max)
+              if(max(lt_max) > pos_tmp[1]/2)
+                pos_x[1] <- max(lt_max) 
               else
-                pos_x[1] <- pos_tmp[1]/2 
+                pos_x[1] <- pos_tmp[1]/2
             }else{
               pos_x[1] <- pos_tmp[1]/2
             }
+            pos_x[1] <- pos_x[1] + pad_u
           }else{
             if(any("right" %in% nd_sd[,j-1])){
               rt_max <- sb_wd[nd_tp %in% "sidebox", 1][nd_sd[,j-1] %in% "right"]
               
-              if(max(rt_max) + pad_u > pos_tmp[j-1]/2){
+              if(max(rt_max) > pos_tmp[j-1]/2){
                 rt_max <- max(rt_max)
               }else{
                 rt_max <- pos_tmp[j-1]/2
               }
               
             }else{
-              rt_max <- 0
+              rt_max <- pos_tmp[j-1]/2
             }
             
             if(any("left" %in% nd_sd[,j])){
               lt_max <- sb_wd[nd_tp %in% "sidebox", 1][nd_sd[,j] %in% "left"]
-              if(max(lt_max) + pad_u > pos_tmp[j]/2){
+              if(max(lt_max) > pos_tmp[j]/2){
                 lt_max <- max(lt_max)
               }else{
                 lt_max <- pos_tmp[j]/2
               }
             }else{
-              lt_max <- pos_tmp[j-1]/2
+              lt_max <- pos_tmp[j]/2
             }
             
-            pos_x[j] <- pos_x[j-1] + lt_max + rt_max + 2*pad_u + pos_tmp[j]/2
+            pos_x[j] <- pos_x[j-1] + lt_max + rt_max + 2*pad_u
             
           }
         }
@@ -189,7 +194,7 @@ calc_coords <- function(consort_plot){
 calc_coords_label <- function(label_plot, node_y, max_h){
 
   lab_wd <- sapply(label_plot, function(x){
-    c(w = x$box_hw$width, h = x$box_hw$height)
+    c(w = get_coords(x$box)$width, h = get_coords(x$box)$height)
   })
   
   lab_pos <- sapply(label_plot, function(x){
