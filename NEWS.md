@@ -1,6 +1,7 @@
 # consort 1.2.0
 
 -   Able to have multiple split with `grViz`
+-   Improve node width calculation to avoid overlap.
 -   Bug in producing nodes for blank text.
 -   Bug in not drawing arrow after split.
 -   Bug in quotation for `grViz`
