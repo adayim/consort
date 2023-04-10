@@ -11,6 +11,7 @@ calc_coords <- function(consort_plot){
     unique(sapply(consort_plot[x], "[[", "node_type"))
   )
 
+
   # Calculate Y
   # pad_u <- convertUnit(unit(1, "char"), "mm", valueOnly = TRUE)
   pad_u <- 3
@@ -21,6 +22,8 @@ calc_coords <- function(consort_plot){
       get_coords(x$box)$height
     )
     if(i == 1){
+      nd_y[[i]] <- nd/2
+      prev_bt <- max(nd)
       nd_y[[i]] <- nd/2
       prev_bt <- max(nd)
     }else{
@@ -52,7 +55,7 @@ calc_coords <- function(consort_plot){
   nd_sides <- lapply(nodes_layout, function(nd){
     unlist(sapply(consort_plot[nd], function(nd)nd$side))
   })
-  
+
   for(i in unique(nd_gp)){
     idx_layout <- which(nd_gp %in% i)
     sub_layout <- nodes_layout[idx_layout]
