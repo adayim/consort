@@ -17,6 +17,7 @@ Build a \code{grob} consort diagram, use this if you want
 to save plots with \code{\link[ggplot2]{ggsave}}
 }
 \examples{
+\dontrun{
 txt1 <- "Population (n=300)"
 txt1_side <- "Excluded (n=15): \n
               \u2022 MRI not collected (n=3)\n
@@ -28,8 +29,8 @@ g <- add_box(txt = txt1)
 g <- add_side_box(g, txt = txt1_side)
 
 g <- add_box(g, txt = "Randomized (n=200)")
-plot(g, grViz = TRUE)
-
+# plot(g, grViz = TRUE)
+}
 }
 \seealso{
 \code{\link[DiagrammeR]{grViz}}

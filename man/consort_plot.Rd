@@ -100,61 +100,6 @@ fow2[!is.na(arm) & is.na(fow1)] <- sample(c("Protocol deviation", "Outcome missi
 df <- data.frame(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2)
 rm(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2, N)
 
-## Single arm
-out <- consort_plot(
-  data = df,
-  order = c(
-    trialno = "Population",
-    exc1 = "Excluded",
-    arm = "Allocated",
-    fow1 = "Lost of Follow-up",
-    trialno = "Finished Followup",
-    fow2 = "Not evaluable for the final analysis",
-    trialno = "Final Analysis"
-  ),
-  side_box = c("exc1", "fow1", "fow2"),
-  cex = 0.9
-)
-
-## Two arms
-out <- consort_plot(
-  data = df,
-  order = c(
-    trialno = "Population",
-    exc = "Excluded",
-    arm = "Randomized patient",
-    fow1 = "Lost of Follow-up",
-    trialno = "Finished Followup",
-    fow2 = "Not evaluable",
-    trialno = "Final Analysis"
-  ),
-  side_box = c("exc", "fow1", "fow2"),
-  allocation = "arm",
-  labels = c(
-    "1" = "Screening", "2" = "Randomization",
-    "5" = "Final"
-  )
-)
-## Three arms
-consort_plot(
-  data = df,
-  order = c(
-    trialno = "Population",
-    exc = "Excluded",
-    arm3 = "Randomized patient",
-    fow1 = "Lost of Follow-up",
-    trialno = "Finished Followup",
-    fow2 = "Not evaluable",
-    trialno = "Final Analysis"
-  ),
-  side_box = c("exc", "fow1", "fow2"),
-  allocation = "arm3",
-  labels = c(
-    "1" = "Screening", "2" = "Randomization",
-    "5" = "Final"
-  )
-)
-
 ## Multiple phase
 consort_plot(
   data = df,
