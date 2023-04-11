@@ -13,6 +13,7 @@
 #'
 #' @seealso \code{\link[grid]{gList}}
 #' @examples
+#' \dontrun{
 #' txt1 <- "Population (n=300)"
 #' txt1_side <- "Excluded (n=15): \n
 #'               \u2022 MRI not collected (n=3)\n
@@ -24,7 +25,8 @@
 #' g <- add_side_box(g, txt = txt1_side)
 #'
 #' g <- add_box(g, txt = "Randomized (n=200)")
-#' # g <- ggplot2::ggsave("consort_diagram.pdf", plot = build_grid(g))
+#' # g <- ggsave("consort_diagram.pdf", plot = build_grid(g))
+#' }
 #' 
 build_grid <- function(x) {
 

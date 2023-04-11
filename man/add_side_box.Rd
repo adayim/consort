@@ -63,5 +63,6 @@ g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
 g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
 }
 \seealso{
-\code{\link{add_box}} \code{\link{add_split}} \code{\link{textbox}}
+\code{\link{add_box}} \code{\link{add_split}} \code{\link{textbox}} 
+\code{\link{add_label_box}}
 }

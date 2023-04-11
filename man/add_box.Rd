@@ -54,23 +54,18 @@ g <- add_side_box(g,
   txt = c(
     "Excluded (n=15):\n
                   \u2022 MRI not collected (n=3)\n
-                   \u2022 Tissues not collected (n=4)\n
+                  \u2022 Tissues not collected (n=4)\n
                    \u2022 Other (n=8)",
     "Excluded (n=15):\n
-                    \u2022 MRI not collected (n=3)\n
-                    \u2022 Tissues not collected (n=4)"
+                   \u2022 MRI not collected (n=3)\n
+                   \u2022 Tissues not collected (n=4)"
   )
 )
 
-g <- add_box(g,
-  txt = c(
-    "Final analysis (n=100)",
-    "Final analysis (n=100"
-  )
-)
-
-
+g <- add_box(g, txt = c("Final analysis (n=100)", "Final analysis (n=100"))
+g <- add_label_box(g, txt = c("1" = "Screening", "3" = "Randomized", "4" = "Final analysis"))
 }
 \seealso{
-\code{\link{add_side_box}} \code{\link{add_split}} \code{\link{textbox}}
+\code{\link{add_side_box}} \code{\link{add_split}} \code{\link{textbox}} 
+\code{\link{add_label_box}}
 }
