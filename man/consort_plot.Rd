@@ -101,7 +101,7 @@ df <- data.frame(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2)
 rm(trialno, exc1, induc, exc2, exc, arm, arm3, fow1, fow2, N)
 
 ## Multiple phase
-consort_plot(
+p <- consort_plot(
   data = df,
   order = list(
     trialno = "Population",
