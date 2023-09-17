@@ -1,3 +1,8 @@
+# consort 1.2.1
+
+-   Better numeric format in `gen_text`
+-   Bug in connection with `build_grviz`
+
 # consort 1.2.0
 
 -   Able to have multiple split with `grViz`

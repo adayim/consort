@@ -13,6 +13,13 @@ test_that("Generate text for the consort", {
     label = "Cars in the data",
     bullet = TRUE
   )
+  
+  tx7 <- gen_text(split(val$car, val$am),
+                  bullet = TRUE
+  )
+  
+  expect_equal(tx7, sub(".*?\\n", "", tx2))
+  
   tx3 <- gen_text(val$am)
   tx4 <- gen_text(rep("", 4), bullet = TRUE)
 
@@ -53,5 +60,6 @@ test_that("Generate text for the consort", {
     paste0("Cars in the data (n=", nrow(mtcars), ")\nV-shaped (n=", 
            sum(tab6["V-shaped",]), "):")
   )
+  
   
 })

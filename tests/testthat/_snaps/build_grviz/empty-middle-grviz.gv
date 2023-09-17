@@ -1,0 +1,66 @@
+digraph consort_diagram {
+  graph [layout = dot]
+
+
+
+
+
+# node definitions with substituted label text
+  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
+
+node1 [label = "Cohort 1 (n=6)"]
+node2 [label = "Cohort 2 (n=6)"]
+node3 [label = "Cohort 3 (n=6)"]
+node4 [label = "Excluded (n=1)\l"]
+node5 [label = "Excluded (n=3)\l"]
+node7 [label = "Cohort 1 (n=5)"]
+node8 [label = "Cohort 2 (n=3)"]
+node10 [label = "Total (n=14)"]
+
+
+## Invisible point node for joints
+
+node [shape = point, width = 0]
+
+P1 P2 P3 P4 P5
+
+subgraph {
+  rank = same; rankdir = LR; node1; node2; node3;
+  }
+subgraph {
+  rank = same; rankdir = LR; P1; node4;
+  }
+subgraph {
+  rank = same; rankdir = LR; node7; node8; node9;
+  }
+subgraph {
+  rank = same; rankdir = LR; node4; node5; node6;
+  }
+subgraph {
+  rank = same; rankdir = LR; P2; node5;
+  }
+subgraph {
+  rank = same; rankdir = LR; node4; node5;
+  }
+subgraph {
+  rank = same; rankdir = LR; P3; P4; P5;
+  }
+
+edge[style=""];
+
+node1 -> P1 [arrowhead = none];
+P1 -> node4;
+P1 -> node7;
+node2 -> P2 [arrowhead = none];
+P2 -> node5;
+P2 -> node8;
+P4 -> node10;
+node7 -> P3 [arrowhead = none];
+node8 -> P4 [arrowhead = none];
+node9 -> P5 [arrowhead = none];
+P3 -> P4 -> P5 [arrowhead = none, minlen = 10];
+
+node3 -> node9 [arrowhead = none];
+
+
+}

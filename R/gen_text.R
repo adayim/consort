@@ -59,7 +59,9 @@ gen_text <- function(x, label = NULL, bullet = FALSE) {
           if(is.data.frame(val)){
             r <- box_data.frame(val)
             if(!is.null(label)){
-              lab_lst <- sprintf("%s (n=%i)", label[indx], sum(!is.na(val[[1]])))
+              lab_lst <- sprintf("%s (n=%s)", 
+                                 label[indx], 
+                                 pret_num(sum(!is.na(val[[1]]))))
               r <- paste(lab_lst, r, sep = "\n")
             }
               
@@ -85,7 +87,7 @@ box_data.frame <- function(x, label = NULL){
     stop("only two columns are supported")
 
   if(!is.null(label))
-    label <- sprintf("%s (n=%i)", label, sum(!is.na(x[[1]])))
+    label <- sprintf("%s (n=%s)", label, pret_num(sum(!is.na(x[[1]]))))
 
   r <- sapply(na.omit(unique(x[[1]])), function(i){
     box_label(x[[2]][x[[1]] == i], label = i, bullet = TRUE)
@@ -115,15 +117,37 @@ box_label <- function(x, label, bullet = TRUE) {
   }
 
   if (is.null(label)) {
-    return(paste0(names(table(x)), " (n=", table(x), ")"))
+    if(is.factor(x))
+      tab <- table(droplevels(x))
+    else
+      tab <- table(x)
+
+    tp <- paste0(names(tab), " (n=", pret_num(tab), ")")
+    if(!bullet){
+      return(tp)
+    }else{
+      return(paste0("\u2022 ", paste(tp, collapse = "\n\u2022 ")))
+    }
+
   }
 
-  tp <- paste0(label, " (n=", sum(!is.na(x)), ")")
+  tp <- paste0(label, " (n=", pret_num(sum(!is.na(x))), ")")
 
   if (bullet) {
-    txt_sub <- paste0("\u2022 ", names(table(x)), " (n=", table(x), ")")
+    if(is.factor(x))
+      tab <- table(droplevels(x))
+    else
+      tab <- table(x)
+    txt_sub <- paste0("\u2022 ", names(tab), " (n=", pret_num(tab), ")")
     tp <- paste0(tp, ":\n", paste(txt_sub, collapse = "\n"))
   }
 
   return(tp)
+}
+
+
+# Format numbers
+#' @keywords internal
+pret_num <- function(x){
+  prettyNum(x, big.mark = ",", preserve.width = "none", scientific = FALSE)
 }
