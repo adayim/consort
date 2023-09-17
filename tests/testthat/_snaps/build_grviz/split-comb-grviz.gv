@@ -38,6 +38,9 @@ subgraph {
   rank = same; rankdir = LR; node1; node2; node3; node4; node5;
   }
 subgraph {
+  rank = same; rankdir = LR; node6;
+  }
+subgraph {
   rank = same; rankdir = LR; P6; node7;
   }
 subgraph {

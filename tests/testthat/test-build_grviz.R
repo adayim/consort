@@ -96,3 +96,29 @@ test_that("Split and combine", {
 })
 
 
+test_that("Empty in the middle", {
+  g <- add_box(
+    txt = c("Cohort 1 (n=6)",
+            "Cohort 2 (n=6)",
+            "Cohort 3 (n=6)")
+  ) |> 
+    add_side_box(
+      txt = c("Excluded (n=1)",
+              "Excluded (n=3)",
+              "")
+    ) |>
+    add_box(
+      txt = c("Cohort 1 (n=5)",
+              "Cohort 2 (n=3)",
+              "")
+    ) |> 
+    add_box(
+      txt = c("Total (n=14)")
+    )  
+  txt <- build_grviz(g)
+  expect_snapshot_file(to_grviz(txt), "empty-middle-grviz.gv")
+  
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # expect_snapshot_file(save_png(g), "split-comb-grviz.png")
+  
+})

@@ -86,7 +86,7 @@ build_grviz <- function(x) {
   })
   main_txt <- do.call(rbind, main_txt)
   # Remove empty label
-  null_indx <- is_empty(main_txt[,"lab"])
+  null_indx <- is_empty(main_txt[,"lab"]) & !main_txt[,"nam"] %in% unlist(nodes_layout[nd_type == "vertbox"])
   main_txt <- main_txt[!null_indx,]
   
   rnk_nd <- vector("character") # Ranking
@@ -183,11 +183,41 @@ build_grviz <- function(x) {
       
       next  
     }
+    
+    if(nd_type[i] == "vertbox"){
+      rnk_nd <- c(rnk_nd, mk_subgraph_rank(nodes_layout[[i]]))
+    }
   }
+  
+  # Make sure all connections are linked
+  if(any(!grepl(paste(nodes_connect, collapse = "|"), con_nd))){
+    nd_none <- sapply(nodes_connect, function(x){
+      !grepl(x, con_nd)
+    })
+    nd_none <- apply(nd_none, 2, all)
+    nd_none <- nodes_connect[nd_none]
+    
+    con_nd_extra <- sapply(seq_along(nd_none), function(idx){
+      con_from <- nd_none[idx]
+      con_to <- names(nd_none[idx])
+      if(consort_plot[[con_to]]$node_type == "sidebox"){
+        return("")
+      }else{
+        if(!is_empty(consort_plot[[con_to]]$text))
+          sprintf("%s -> %s;", con_from, con_to)
+        else
+          sprintf("%s -> %s [arrowhead = none];", con_from, con_to)
+      }
+    })
+    
+  }else{
+    con_nd_extra <- ""
+  }
+
   
   rnk_nd <- unique(rnk_nd)
   inv_nd <- unique(inv_nd)
-  con_nd <- unique(con_nd)
+  con_nd <- unique(c(con_nd, con_nd_extra))
   
   if(!is.null(lab_rnk)){
     for(i in names(lab_rnk)){
@@ -205,6 +235,9 @@ build_grviz <- function(x) {
     }
     
   }
+  
+  # Remove empty labels
+  main_txt <- main_txt[!is.na(main_txt[,"lab"]),]
 
   grviz_txt <- paste("digraph consort_diagram {
   graph [layout = dot]",

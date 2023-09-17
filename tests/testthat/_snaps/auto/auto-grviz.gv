@@ -36,6 +36,9 @@ node [shape = point, width = 0]
 P1 P2 P3 P4 P5 P6 P7 P8
 
 subgraph {
+  rank = same; rankdir = LR; label14;  node1;
+  }
+subgraph {
   rank = same; rankdir = LR; P1; node2;
   }
 subgraph {
@@ -67,9 +70,6 @@ subgraph {
   }
 subgraph {
   rank = same; rankdir = LR; P8; node11;
-  }
-subgraph {
-  rank = same; rankdir = LR; label14; node1;
   }
 subgraph {
   rank = same; rankdir = LR; label15; node3;

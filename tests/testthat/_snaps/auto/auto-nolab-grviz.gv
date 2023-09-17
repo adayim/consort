@@ -22,6 +22,9 @@ node [shape = point, width = 0]
 P1
 
 subgraph {
+  rank = same; rankdir = LR; node1;
+  }
+subgraph {
   rank = same; rankdir = LR; P1; node2;
   }
 subgraph {
