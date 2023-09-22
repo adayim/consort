@@ -1,7 +1,7 @@
 Package: consort
 Type: Package
 Title: Create Consort Diagram
-Version: 1.2.0
+Version: 1.2.1
 Authors@R: person("Alim", "Dayim",
                   email = "ad938@cam.ac.uk",
                   role = c("aut", "cre"),
