@@ -1,3 +1,7 @@
+# consort 1.2.2
+
+-   Use comma separators for large number. 
+
 # consort 1.2.1
 
 -   Better numeric format in `gen_text`

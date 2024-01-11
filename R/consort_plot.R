@@ -94,7 +94,7 @@ consort_plot <- function(data,
     i <- names(orders)[indx]
 
     if (indx == 1) {
-      txt <- paste0(orders[indx], " (n=", sum(!is.na(data[[i]])), ")")
+      txt <- paste0(orders[indx], " (n=", pret_num(sum(!is.na(data[[i]]))), ")")
       gp_list <- add_box(txt = txt, text_width = text_width)
       data <- data[!is.na(data[[i]]), ]
     } else {
