@@ -1,0 +1,22 @@
+#' Demo clinical trial disposition data
+#'
+#' This is a demo data to demonstrate the use of the package. One row per
+#' participant. Participants who are excluded should provide a reason, missing
+#' otherwise. 
+#'
+#' @format 
+#' A data frame with 300 rows and 11 columns:
+#' \describe{
+#'   \item{trialno}{Trial ID of the participants}
+#'   \item{exc1, exc2}{Exclusion reason before and after induction}
+#'   \item{induc}{Trial ID of the participants who are included in the induction
+#'   phase, an extra treatment before randomisation. This is to demenstrate extra
+#'   step before randomisation.}
+#'   \item{exc}{Exclusion reason before randomisation, including before and after
+#'   induction}
+#'   \item{arm, arm3}{Allocated treatment arm, two and three arms}
+#'   \item{fow1, fow2}{First and second follow-up}
+#'   \item{reas1, reas2}{Reason for exclusion.}
+#' }
+"dispos.data"
+

@@ -1,6 +1,9 @@
 # consort 1.2.2
 
 -   Use comma separators for large number. 
+-   Support two level randomisation/stratification
+-   Better node alignment
+-   Improved documentation
 
 # consort 1.2.1
 
