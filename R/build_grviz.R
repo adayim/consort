@@ -74,15 +74,32 @@ build_grviz <- function(x) {
     unique(sapply(consort_plot[x], "[[", "node_type"))
   )
   
+  # Previous node list
+  node_infor <- sapply(unlist(nodes_layout), function(y){
+    c(node = y,
+      type = consort_plot[[y]]$node_type,
+      text = consort_plot[[y]]$text)
+  }, simplify = FALSE)
+  node_infor <- data.frame(do.call(rbind, node_infor), row.names = NULL)
+  node_infor$width <- floor(convertWidth(stringWidth(node_infor$text),
+                                         unitTo = "picas",
+                                         valueOnly = TRUE))
+  
+  
+  # Number of nodes at each level
+  # nd_len <- sapply(nodes_layout, length)
+  
   if(nd_type[length(nd_type)] == "sidebox")
     stop("last box cannot be a side box.")
   
   main_txt <- lapply(names(consort_plot), function(nd){
     nd_num <- gsub("\\D", "", nd)
-    txt_lab <- mk_text_align(consort_plot[[nd]]$text, consort_plot[[nd]]$just)
+    text <- consort_plot[[nd]]$text
+    txt_lab <- mk_text_align(text, consort_plot[[nd]]$just)
     c(nam = nd,
       node = paste(nd, txt_lab),
-      lab = txt_lab)
+      lab = txt_lab,
+      text = text)
   })
   main_txt <- do.call(rbind, main_txt)
   # Remove empty label
@@ -93,6 +110,10 @@ build_grviz <- function(x) {
   inv_nd <- vector("character") # Invisible node
   con_nd <- vector("character") # Connections
   
+  # For multiple split
+  if(sum(nd_type == "splitbox") > 2)
+    stop("More than two splits are not supported.")
+  
   # Main nodes
   for(i in seq_along(nd_type)){
     
@@ -102,7 +123,19 @@ build_grviz <- function(x) {
       next
     
     if(length(nodes_layout[[i+1]]) != length(nd)){
-      nd_lst <- mk_invs_node(nd, nodes_layout[[i+1]])
+      
+      prev_node <- lapply(nodes_layout[[i+1]], function(nd){
+        fm_node <- consort_plot[[nd]]$prev_node
+        data.frame(from = fm_node,
+                   to = rep(nd, length(fm_node)))
+      })
+      prev_node <- do.call(rbind, prev_node)
+      
+      nd_lst <- mk_invs_split(from_node = prev_node$from, 
+                              to_node = prev_node$to,
+                              consort_plot = consort_plot, 
+                              nodes_layout = nodes_layout, 
+                              node_infor = node_infor)
       rnk_nd <- c(rnk_nd, nd_lst[["rank"]])
       inv_nd <- c(inv_nd, nd_lst[["invs"]])
       con_nd <- c(con_nd, nd_lst[["connect"]])
@@ -143,7 +176,7 @@ build_grviz <- function(x) {
                                       nodes_layout[[i-1]], 
                                       nodes_layout[[i+1]]))
         }else{
-          nd_lst <- mk_invs_node(nodes_layout[[i-1]], nd, nodes_layout[[i+1]])
+          nd_lst <- mk_invs_side(nodes_layout[[i-1]], nd, nodes_layout[[i+1]])
           rnk_nd <- c(rnk_nd, nd_lst[["rank"]])
           inv_nd <- c(inv_nd, nd_lst[["invs"]])
           con_nd <- c(con_nd, nd_lst[["connect"]])
@@ -164,7 +197,7 @@ build_grviz <- function(x) {
             }
             sp_box <- sp_box[-j]
           }else{
-            nd_lst <- mk_invs_node(nodes_layout[[i-1]][j], 
+            nd_lst <- mk_invs_side(nodes_layout[[i-1]][j], 
                                    nd[j], 
                                    nodes_layout[[i+1]][j])
             
@@ -247,7 +280,7 @@ build_grviz <- function(x) {
   node [shape = rectangle, fillcolor = Biege, style=\"\", fillcolor = \"\", color = \"\"]",
   paste(main_txt[,"node"], collapse = "\n"), # Node 
   "\n## Invisible point node for joints",
-  "node [shape = point, width = 0]",
+  "node [shape = point, width = 0, style=invis]",
   paste(inv_nd, collapse = " "),             # Invisible node 
   paste(rnk_nd, collapse = "\n"),            # Ranks
   "edge[style=\"\"];",

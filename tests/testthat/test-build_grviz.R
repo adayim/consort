@@ -85,7 +85,7 @@ test_that("Split and combine", {
   g <- add_split(g, txt = c("Arm A (n=143)", "Arm B (n=142)"))
   g <- add_box(g, txt = c("", "From Arm B"))
   g <- add_box(g, txt = "Combine all")
-  g <- add_split(g, txt = c("Process 1 (n=140)", "Process 2 (n=140)", "Process 3 (n=142)"))
+  g <- add_split(g, txt = list(c("Process 1 (n=140)", "Process 2 (n=140)", "Process 3 (n=142)")))
   
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "split-comb-grviz.gv")

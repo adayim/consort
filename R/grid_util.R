@@ -10,6 +10,9 @@ calc_coords <- function(consort_plot){
   nd_type <- sapply(nodes_layout, function(x) 
     unique(sapply(consort_plot[x], "[[", "node_type"))
   )
+  
+  if(nd_type[length(nd_type)] == "sidebox")
+    stop("The last node can not be a side box.")
 
 
   # Calculate Y
@@ -22,9 +25,7 @@ calc_coords <- function(consort_plot){
       get_coords(x$box)$height
     )
     if(i == 1){
-      nd_y[[i]] <- nd/2
-      prev_bt <- max(nd)
-      nd_y[[i]] <- nd/2
+      nd_y[[i]] <- nd/2 + pad_u/2
       prev_bt <- max(nd)
     }else{
       
@@ -92,40 +93,37 @@ calc_coords <- function(consort_plot){
               # Width of the left
               lt_max <- sb_wd[nd_tp %in% "sidebox", 1][nd_sd[,1] %in% "left"]
               
-              if(max(lt_max) > pos_tmp[1]/2)
-                pos_x[1] <- max(lt_max) 
-              else
-                pos_x[1] <- pos_tmp[1]/2
+              pos_x[1] <- max(c(max(lt_max), pos_tmp[1]/2))
+
             }else{
               pos_x[1] <- pos_tmp[1]/2
             }
             pos_x[1] <- pos_x[1] + pad_u
           }else{
             if(any("right" %in% nd_sd[,j-1])){
-              rt_max <- sb_wd[nd_tp %in% "sidebox", 1][nd_sd[,j-1] %in% "right"]
+              rt_max <- sb_wd[nd_tp %in% "sidebox", j - 1][nd_sd[,j-1] %in% "right"]
               
-              if(max(rt_max) > pos_tmp[j-1]/2){
-                rt_max <- max(rt_max)
-              }else{
-                rt_max <- pos_tmp[j-1]/2
-              }
+              rt_max <- max(c(max(rt_max), pos_tmp[j-1]/2))
+              prevnd_right <- TRUE
               
             }else{
               rt_max <- pos_tmp[j-1]/2
+              prevnd_right <- FALSE
             }
             
             if(any("left" %in% nd_sd[,j])){
               lt_max <- sb_wd[nd_tp %in% "sidebox", 1][nd_sd[,j] %in% "left"]
-              if(max(lt_max) > pos_tmp[j]/2){
-                lt_max <- max(lt_max)
-              }else{
-                lt_max <- pos_tmp[j]/2
-              }
+              
+              lt_max <- max(c(max(lt_max), pos_tmp[j]/2))
+
             }else{
-              lt_max <- pos_tmp[j]/2
+              if(prevnd_right & max(rt_max) > pos_tmp[j-1]/2)
+                lt_max <- pad_u/2
+              else
+                lt_max <- pos_tmp[j]/2
             }
             
-            pos_x[j] <- pos_x[j-1] + lt_max + rt_max + 2*pad_u
+            pos_x[j] <- pos_x[j-1] + lt_max + rt_max + pad_u
             
           }
         }
@@ -139,8 +137,8 @@ calc_coords <- function(consort_plot){
             sd_tmp <- nd_sides[[j]]
             for(k in 1:sub_len){
               nd_x[[j]][k] <- ifelse(sd_tmp[k] == "right", 
-                                     pos_x[k] + nd_wd[[j]][k]/2 + pad_u,
-                                     pos_x[k] - nd_wd[[j]][k]/2 - pad_u)
+                                     pos_x[k] + nd_wd[[j]][k]/2 + pad_u/2,
+                                     pos_x[k] - nd_wd[[j]][k]/2 - pad_u/2)
             }
           }
           
@@ -157,6 +155,26 @@ calc_coords <- function(consort_plot){
           names(nd_x[[j]]) <- nodes_layout[[j]]
         }
       }
+    }
+  }
+  
+  # For multiple split
+  if(sum(nd_type == "splitbox") > 1){
+    if(sum(nd_type == "splitbox") > 2)
+      stop("More than two splits are not supported.")
+    
+    # Recalculate the x coordinates for multiple split
+    split_idx <- which(nd_type == "splitbox")[-1]
+    
+    prev_node <- sapply(unlist(nodes_layout[split_idx]), function(y){
+      consort_plot[[y]]$prev_node
+    }, simplify = FALSE)
+    
+    prev_node <- unlist(prev_node)
+    for(i in unique(prev_node)){
+      # Get x of next nodes
+      next_nd_x <- nd_x[[split_idx]][names(prev_node[prev_node==i])]
+      nd_x[[split_idx-1]][i] <- min(next_nd_x) + (max(next_nd_x) - min(next_nd_x))/2
     }
   }
   
@@ -188,7 +206,7 @@ calc_coords <- function(consort_plot){
               nd_x = nd_x, 
               nd_y = nd_y,
               max_width = max_width,
-              max_height = prev_bt))
+              max_height = prev_bt + pad_u))
 }
 
 # Calculate coordinates

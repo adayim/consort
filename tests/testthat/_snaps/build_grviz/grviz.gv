@@ -31,7 +31,7 @@ node13 [label = "Final analysis (n=135)"]
 
 ## Invisible point node for joints
 
-node [shape = point, width = 0]
+node [shape = point, width = 0, style=invis]
 
 P1 P2 P3 P4 P5 P6 P7 P8 P9
 
@@ -77,14 +77,14 @@ edge[style=""];
 P2 -> node3;
 node1 -> P1 [arrowhead = none];
 node2 -> P3 [arrowhead = none];
-P1 -> P2 -> P3 [arrowhead = none, minlen = 10];
+P1 -> P2 -> P3 [arrowhead = none, minlen = 4.0];
 node3 -> P4 [arrowhead = none];
 P4 -> node4;
 P4 -> node5;
 node5 -> P6 [arrowhead = none];
 P5 -> node6;
 P7 -> node7;
-P5 -> P6 -> P7 [arrowhead = none, minlen = 10];
+P5 -> P6 -> P7 [arrowhead = none, minlen = 7.0];
 node6 -> node8;
 node7 -> node9;
 node8 -> P8 [arrowhead = none];

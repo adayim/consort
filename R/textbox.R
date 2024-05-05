@@ -72,11 +72,13 @@ grid.textbox <- function(...) {
 get_hw <- function(x) {
   t <- textGrob(label = x$label, gp = x$txt_gp)
   # Add padding
-  padding <- unit(4 * ifelse(is.null(x$txt_gp$cex), 1,
+  padding <- unit(1 * ifelse(is.null(x$txt_gp$cex), 1,
     x$txt_gp$cex
-  ), "mm")
-  height <- grobHeight(t) + padding
-  width <- grobWidth(t) + padding
+  ), "char")
+  # height <- grobHeight(t) + padding
+  height <- convertHeight(grobHeight(t), "char") + padding
+  # width <- grobWidth(t) + padding
+  width <- convertWidth(grobWidth(t), "char") + padding
 
   list(width = width, height = height)
 }
