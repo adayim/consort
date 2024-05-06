@@ -2,7 +2,7 @@
 ## Prepare test data
 data(dispos.data)
 
-df <- dispos.data[!dispos.data$arm3 %in% "Trt C"]
+df <- dispos.data[!dispos.data$arm3 %in% "Trt C", ]
 p <- consort_plot(data = df,
                   orders = list(c(trialno = "Population"),
                                 c(exclusion = "Excluded"),

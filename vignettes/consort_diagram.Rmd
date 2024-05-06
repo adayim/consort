@@ -148,8 +148,31 @@ plot(g)
 ```
 
 ## Multiple stratification with node stack
-In some cases, two level randomisation/stratification is desired. A typical case is the factorial design. Simply provide two allocation variables, but more than two splits are not supported. In a more general cases, one may want to keep the count inside the vertical box instead of excluding. In this cases, one can provide multiple variables in a list. The first variable will simply be counted, the remaining variables will be itemised. 
-```{r multiple-split, fig.width  = 13, fig.height = 10, out.width = "95%"}
+In some cases, two level randomisation/stratification is desired. A typical case is the factorial design. Simply provide two allocation variables, but more than two splits are not supported. 
+
+Here is a simple example on how to do it.
+```{r multiple-split, fig.width  = 12, fig.height = 8, out.width = "95%"}
+df <- dispos.data[!dispos.data$arm3 %in% "Trt C",]
+g <- consort_plot(data = df,
+                  orders = c(trialno = "Population",
+                             exclusion1    = "Excluded",
+                             induction   = "Induction",
+                             exclusion2    = "Excluded",
+                             arm = "Randomized patient",
+                             arm3     = "",
+                             subjid_notdosed = "Not dosed",
+                             mitt = "Final miTT Analysis"),
+                  side_box = c("exclusion1", "exclusion2", "subjid_notdosed"),
+                  allocation = c("arm", "arm3"),
+                  labels = c("1" = "Screening", "2" = "Month 4",
+                             "3" = "Randomization", 
+                             "6" = "End of study"),
+                  cex = 0.7)
+plot(g)
+```
+
+In a more general cases, one may want to keep the count inside the vertical box instead of excluding. In this cases, one can provide multiple variables in a list. The first variable will simply be counted, the remaining variables will be itemised. 
+```{r multiple-split-stack, fig.width  = 13, fig.height = 10, out.width = "95%"}
 # We will exclude one arm to avoid too many arms.
 df <- dispos.data[!dispos.data$arm3 %in% "Trt C",]
 p <- consort_plot(data = df,
