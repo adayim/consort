@@ -2,6 +2,7 @@
 
 -   Use comma separators for large number. 
 -   Support two level randomisation/stratification
+-   Support multiple variables in one node
 -   Better node alignment
 -   Improved documentation
 

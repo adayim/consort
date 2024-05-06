@@ -24,21 +24,24 @@ data(dispos.data)
 The goal of this package is to make it easy to create CONSORT diagrams for the transparent reporting of participant allocation in randomized, controlled clinical trials. This is done by creating a standardized disposition data, and using this data as the source for the creation a standard CONSORT diagram. Human effort by supplying text labels on the node can also be achieved. Below is the illustration of the CONSORT diagram creating process for the two different methods.
 
 # Prepare test data
-In a clinical research, we normally will have a participants disposition data. One column is the participants' ID, and the following columns indicating the status of the participants at different stage of the study. One can easily derive the number of participants at different stage by counting the number of participants on-study excluding the participants who are excluded. 
+In a clinical research, we have a participants disposition data. One column is the participants' ID, and the following columns indicating the status of the participants at different stage of the study. One can easily derive the number of participants at different stage by counting the number of participants on-study excluding the participants who are excluded. 
 
 # Description
 
-This function developed to populate consort diagram automatically. But to do so, a population disposition data should be prepared. The following data is prepared for demonstration.
+This function developed to populate consort diagram automatically. But to do so, a population disposition data should be prepared. The following data is prepared for demonstration provided in the package. The data can be loaded with `data(dispos.data)`, the variables in this table is explained below: 
 
--   `trailno`: List of the subject ID.
--   `exc1`: reason for exclusion after enrolled, should be missing if not excluded.
--   `induc`: list of subject ID entered the induction phase.
--   `exc2`: reason for exclusion in the induction phase, should be missing if not excluded.
--   `exc`: reason for exclusion after enrolled. This is the combination of `exc1` and `exc2`.
--   `arm`: treatment arm, two groups.
--   `fow1`: reason for exclusion in the follow-up, should be missing if not excluded.
--   `fow2`: reason for exclusion in the final analysis, should be missing if not excluded.
--   `arm3`: treatment arm, three groups.
+-   `trialno`: Participants ID of the participants
+-   `exclusion1, exclusion2`: Exclusion reason before and after induction
+-   `induction`: Participants ID of the participants who are included in the induction phase, an extra treatment before randomisation.
+-   `exclusion`: Exclusion reason before randomisation, including before and after induction
+-   `arm, arm3`: Arms pariticipants randomised to.
+-   `sbujid_dosed`: Participants ID of the participants who had at least one dose of the protocol treatment.
+-   `subjid_notdosed`: Reason for participants not dosed.
+-   `followup`: Participants ID planned for follow-up.
+-   `lost_followup`: Reason for participants not dosed.
+-   `assessed`: Participants ID participants attended assessment.
+-   `no_value`: Reason for participants missing final assessment.
+-   `mitt`: Participants ID included in the mITT analysis.
 
 ```{r data-head, echo=FALSE}
 head(dispos.data)
@@ -50,9 +53,11 @@ Basic logic:
 
 1.  The vertical node are the number of patients in the current node, no dropout reasons of inclusion reasons should be provided.
 2.  Side box is only used for the drop outs. It include information about the number of patients excluded and reasons. 
-3.  Any subjects with exclusion reasons will not be included in the next vertical node box after excluded. So the subject id can be used multiple times to indicate how many patients left in the current node. 
+3.  Any participants with exclusion reasons will not be included in the next vertical node box after excluded. So the subject id can be used multiple times to indicate how many patients left in the current node. 
 4.  The node labels, for example visit number or phase, can only horizontally align to a vertical main nodes, not an exclusion box.
 5.  If more than 2 treatment allocation is present, all the exclusion box after the allocation will be aligned to the right
+
+**At each stage, number of non-missing values will be counted**. Set `kickoff_sidebox=TRUE` to remove the observations counted in the side box in the remaining nodes. 
 
 # Self-generating function
 
@@ -70,10 +75,11 @@ consort_plot(data,
 ```
 
 -   `data`: Dataset prepared above
--   `orders`: A named vector or a list, names as the variable and values as labels in the box. The order of the diagram will be based on this. Variables listed here, but not included in other parameters will calculate the number of non-missing values.
--   `side_box`: Variable vector, appeared as side box in the diagram. The next box will be the subset of the missing values of these variables. The subject id variable can be used multiple times, since only the number of non-missing is calculated for the vertical box.
+-   `orders`: A named vector or a list, names as the variable and values as labels in the box. The order of the diagram will be based on this. Variables listed here, but not included in other parameters will calculate the number of non-missing values. A list can be provided with multiple variables in each list element and these variables will be stack into a single node. The side box should only have 1 variable. 
+-   `side_box`: Variable vector, appeared as side box in the diagram. The next box will be count the number of non-missing values, so users need to make sure this is correct. The pariticpants id variable can be used multiple times, since only the number of non-missing is calculated for the vertical box.
 -   `allocation`: Name of the grouping/treatment variable (optional), the diagram will split into branches on this variables.
 -   `labels`: Named vector, names is the location of the vertical node excluding the side box. The position location should plus 1 after the allocation variables if the allocation is defined.
+-   `kickoff_sidebox`: kickoff of the observation from the data with following a side box.
 -   `cex`: Multiplier applied to font size, Default is 0.6
 -   `text_width`: A positive integer giving the target column for wrapping lines in the output.
 
@@ -109,76 +115,62 @@ cat(build_grviz(g), file = "consort.gv")
 
 ```{r single-arms, message=FALSE, fig.width  = 6, fig.height = 6}
 out <- consort_plot(data = dispos.data,
-             orders = c(trialno = "Population",
-                          exc1    = "Excluded",
-                          trialno = "Allocated",
-                          fow1    = "Lost of Follow-up",
-                          trialno = "Finished Followup",
-                          fow2    = "Not evaluable for the final analysis",
-                          trialno = "Final Analysis"),
-             side_box = c("exc1", "fow1", "fow2"),
-             cex = 0.9)
-plot(out)
-
-```
-
-## Two arms
-
-```{r two-arms, fig.width  = 7, fig.height = 6}
-out <- consort_plot(data = dispos.data,
-             orders = c(trialno = "Population",
-                          exc    = "Excluded",
-                          arm     = "Randomized patient",
-                          fow1    = "Lost of Follow-up",
-                          trialno = "Finished Followup",
-                          fow2    = "Not evaluable",
-                          trialno = "Final Analysis"),
-             side_box = c("exc", "fow1", "fow2"),
-             allocation = "arm",
-             labels = c("1" = "Screening", "2" = "Randomization",
-                        "5" = "Final"))
-
+                    orders = c(trialno = "Population",
+                               exclusion = "Excluded",
+                               trialno = "Allocated",
+                               subjid_notdosed = "Not dosed",
+                               followup = "Followup",
+                               lost_followup = "Not evaluable for the final analysis",
+                               mitt = "Final Analysis"),
+                    side_box = c("exclusion", "subjid_notdosed", "lost_followup"),
+                    cex = 0.9)
 plot(out)
 ```
 
-## Multiple phase
+## Multiple phase and multiple arms
 
 ```{r multiple-phase, fig.width  = 9, fig.height = 6}
 g <- consort_plot(data = dispos.data,
-             orders = list(trialno = "Population",
-                          exc1    = "Excluded",
-                          induc   = "Induction",
-                          exc2    = "Excluded",
-                          arm3     = "Randomized patient",
-                          fow1    = "Lost of Follow-up",
-                          trialno = "Finished Followup",
-                          fow2    = "Not evaluable",
-                          trialno = "Final Analysis"),
-             side_box = c("exc1", "exc2", "fow1", "fow2"),
-             allocation = "arm3",
-             labels = c("1" = "Screening", "2" = "Month 4",
-                        "3" = "Randomization", "5" = "Month 24",
-                        "6" = "End of study"),
-             cex = 0.7)
+                  orders = c(trialno = "Population",
+                             exclusion1    = "Excluded",
+                             induction   = "Induction",
+                             exclusion2    = "Excluded",
+                             arm3     = "Randomized patient",
+                             subjid_notdosed = "Not dosed",
+                             mitt = "Final miTT Analysis"),
+                  side_box = c("exclusion1", "exclusion2", "subjid_notdosed"),
+                  allocation = "arm3",
+                  labels = c("1" = "Screening", "2" = "Month 4",
+                             "3" = "Randomization", 
+                             "5" = "End of study"),
+                  cex = 0.7)
 plot(g)
 ```
 
-## Multiple stratification
-In some cases, two level randomisation/stratification is desired. A typical case is the factorial design. Simply provide two allocation variables, but more than two splits are not supported. 
-```{r multiple-split, fig.width  = 10, fig.height = 6}
+## Multiple stratification with node stack
+In some cases, two level randomisation/stratification is desired. A typical case is the factorial design. Simply provide two allocation variables, but more than two splits are not supported. In a more general cases, one may want to keep the count inside the vertical box instead of excluding. In this cases, one can provide multiple variables in a list. The first variable will simply be counted, the remaining variables will be itemised. 
+```{r multiple-split, fig.width  = 13, fig.height = 10, out.width = "95%"}
 # We will exclude one arm to avoid too many arms.
-df <- dispos.data[dispos.data$arm3 != "Trt C", ] 
+df <- dispos.data[!dispos.data$arm3 %in% "Trt C",]
 p <- consort_plot(data = df,
-                  orders = c(trialno = "Population",
-                             exc    = "Excluded",
-                             arm     = "Randomized patient",
-                             arm3     = "", # Set this to blank to suppress extra label node
-                             fow1    = "Lost of Follow-up",
-                             trialno = "Finished Followup",
-                             fow2    = "Not evaluable",
-                             trialno = "Final Analysis"),
-                  side_box = c("exc", "fow1", "fow2"),
-                  allocation = c("arm", "arm3"))
+                  orders = list(c(trialno = "Population"),
+                                c(exclusion = "Excluded"),
+                                c(arm     = "Randomized patient"),
+                                # The following two variables will be stacked together
+                                c(arm3     = "", # Should not provide a value to show the actual arm
+                                  subjid_notdosed="Participants not treated"),
+                                # The following two variables will be stacked together
+                                c(followup    = "Pariticpants planned for follow-up",
+                                  lost_followup = "Reason for tot followed"),
+                                c(assessed = "Assessed for final outcome"),
+                                c(no_value = "Reason for not assessed"),
+                                c(mitt = "Included in the mITT analysis")),
+                  side_box = c("exclusion", "no_value"), 
+                  allocation = c("arm", "arm3"), # Two level randomisation
+                  kickoff_sidebox = FALSE,
+                  labels = c("1" = "Screening", "2" = "Randomization",
+                             "5" = "Follow-up", "7" = "Final analysis"),
+                  cex = 0.7)
 
 plot(p)
 ```
@@ -259,7 +251,7 @@ plot(g)
 ```
 
 ## Using disposition table
-```{r disposition-data, fig.width  = 7, fig.height = 6}
+```{r disposition-data, fig.width  = 7, fig.height = 6.5}
 options(txt_gp = gpar(cex = 0.8))
 
 dispos.data$arm <- factor(dispos.data$arm)
@@ -267,28 +259,27 @@ dispos.data$arm <- factor(dispos.data$arm)
 txt <- gen_text(dispos.data$trialno, label = "Patient consented")
 g <- add_box(txt = txt)
 
-txt <- gen_text(dispos.data$exc, label = "Excluded", bullet = TRUE)
+txt <- gen_text(dispos.data$exclusion, label = "Excluded", bullet = TRUE)
 g <- add_side_box(g, txt = txt)   
-
-# Exclude subjects
-dispos.data <- dispos.data[is.na(dispos.data$exc), ]
 
 g <- add_box(g, txt = gen_text(dispos.data$arm, label = "Patients randomised")) 
 
 txt <- gen_text(dispos.data$arm)
 g <- add_split(g, txt = txt)
 
-txt <- gen_text(split(dispos.data[,c("reas1", "reas2")], dispos.data$arm),
-                label = "Lost to follow-up")
+# Exclude subjects
+dispos.data <- dispos.data[is.na(dispos.data$exclusion), ]
+
+txt <- gen_text(split(dispos.data[,c("subjid_notdosed")], dispos.data$arm),
+                label = "Not dosed", bullet = TRUE)
 g <- add_box(g, txt = txt, just = "left")
 
-dispos.data <- dispos.data[complete.cases(dispos.data[,c("reas1", "reas2")]), ]
-txt <- gen_text(split(dispos.data$trialno, dispos.data$arm),
-                label = "Primary analysis")
+txt <- gen_text(split(dispos.data$mitt, dispos.data$arm),
+                label = "Primary mITT analysis")
 g <- add_box(g, txt = txt)
 
 g <- add_label_box(g, txt = c("1" = "Baseline",
-                              "3" = "First Stage"))
+                              "5" = "Final analysis"))
 
 plot(g)
 ```

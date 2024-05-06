@@ -18,10 +18,13 @@
 #' @example inst/examples/add-box-example.R
 add_split <- function(prev_box,
                       txt,
+                      just = c("center", "left", "right"),
                       text_width = NULL,
                       ...) {
 
   dots <- list(...)
+
+  just <- match.arg(just)
 
   # Wrap text
   if (!is.null(text_width)) {
@@ -53,14 +56,14 @@ add_split <- function(prev_box,
 
   if(!is.list(txt)){
     nodes <- lapply(seq_along(txt), function(i){
-    box <- do.call(textbox, c(list(text = txt[i], just = "center", box_fn = rectGrob, name = "splitbox"), dots))
+    box <- do.call(textbox, c(list(text = txt[i], just = just, box_fn = rectGrob, name = "splitbox"), dots))
       list(
         text = txt[i],
         node_type = "splitbox",
         box = box,
         box_hw = get_coords(box),
         side = NULL,
-        just = "center",
+        just = just,
         prev_node = prev_nodes
       )
     })
@@ -68,7 +71,7 @@ add_split <- function(prev_box,
     # For nested splits
     nodes <- lapply(seq_along(txt), function(i){
       lapply(txt[[i]], function(x){
-        box <- do.call(textbox, c(list(text = x, just = "center", 
+        box <- do.call(textbox, c(list(text = x, just = just, 
                                        box_fn = rectGrob, name = "splitbox"), dots))
         list(
           text = x,
@@ -76,7 +79,7 @@ add_split <- function(prev_box,
           box = box,
           box_hw = get_coords(box),
           side = NULL,
-          just = "center",
+          just = just,
           prev_node = prev_nodes[i]
         )
       })

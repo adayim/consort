@@ -7,16 +7,21 @@
 \format{
 A data frame with 300 rows and 11 columns:
 \describe{
-  \item{trialno}{Trial ID of the participants}
-  \item{exc1, exc2}{Exclusion reason before and after induction}
-  \item{induc}{Trial ID of the participants who are included in the induction
-  phase, an extra treatment before randomisation. This is to demenstrate extra
-  step before randomisation.}
-  \item{exc}{Exclusion reason before randomisation, including before and after
+  \item{trialno}{Participants ID of the participants}
+  \item{exclusion1, exclusion2}{Exclusion reason before and after induction}
+  \item{induction}{Participants ID of the participants who are included in the induction
+  phase, an extra treatment before randomisation.}
+  \item{exclusion}{Exclusion reason before randomisation, including before and after
   induction}
-  \item{arm, arm3}{Allocated treatment arm, two and three arms}
-  \item{fow1, fow2}{First and second follow-up}
-  \item{reas1, reas2}{Reason for exclusion.}
+  \item{arm, arm3}{Arms pariticipants randomised to.}
+  \item{sbujid_dosed}{Participants ID of the participants who had at least one dose of 
+  the protocol treatment.}
+  \item{subjid_notdosed}{Reason for participants not dosed.}
+  \item{followup}{Participants ID planned for follow-up.}
+  \item{lost_followup}{Reason for participants not dosed.}
+  \item{assessed}{Participants ID participants attended assessment.}
+  \item{no_value}{Reason for participants missing final assessment.}
+  \item{mitt}{Participants ID included in the mITT analysis.}
 }
 }
 \usage{

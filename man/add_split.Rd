@@ -4,13 +4,21 @@
 \alias{add_split}
 \title{Add a splitting box}
 \usage{
-add_split(prev_box, txt, text_width = NULL, ...)
+add_split(
+  prev_box,
+  txt,
+  just = c("center", "left", "right"),
+  text_width = NULL,
+  ...
+)
 }
 \arguments{
 \item{prev_box}{Previous node that the newly created split box will be aligned.}
 
 \item{txt}{Text in the node. If the `prev_box` is a horizontally aligned multiple
 nodes, a vector of with the same length must be provided.}
+
+\item{just}{The justification for the text: left, center or right.}
 
 \item{text_width}{a positive integer giving the target column for wrapping
 lines in the output. String will not be wrapped if not defined (default).

@@ -50,6 +50,7 @@ test_that("Auto generate", {
 
 test_that("Allocation last node", {
   r <- readRDS('dat2.rds')
+  r$qual[!is.na(r$exc)] <- NA
   g <- consort_plot(r,
                     orders = c(id      = 'Screened',
                                exc     = 'Excluded',
