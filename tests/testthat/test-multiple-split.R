@@ -34,7 +34,8 @@ test_that("Multiple split generate", {
   txt <- build_grviz(p)
   expect_snapshot_file(to_grviz(txt), "multiple-split.gv")
 
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(p), "multiple-split.png")
 
 })
@@ -66,7 +67,8 @@ test_that("Multiple split and no kickoff", {
   txt <- build_grviz(p)
   expect_snapshot_file(to_grviz(txt), "multiple-split-nokick.gv")
 
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(p), "multiple-split-nokick.png")
 
 })

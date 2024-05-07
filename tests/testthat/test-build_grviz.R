@@ -34,7 +34,8 @@ test_that("Check plot creation", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "grviz.gv")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "build-grviz.png")
   
 })
@@ -53,7 +54,8 @@ test_that("Missing in some nodes", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "multi-miss-grviz.gv")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "multi-miss-grviz.png")
   
 })
@@ -71,7 +73,8 @@ test_that("End with missing", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "end-miss-grviz.gv")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "end-miss-grviz.png")
   
 })

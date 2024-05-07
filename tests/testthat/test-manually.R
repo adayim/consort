@@ -40,7 +40,8 @@ test_that("Generate consort manually", {
 
   expect_s3_class(g, "consort")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "manually-gen.png")
 
 })
