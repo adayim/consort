@@ -20,7 +20,7 @@ node10 [label = "Total (n=14)"]
 
 ## Invisible point node for joints
 
-node [shape = point, width = 0]
+node [shape = point, width = 0, style=invis]
 
 P1 P2 P3 P4 P5
 
@@ -58,7 +58,7 @@ P4 -> node10;
 node7 -> P3 [arrowhead = none];
 node8 -> P4 [arrowhead = none];
 node9 -> P5 [arrowhead = none];
-P3 -> P4 -> P5 [arrowhead = none, minlen = 10];
+P3 -> P4 -> P5 [arrowhead = none, minlen = 7.0];
 
 node3 -> node9 [arrowhead = none];
 

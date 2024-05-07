@@ -34,7 +34,8 @@ test_that("Check plot creation", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "grviz.gv")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "build-grviz.png")
   
 })
@@ -53,7 +54,8 @@ test_that("Missing in some nodes", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "multi-miss-grviz.gv")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "multi-miss-grviz.png")
   
 })
@@ -71,7 +73,8 @@ test_that("End with missing", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "end-miss-grviz.gv")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "end-miss-grviz.png")
   
 })
@@ -85,7 +88,7 @@ test_that("Split and combine", {
   g <- add_split(g, txt = c("Arm A (n=143)", "Arm B (n=142)"))
   g <- add_box(g, txt = c("", "From Arm B"))
   g <- add_box(g, txt = "Combine all")
-  g <- add_split(g, txt = c("Process 1 (n=140)", "Process 2 (n=140)", "Process 3 (n=142)"))
+  g <- add_split(g, txt = list(c("Process 1 (n=140)", "Process 2 (n=140)", "Process 3 (n=142)")))
   
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "split-comb-grviz.gv")

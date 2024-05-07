@@ -30,11 +30,11 @@ get_coords <- function(x) {
   #   stop("Object x must be textbox.")
   # }
 
-  width <- convertWidth(grobWidth(x), "mm", valueOnly = TRUE)
-  height <- convertHeight(grobHeight(x), "mm", valueOnly = TRUE)
+  width <- convertWidth(grobWidth(x), "char", valueOnly = TRUE)
+  height <- convertHeight(grobHeight(x), "char", valueOnly = TRUE)
 
-  half_height <- unit(0.5 * height, "mm")
-  half_width <- unit(0.5 * width, "mm")
+  half_height <- unit(0.5 * height, "char")
+  half_width <- unit(0.5 * width, "char")
 
   list(
     left = convertX(grobX(x, 90), "npc") - half_width,

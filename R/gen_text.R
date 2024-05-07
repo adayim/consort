@@ -139,7 +139,7 @@ box_label <- function(x, label, bullet = TRUE) {
     else
       tab <- table(x)
     txt_sub <- paste0("\u2022 ", names(tab), " (n=", pret_num(tab), ")")
-    tp <- paste0(tp, ":\n", paste(txt_sub, collapse = "\n"))
+    tp <- paste0(tp, "\n", paste(txt_sub, collapse = "\n"))
   }
 
   return(tp)

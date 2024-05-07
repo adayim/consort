@@ -9,17 +9,19 @@ digraph consort_diagram {
   node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
 node1 [label = "Screened (n=1,000)"]
-node2 [label = "Excluded (n=286):\l Hx medication (n=48)\l age < 40 (n=82)\l pain-free (n=156)\l"]
+node2 [label = "Excluded (n=286)\l Hx medication (n=48)\l age < 40 (n=82)\l pain-free (n=156)\l"]
 node3 [label = "Qualified for Randomization (n=714)"]
 node4 [label = "Consented (n=634)"]
 node5 [label = "Randomized (n=534)"]
+node6 [label = "Treatment A (n=285)"]
+node7 [label = "Treatment B (n=249)"]
 
 
 ## Invisible point node for joints
 
-node [shape = point, width = 0]
+node [shape = point, width = 0, style=invis]
 
-P1
+P1 P2 P3 P4
 
 subgraph {
   rank = same; rankdir = LR; node1;
@@ -36,6 +38,12 @@ subgraph {
 subgraph {
   rank = same; rankdir = LR; node5;
   }
+subgraph {
+  rank = same; rankdir = LR; P2; P3; P4;
+  }
+subgraph {
+  rank = same; rankdir = LR; node6; node7;
+  }
 
 edge[style=""];
 
@@ -44,6 +52,10 @@ P1 -> node2;
 P1 -> node3;
 node3 -> node4;
 node4 -> node5;
+node5 -> P3 [arrowhead = none];
+P2 -> node6;
+P4 -> node7;
+P2 -> P3 -> P4 [arrowhead = none, minlen = 9.0];
 
 
 }

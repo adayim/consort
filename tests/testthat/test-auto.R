@@ -43,13 +43,15 @@ test_that("Auto generate", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "auto-grviz.gv")
 
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "autogen.png")
 
 })
 
 test_that("Allocation last node", {
   r <- readRDS('dat2.rds')
+  r$qual[!is.na(r$exc)] <- NA
   g <- consort_plot(r,
                     orders = c(id      = 'Screened',
                                exc     = 'Excluded',
@@ -65,7 +67,8 @@ test_that("Allocation last node", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "auto-last-grviz.gv")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "autogen-last.png")
   
 })
@@ -88,7 +91,8 @@ test_that("Allocation no label", {
   txt <- build_grviz(g)
   expect_snapshot_file(to_grviz(txt), "auto-nolab-grviz.gv")
   
-  skip_if_not(tolower(.Platform$OS.type) == "windows")
+  # skip_if_not(tolower(.Platform$OS.type) == "windows")
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "autogen-nolab.png")
   
 })

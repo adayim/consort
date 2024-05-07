@@ -47,7 +47,7 @@ test_that("Generate text for the consort", {
   expect_equal(
     tx5_ulst[1],
     paste0("Cars in the data (n=", sum(tab5[,2]), ")\nStraight (n=", 
-           sum(tab5["Straight", 2]), "):")
+           sum(tab5["Straight", 2]), ")")
   )
   
   tx6 <- gen_text(val[,c("vs", "car")], 
@@ -58,7 +58,7 @@ test_that("Generate text for the consort", {
   expect_equal(
     tx6_ulst[1],
     paste0("Cars in the data (n=", nrow(mtcars), ")\nV-shaped (n=", 
-           sum(tab6["V-shaped",]), "):")
+           sum(tab6["V-shaped",]), ")")
   )
   
   
