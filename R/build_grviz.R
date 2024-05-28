@@ -273,7 +273,7 @@ build_grviz <- function(x) {
   main_txt <- main_txt[!is.na(main_txt[,"lab"]),]
 
   grviz_txt <- paste("digraph consort_diagram {
-  graph [layout = dot]",
+  graph [layout = dot, splines=ortho, overlap=prism]",
   lab_nd,
   lab_edge,
   "# node definitions with substituted label text
