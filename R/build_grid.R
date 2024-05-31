@@ -98,7 +98,12 @@ build_grid <- function(x) {
       next
     
     for(j in 2:length(nd$node)){
-      connect_gb <- connect_box(nodes[[nd$node[j]]], nodes[[nd$node[1]]], 
+      if(is.null(nodes[[nd$node[j]]])){
+        nd_name <- nodes_connect[[nd$node[j]]]$node[2]
+      }else{
+        nd_name <- nd$node[j]
+      }
+      connect_gb <- connect_box(nodes[[nd_name]], nodes[[nd$node[1]]], 
                                 connect = nd$connect, type = "p")
       grobs_list <- gList(grobs_list, connect_gb)
     }

@@ -1,5 +1,5 @@
 digraph consort_diagram {
-  graph [layout = dot, splines=ortho, overlap=prism]
+  graph [layout = dot, splines=ortho]
 
 
 
@@ -8,22 +8,30 @@ digraph consort_diagram {
 # node definitions with substituted label text
   node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Study 1 (n=8)"]
-node2 [label = "Study 2 (n=12)"]
-node3 [label = "Included All (n=20)"]
+node1 [label = "Study 1 (n=8)" group=A1]
+node2 [label = "Study 2 (n=12)" group=A2]
+node3 [label = "Included All (n=20)" group=B1]
 node4 [label = "Excluded (n=7):\l MRI not collected (n=3)\l"]
-node5 [label = "Randomised"]
-node6 [label = "Arm A (n=143)"]
-node7 [label = "Arm B (n=142)"]
+node5 [label = "Randomised" group=B1]
+node6 [label = "Arm A (n=143)" group=A1]
+node7 [label = "Arm B (n=142)" group=A2]
 node9 [label = "Exclude (n=3\l"]
-node11 [label = "From Arm B"]
+node10 [label = "" group=A1 shape=none height=0 width=0]
+node11 [label = "From Arm B" group=A2]
 
 
 ## Invisible point node for joints
 
 node [shape = point, width = 0, style=invis]
 
-P1 P2 P3 P4 P5 P6 P7 P8
+P1 [group=A1]
+P2 [group=B1]
+P3 [group=A2]
+P4 [group=B1]
+P5 [group=A1]
+P6 [group=B1]
+P7 [group=A2]
+P8 [group=A2]
 
 subgraph {
   rank = same; rankdir = LR; P1; P2; P3;
@@ -55,14 +63,14 @@ edge[style=""];
 P2 -> node3;
 node1 -> P1 [arrowhead = none];
 node2 -> P3 [arrowhead = none];
-P1 -> P2 -> P3 [arrowhead = none, minlen = 4.0];
+P1 -> P2 -> P3 [arrowhead = none];
 node3 -> P4 [arrowhead = none];
 P4 -> node4;
 P4 -> node5;
 node5 -> P6 [arrowhead = none];
 P5 -> node6;
 P7 -> node7;
-P5 -> P6 -> P7 [arrowhead = none, minlen = 5.5];
+P5 -> P6 -> P7 [arrowhead = none];
 node7 -> P8 [arrowhead = none];
 P8 -> node9;
 P8 -> node11;
