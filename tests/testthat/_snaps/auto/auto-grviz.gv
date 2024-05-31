@@ -1,5 +1,5 @@
 digraph consort_diagram {
-  graph [layout = dot]
+  graph [layout = dot, splines=ortho]
 
 node [shape = rectangle, style = "rounded,filled", fillcolor = "#A9C7FD" color = "#4F81BD"]
 label14 [label = "Screening"]
@@ -14,26 +14,33 @@ label14 -> label15 -> label16;
 # node definitions with substituted label text
   node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Population (n=300)"]
+node1 [label = "Population (n=300)" group=A1]
 node2 [label = "Excluded (n=15)\l MRI not collected (n=3)\l Other (n=4)\l Sample not collected (n=8)\l"]
-node3 [label = "Allocated (n=285)"]
-node4 [label = "Conc (n=158)"]
-node5 [label = "Seq (n=127)"]
+node3 [label = "Allocated (n=285)" group=A1]
+node4 [label = "Conc (n=158)" group=B1]
+node5 [label = "Seq (n=127)" group=B2]
 node6 [label = "Lost of Follow-up (n=33)\l Death (n=12)\l Discontinued (n=4)\l Other (n=11)\l Withdraw (n=6)\l"]
 node7 [label = "Lost of Follow-up (n=26)\l Death (n=5)\l Discontinued (n=6)\l Other (n=11)\l Withdraw (n=4)\l"]
-node8 [label = "Finished Followup (n=125)"]
-node9 [label = "Finished Followup (n=101)"]
+node8 [label = "Finished Followup (n=125)" group=B1]
+node9 [label = "Finished Followup (n=101)" group=B2]
 node10 [label = "Not evaluable for the final analysis (n=6)\l Outcome missing (n=4)\l Protocol deviation (n=2)\l"]
 node11 [label = "Not evaluable for the final analysis (n=5)\l Outcome missing (n=4)\l Protocol deviation (n=1)\l"]
-node12 [label = "Final Analysis (n=119)"]
-node13 [label = "Final Analysis (n=96)"]
+node12 [label = "Final Analysis (n=119)" group=B1]
+node13 [label = "Final Analysis (n=96)" group=B2]
 
 
 ## Invisible point node for joints
 
 node [shape = point, width = 0, style=invis]
 
-P1 P2 P3 P4 P5 P6 P7 P8
+P1 [group=A1]
+P2 [group=B1]
+P3 [group=A1]
+P4 [group=B2]
+P5 [group=B1]
+P6 [group=B2]
+P7 [group=B1]
+P8 [group=B2]
 
 subgraph {
   rank = same; rankdir = LR; label14;  node1;
@@ -83,7 +90,7 @@ P1 -> node3;
 node3 -> P3 [arrowhead = none];
 P2 -> node4;
 P4 -> node5;
-P2 -> P3 -> P4 [arrowhead = none, minlen = 9.5];
+P2 -> P3 -> P4 [arrowhead = none];
 node4 -> P5 [arrowhead = none];
 P5 -> node6;
 P5 -> node8;

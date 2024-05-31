@@ -1,5 +1,5 @@
 digraph consort_diagram {
-  graph [layout = dot]
+  graph [layout = dot, splines=ortho]
 
 
 
@@ -8,21 +8,26 @@ digraph consort_diagram {
 # node definitions with substituted label text
   node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Cohort 1 (n=6)"]
-node2 [label = "Cohort 2 (n=6)"]
-node3 [label = "Cohort 3 (n=6)"]
+node1 [label = "Cohort 1 (n=6)" group=A1]
+node2 [label = "Cohort 2 (n=6)" group=A2]
+node3 [label = "Cohort 3 (n=6)" group=A3]
 node4 [label = "Excluded (n=1)\l"]
 node5 [label = "Excluded (n=3)\l"]
-node7 [label = "Cohort 1 (n=5)"]
-node8 [label = "Cohort 2 (n=3)"]
-node10 [label = "Total (n=14)"]
+node7 [label = "Cohort 1 (n=5)" group=A1]
+node8 [label = "Cohort 2 (n=3)" group=A2]
+node9 [label = "" group=A3 shape=none height=0 width=0]
+node10 [label = "Total (n=14)" group=B1]
 
 
 ## Invisible point node for joints
 
 node [shape = point, width = 0, style=invis]
 
-P1 P2 P3 P4 P5
+P1 [group=A1]
+P2 [group=A2]
+P3 [group=A1]
+P4 [group=A2]
+P5 [group=A3]
 
 subgraph {
   rank = same; rankdir = LR; node1; node2; node3;
@@ -58,7 +63,7 @@ P4 -> node10;
 node7 -> P3 [arrowhead = none];
 node8 -> P4 [arrowhead = none];
 node9 -> P5 [arrowhead = none];
-P3 -> P4 -> P5 [arrowhead = none, minlen = 7.0];
+P3 -> P4 -> P5 [arrowhead = none];
 
 node3 -> node9 [arrowhead = none];
 

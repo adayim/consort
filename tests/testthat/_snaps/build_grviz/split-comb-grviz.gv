@@ -1,5 +1,5 @@
 digraph consort_diagram {
-  graph [layout = dot]
+  graph [layout = dot, splines=ortho]
 
 
 
@@ -8,28 +8,43 @@ digraph consort_diagram {
 # node definitions with substituted label text
   node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Study 1 (n=8)"]
-node2 [label = "Study 2 And this is long (n=12)"]
-node3 [label = "Study 3 (n=12)"]
-node4 [label = "Study 3 (n=12)"]
-node5 [label = "Study 3 (n=12)"]
-node6 [label = "Included All (n=20)"]
+node1 [label = "Study 1 (n=8)" group=A1]
+node2 [label = "Study 2 And this is long (n=12)" group=A2]
+node3 [label = "Study 3 (n=12)" group=A3]
+node4 [label = "Study 3 (n=12)" group=A4]
+node5 [label = "Study 3 (n=12)" group=A5]
+node6 [label = "Included All (n=20)" group=B1]
 node7 [label = "Excluded (n=7):\l MRI not collected (n=3)\l"]
-node8 [label = "Randomised"]
-node9 [label = "Arm A (n=143)"]
-node10 [label = "Arm B (n=142)"]
-node12 [label = "From Arm B"]
-node13 [label = "Combine all"]
-node14 [label = "Process 1 (n=140)"]
-node15 [label = "Process 2 (n=140)"]
-node16 [label = "Process 3 (n=142)"]
+node8 [label = "Randomised" group=B1]
+node9 [label = "Arm A (n=143)" group=C1]
+node10 [label = "Arm B (n=142)" group=C2]
+node11 [label = "" group=C1 shape=none height=0 width=0]
+node12 [label = "From Arm B" group=C2]
+node13 [label = "Combine all" group=B1]
+node14 [label = "Process 1 (n=140)" group=D1]
+node15 [label = "Process 2 (n=140)" group=D2]
+node16 [label = "Process 3 (n=142)" group=D3]
 
 
 ## Invisible point node for joints
 
 node [shape = point, width = 0, style=invis]
 
-P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 P13 P14 P15
+P1 [group=A1]
+P2 [group=A2]
+P3 [group=A3]
+P4 [group=A4]
+P5 [group=A5]
+P6 [group=B1]
+P7 [group=C1]
+P8 [group=B1]
+P9 [group=C2]
+P10 [group=C1]
+P11 [group=B1]
+P12 [group=C2]
+P13 [group=D1]
+P14 [group=D2]
+P15 [group=D3]
 
 subgraph {
   rank = same; rankdir = LR; P1; P2; P3; P4; P5;
@@ -70,25 +85,25 @@ node2 -> P2 [arrowhead = none];
 node3 -> P3 [arrowhead = none];
 node4 -> P4 [arrowhead = none];
 node5 -> P5 [arrowhead = none];
-P1 -> P2 -> P3 -> P4 -> P5 [arrowhead = none, minlen = 16.5];
+P1 -> P2 -> P3 -> P4 -> P5 [arrowhead = none];
 node6 -> P6 [arrowhead = none];
 P6 -> node7;
 P6 -> node8;
 node8 -> P8 [arrowhead = none];
 P7 -> node9;
 P9 -> node10;
-P7 -> P8 -> P9 [arrowhead = none, minlen = 5.5];
+P7 -> P8 -> P9 [arrowhead = none];
 node9 -> node11 [arrowhead = none];
 node10 -> node12;
 P11 -> node13;
 node11 -> P10 [arrowhead = none];
 node12 -> P12 [arrowhead = none];
-P10 -> P11 -> P12 [arrowhead = none, minlen = 5.5];
+P10 -> P11 -> P12 [arrowhead = none];
 node13 -> P14 [arrowhead = none];
 P13 -> node14;
 P14 -> node15;
 P15 -> node16;
-P13 -> P14 -> P15 [arrowhead = none, minlen = 12.0];
+P13 -> P14 -> P15 [arrowhead = none];
 
 
 }

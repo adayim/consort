@@ -40,7 +40,7 @@ add_split <- function(prev_box,
   prev_nodes <- attr(prev_box, "nodes.current")
   num_nodes <- attr(prev_box, "nodes.num")
 
-  if (any(sapply(prev_box, "[[", "node_type") %in% "splitbox") & !is.list(txt)) {
+  if (any(sapply(prev_box, "[[", "node_type") %in% "splitbox") & !is.list(txt) & length(prev_nodes) > 1) {
     stop("txt should be a list for a nested splits.")
   }
 

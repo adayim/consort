@@ -1,5 +1,5 @@
 digraph consort_diagram {
-  graph [layout = dot]
+  graph [layout = dot, splines=ortho]
 
 
 
@@ -8,48 +8,69 @@ digraph consort_diagram {
 # node definitions with substituted label text
   node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Population (n=300)"]
+node1 [label = "Population (n=300)" group=A1]
 node2 [label = "Excluded (n=33)\l Dead (n=4)\l MRI not collected (n=3)\l Other (n=8)\l Sample not collected (n=18)\l"]
-node3 [label = "Randomized patient (n=267)"]
-node4 [label = "Conc (n=142)"]
-node5 [label = "Seq (n=125)"]
-node6 [label = "Trt A (n=42)"]
-node7 [label = "Trt B (n=44)"]
-node8 [label = "Trt C (n=56)"]
-node9 [label = "Trt A (n=44)"]
-node10 [label = "Trt B (n=39)"]
-node11 [label = "Trt C (n=42)"]
+node3 [label = "Randomized patient (n=267)" group=A1]
+node4 [label = "Conc (n=142)" group=B1]
+node5 [label = "Seq (n=125)" group=B2]
+node6 [label = "Trt A (n=42)" group=C1]
+node7 [label = "Trt B (n=44)" group=C2]
+node8 [label = "Trt C (n=56)" group=C3]
+node9 [label = "Trt A (n=44)" group=C4]
+node10 [label = "Trt B (n=39)" group=C5]
+node11 [label = "Trt C (n=42)" group=C6]
 node12 [label = "Lost of Follow-up (n=2)\l Never dosed (n=2)\l"]
 node13 [label = "Lost of Follow-up (n=1)\l Never dosed (n=1)\l"]
 node14 [label = "Lost of Follow-up (n=2)\l Never dosed (n=2)\l"]
 node15 [label = "Lost of Follow-up (n=7)\l Declined (n=2)\l Never dosed (n=3)\l Ranomised by error (n=2)\l"]
 node16 [label = "Lost of Follow-up (n=2)\l Never dosed (n=1)\l Ranomised by error (n=1)\l"]
 node17 [label = "Lost of Follow-up (n=4)\l Never dosed (n=3)\l Ranomised by error (n=1)\l"]
-node18 [label = "Followup-up (n=40)"]
-node19 [label = "Followup-up (n=43)"]
-node20 [label = "Followup-up (n=54)"]
-node21 [label = "Followup-up (n=37)"]
-node22 [label = "Followup-up (n=37)"]
-node23 [label = "Followup-up (n=38)"]
+node18 [label = "Followup-up (n=40)" group=C1]
+node19 [label = "Followup-up (n=43)" group=C2]
+node20 [label = "Followup-up (n=54)" group=C3]
+node21 [label = "Followup-up (n=37)" group=C4]
+node22 [label = "Followup-up (n=37)" group=C5]
+node23 [label = "Followup-up (n=38)" group=C6]
 node24 [label = "Lost to follow-up (n=12)\l Death (n=2)\l Discontinued (n=4)\l Other (n=3)\l Withdraw (n=3)\l"]
 node25 [label = "Lost to follow-up (n=5)\l Discontinued (n=2)\l Other (n=2)\l Withdraw (n=1)\l"]
 node26 [label = "Lost to follow-up (n=9)\l Death (n=1)\l Discontinued (n=5)\l Other (n=2)\l Withdraw (n=1)\l"]
 node27 [label = "Lost to follow-up (n=12)\l Death (n=2)\l Other (n=4)\l Withdraw (n=6)\l"]
 node28 [label = "Lost to follow-up (n=7)\l Death (n=1)\l Discontinued (n=4)\l Withdraw (n=2)\l"]
 node29 [label = "Lost to follow-up (n=7)\l Death (n=2)\l Discontinued (n=2)\l Other (n=1)\l Withdraw (n=2)\l"]
-node30 [label = "Final Analysis (n=28)"]
-node31 [label = "Final Analysis (n=38)"]
-node32 [label = "Final Analysis (n=45)"]
-node33 [label = "Final Analysis (n=25)"]
-node34 [label = "Final Analysis (n=30)"]
-node35 [label = "Final Analysis (n=31)"]
+node30 [label = "Final Analysis (n=28)" group=C1]
+node31 [label = "Final Analysis (n=38)" group=C2]
+node32 [label = "Final Analysis (n=45)" group=C3]
+node33 [label = "Final Analysis (n=25)" group=C4]
+node34 [label = "Final Analysis (n=30)" group=C5]
+node35 [label = "Final Analysis (n=31)" group=C6]
 
 
 ## Invisible point node for joints
 
 node [shape = point, width = 0, style=invis]
 
-P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 P13 P14 P15 P16 P17 P18 P19 P20 P21 P22
+P1 [group=A1]
+P2 [group=B1]
+P3 [group=A1]
+P4 [group=B2]
+P5 [group=C1]
+P6 [group=C2]
+P7 [group=C3]
+P8 [group=C4]
+P9 [group=C5]
+P10 [group=C6]
+P11 [group=C1]
+P12 [group=C2]
+P13 [group=C3]
+P14 [group=C4]
+P15 [group=C5]
+P16 [group=C6]
+P17 [group=C1]
+P18 [group=C2]
+P19 [group=C3]
+P20 [group=C4]
+P21 [group=C5]
+P22 [group=C6]
 
 subgraph {
   rank = same; rankdir = LR; node1;
@@ -126,17 +147,17 @@ P1 -> node3;
 node3 -> P3 [arrowhead = none];
 P2 -> node4;
 P4 -> node5;
-P2 -> P3 -> P4 [arrowhead = none, minlen = 20.0];
+P2 -> P3 -> P4 [arrowhead = none];
 node4 -> P6 [arrowhead = none];
 P5 -> node6;
 P6 -> node7;
 P7 -> node8;
-P5 -> P6 -> P7 [arrowhead = none, minlen = 11.0];
+P5 -> P6 -> P7 [arrowhead = none];
 node5 -> P9 [arrowhead = none];
 P8 -> node9;
 P9 -> node10;
 P10 -> node11;
-P8 -> P9 -> P10 [arrowhead = none, minlen = 13.0];
+P8 -> P9 -> P10 [arrowhead = none];
 P7 -> P8 [style=invis];
 node6 -> P11 [arrowhead = none];
 P11 -> node12;
