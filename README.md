@@ -1,50 +1,49 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# consort
+# consort2
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/adayim/consort/workflows/R-CMD-check/badge.svg)](https://github.com/adayim/consort/actions)
+[![R-CMD-check](https://github.com/r2sas2025-svg/consort2/workflows/R-CMD-check/badge.svg)](https://github.com/r2sas2025-svg/consort2/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/consort)](https://CRAN.R-project.org/package=consort)
 [![CRAN
 download](https://cranlogs.r-pkg.org/badges/grand-total/consort)](https://cran.r-project.org/package=consort)
-[![codecov](https://codecov.io/gh/adayim/consort/branch/main/graph/badge.svg?token=mzvaYDMPNc)](https://app.codecov.io/gh/adayim/consort)
+[![codecov](https://codecov.io/gh/r2sas2025-svg/consort2/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r2sas2025-svg/consort2)
 <!-- badges: end -->
 
-The goal of `consort` is to make it easy to create CONSORT diagrams for
-the transparent reporting of participant allocation in randomized,
-controlled clinical trials. This is done by creating a standardized
-disposition data, and using this data as the source for the creation a
-standard CONSORT diagram. Human effort by supplying text labels on the
-node can also be achieved.
+`consort2` is a modern, simplified R package for creating CONSORT
+(Consolidated Standards of Reporting Trials) diagrams for the
+transparent reporting of participant allocation in randomized, controlled
+clinical trials. Version 2.0 introduces a new declarative API, full
+styling control, and improved Graphviz rendering.
 
 ## Installation
 
-You can install the released version of consort from
-[CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("consort")
-```
-
-And the development version from [GitHub](https://github.com/) with:
+Install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("adayim/consort")
+devtools::install_github("r2sas2025-svg/consort2")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a create CONSORT
-diagram with a given subject disposition data:
+## Quick Start
 
 ``` r
-library(consort)
-## basic example code
+library(consort2)
+
+# Create a styled consort diagram object
+style <- consort_style(
+  line_width = 2,
+  line_color = "darkblue",
+  box_fill   = "lightyellow"
+)
+
+diagram <- consort(metadata = list(title = "My RCT"))
 ```
+
+## Full Example
+
+Create a CONSORT diagram from trial disposition data:
 
 ``` r
 set.seed(1001)
@@ -53,28 +52,20 @@ N <- 300
 trialno <- sample(c(1000:2000), N)
 exc <- rep(NA, N)
 exc[sample(1:N, 15)] <- sample(c("Sample not collected", "MRI not collected", "Other"),
-                                15, replace = T, prob = c(0.4, 0.4, 0.2))
+                                15, replace = TRUE, prob = c(0.4, 0.4, 0.2))
 
 arm <- rep(NA, N)
-arm[is.na(exc)] <- sample(c("Conc", "Seq"), sum(is.na(exc)), replace = T)
+arm[is.na(exc)] <- sample(c("Conc", "Seq"), sum(is.na(exc)), replace = TRUE)
 
 fow1 <- rep(NA, N)
 fow1[!is.na(arm)] <- sample(c("Withdraw", "Discontinued", "Death", "Other", NA),
-                            sum(!is.na(arm)), replace = T, 
+                            sum(!is.na(arm)), replace = TRUE,
                             prob = c(0.05, 0.05, 0.05, 0.05, 0.8))
 fow2 <- rep(NA, N)
 fow2[!is.na(arm) & is.na(fow1)] <- sample(c("Protocol deviation", "Outcome missing", NA),
-                                          sum(!is.na(arm) & is.na(fow1)), replace = T, 
+                                          sum(!is.na(arm) & is.na(fow1)), replace = TRUE,
                                           prob = c(0.05, 0.05, 0.9))
 df <- data.frame(trialno, exc, arm, fow1, fow2)
-head(df)
-#>   trialno  exc  arm  fow1 fow2
-#> 1    1086 <NA> Conc  <NA> <NA>
-#> 2    1418 <NA>  Seq  <NA> <NA>
-#> 3    1502 <NA> Conc Death <NA>
-#> 4    1846 <NA> Conc  <NA> <NA>
-#> 5    1303 <NA> Conc Death <NA>
-#> 6    1838 <NA>  Seq  <NA> <NA>
 ```
 
 ``` r
@@ -97,11 +88,7 @@ plot(out)
 
 <img src="man/figures/README-diagram-1.png" width="100%" />
 
-As the `grid` plotting is not very ideal, calculation of the coodinates
-for the nodes are not easy job and tried my best. Feel free to PR if you
-want to improve. Or you can produce `Graphviz` plot by setting
-`grViz = TRUE` in `plot`. This will use `DiagrammeR` to print the plot.
-The plot is ideal for Shiny or HTML output.
+Render with Graphviz (ideal for Shiny or HTML output):
 
 ``` r
 plot(out, grViz = TRUE)
@@ -109,11 +96,52 @@ plot(out, grViz = TRUE)
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
-Or save this `Graphviz` plot to `png` or `pdf`
+Export the Graphviz plot to PDF or PNG:
 
 ``` r
-plot(g, grViz = TRUE) |> 
-    DiagrammeRsvg::export_svg() |> 
-    charToRaw() |> 
-    rsvg::rsvg_pdf("svg_graph.pdf")
+plot(out, grViz = TRUE) |>
+    DiagrammeRsvg::export_svg() |>
+    charToRaw() |>
+    rsvg::rsvg_pdf("consort_diagram.pdf")
 ```
+
+## Old vs New Approach
+
+| Feature | consort v1.x | consort2 v2.0 |
+|---|---|---|
+| Styling | Limited | Full control via `consort_style()` |
+| API | Imperative | Declarative |
+| Rendering | grid | Graphviz (grid fallback) |
+| Class system | None | S3 `consort` class |
+| Validation | Minimal | Comprehensive |
+
+## Styling
+
+`consort2` provides a full styling system via `consort_style()`:
+
+``` r
+# Customize every visual aspect
+style <- consort_style(
+  line_width  = 2,
+  line_color  = "darkblue",
+  line_style  = "solid",
+  arrow_size  = 1.5,
+  arrow_type  = "closed",
+  box_fill    = "lightyellow",
+  box_border  = "navy",
+  text_size   = 11,
+  text_color  = "black",
+  node_spacing = 0.6,
+  arm_spacing  = 1.2
+)
+
+# Apply as a global default
+options(consort.style = style)
+```
+
+## Documentation
+
+Full documentation is available at the package website. See also:
+
+- `vignette("consort_diagram", package = "consort2")` for a full tutorial
+

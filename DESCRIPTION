@@ -1,25 +1,31 @@
-Package: consort
+Package: consort2
 Type: Package
 Title: Create Consort Diagram
-Version: 1.2.2
+Version: 2.0.0
 Authors@R: person("Alim", "Dayim",
                   email = "ad938@cam.ac.uk",
                   role = c("aut", "cre"),
                   comment = c(ORCID = "0000-0001-9998-7463"))
-Description: To make it easy to create CONSORT diagrams for the transparent reporting of participant allocation in randomized, controlled clinical trials. This is done by creating a standardized disposition data, and using this data as the source for the creation a standard CONSORT diagram. Human effort by supplying text labels on the node can also be achieved.
+Description: A modern, simplified framework for creating CONSORT (Consolidated
+    Standards of Reporting Trials) diagrams for the transparent reporting of
+    participant allocation in randomized, controlled clinical trials. Provides a
+    declarative API for building diagrams with full styling control, supporting
+    both Graphviz and grid rendering backends.
 License: MIT + file LICENSE
 URL: https://github.com/adayim/consort/
 BugReports: https://github.com/adayim/consort/issues
 Encoding: UTF-8
 Imports:
-    grid
+    grid,
+    DiagrammeR (>= 1.0.0),
+    DiagrammeRsvg,
+    rsvg
 Suggests: 
+    stringi,
     testthat (>= 3.0.0),
     knitr,
-    DiagrammeR,
     rmarkdown,
-    covr,
-    stringi
+    covr
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
 Config/testthat/edition: 3

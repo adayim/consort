@@ -1,3 +1,40 @@
+# consort2 2.0.0 (Development)
+
+## Major Changes
+
+This is a complete modernization and simplification of the consort package.
+
+### New Features
+
+* **Simplified API**: New declarative API makes creating diagrams easier
+* **Enhanced Styling**: Full control over line widths, colors, arrows, and spacing (addresses Issue #28)
+* **Better Validation**: Improved error messages and data validation
+* **Modern Dependencies**: Updated to use latest Graphviz rendering
+
+### Breaking Changes
+
+* Package renamed to consort2 to allow parallel installation
+* New S3 class structure for consort objects
+* Simplified function names and parameters
+* Primary focus on Graphviz rendering (grid as fallback)
+
+### Improvements
+
+* Reduced codebase from 18+ files to 8 core files
+* 40-50% reduction in code complexity
+* Comprehensive test coverage (target: 90%+)
+* Modern documentation with pkgdown website
+
+### Bug Fixes
+
+* Fixed arrow rendering issues (Issue #26)
+* Improved coordinate calculations
+* Better handling of missing nodes
+
+### Migration Guide
+
+See vignettes for migration guide from consort v1.x to consort2 v2.0
+
 # consort 1.2.2
 
 -   Use comma separators for large number. 
