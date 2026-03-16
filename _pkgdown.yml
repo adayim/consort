@@ -1,0 +1,53 @@
+url: https://adayim.github.io/consort/
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/adayim/consort/
+
+reference:
+  - title: "Build Diagrams"
+    desc: "Core functions for building CONSORT diagrams"
+    contents:
+      - consort_plot
+      - build_grid
+      - build_grviz
+
+  - title: "Add Nodes"
+    desc: "Functions for adding nodes to the diagram"
+    contents:
+      - add_box
+      - add_side_box
+      - add_split
+      - add_label_box
+
+  - title: "Text and Labels"
+    desc: "Generate text labels for diagram nodes"
+    contents:
+      - gen_text
+      - textbox
+      - grid.textbox
+
+  - title: "Utilities"
+    desc: "Helper and utility functions"
+    contents:
+      - get_coords
+      - connect_box
+      - move_box
+      - plot.consort
+
+articles:
+  - title: "Getting Started"
+    contents:
+      - consort_diagram
+  - title: "Customisation"
+    contents:
+      - customisation

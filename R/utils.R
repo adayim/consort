@@ -3,8 +3,16 @@
 #' Method for plot objects and display the output in on a grid device.
 #'
 #' @param x A \code{consort} object.
-#' @param grViz If use \link[DiagrammeR]{grViz} to print the plot. 
+#' @param grViz If use \link[DiagrammeR]{grViz} to print the plot.
 #' Default is \code{FALSE} to use \link[grid]{grid.draw}
+#' @param diagram_width Width of the diagram viewport. Can be a number between
+#' 0 and 1 (proportion of device width) or a \code{\link[grid]{unit}} object
+#' (e.g., \code{unit(15, "cm")}). Default is \code{NULL} (uses 0.98 of device
+#' width). Only used when \code{grViz = FALSE}.
+#' @param diagram_height Height of the diagram viewport. Can be a number between
+#' 0 and 1 (proportion of device height) or a \code{\link[grid]{unit}} object
+#' (e.g., \code{unit(20, "cm")}). Default is \code{NULL} (uses 0.98 of device
+#' height). Only used when \code{grViz = FALSE}.
 #' @param ... Not used.
 #'
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}},
@@ -14,9 +22,11 @@
 #'
 #' @rdname plot.consort
 #' @export
-plot.consort <- function(x, grViz = FALSE, ...) {
+plot.consort <- function(x, grViz = FALSE, diagram_width = NULL,
+                         diagram_height = NULL, ...) {
   if(!grViz){
-    r <- build_grid(x)
+    r <- build_grid(x, diagram_width = diagram_width,
+                    diagram_height = diagram_height)
     grid.newpage()
     grid.draw(r)
   }else{

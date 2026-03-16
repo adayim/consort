@@ -2,14 +2,22 @@
 #'
 #' Build a \code{grob} consort diagram, use this if you want
 #' to save plots with \code{\link[ggplot2]{ggsave}}. \code{build_grid}
-#' does not support multiple split for the moment, please use 
-#'  \code{\link{build_grviz}} or \code{plot(g, grViz = TRUE)} for 
+#' does not support multiple split for the moment, please use
+#'  \code{\link{build_grviz}} or \code{plot(g, grViz = TRUE)} for
 #' multiple split nodes instead.
 #'
 #' @param x A conosrt object.
-#' 
+#' @param diagram_width Width of the diagram viewport as a proportion of the
+#' available device width (0 to 1). Default is \code{NULL} which uses 0.98.
+#' Can also be a \code{\link[grid]{unit}} object for absolute sizing
+#' (e.g., \code{unit(15, "cm")}).
+#' @param diagram_height Height of the diagram viewport as a proportion of the
+#' available device width (0 to 1). Default is \code{NULL} which uses 0.98.
+#' Can also be a \code{\link[grid]{unit}} object for absolute sizing
+#' (e.g., \code{unit(20, "cm")}).
+#'
 #' @return A \code{gList} object
-#' @export 
+#' @export
 #'
 #' @seealso \code{\link[grid]{gList}}
 #' @examples
@@ -26,9 +34,12 @@
 #'
 #' g <- add_box(g, txt = "Randomized (n=200)")
 #' # g <- ggsave("consort_diagram.pdf", plot = build_grid(g))
+#' # Control diagram width
+#' # g <- ggsave("consort_diagram.pdf", plot = build_grid(g, diagram_width = 0.7))
+#' # g <- ggsave("consort_diagram.pdf", plot = build_grid(g, diagram_width = unit(15, "cm")))
 #' }
-#' 
-build_grid <- function(x) {
+#'
+build_grid <- function(x, diagram_width = NULL, diagram_height = NULL) {
 
   if (!inherits(x, c("consort")))
     stop("x must be consort object")
@@ -130,12 +141,31 @@ build_grid <- function(x) {
     
   }
   
-  grobTree(grobs_list, 
+  # Set viewport dimensions
+  if (is.null(diagram_width)) {
+    vp_w <- unit(0.98, "npc")
+  } else if (inherits(diagram_width, "unit")) {
+    vp_w <- diagram_width
+  } else {
+    if (!is.numeric(diagram_width) || diagram_width <= 0 || diagram_width > 1)
+      stop("diagram_width must be a number between 0 and 1 or a grid unit object.")
+    vp_w <- unit(diagram_width, "npc")
+  }
+
+  if (is.null(diagram_height)) {
+    vp_h <- unit(0.98, "npc")
+  } else if (inherits(diagram_height, "unit")) {
+    vp_h <- diagram_height
+  } else {
+    if (!is.numeric(diagram_height) || diagram_height <= 0 || diagram_height > 1)
+      stop("diagram_height must be a number between 0 and 1 or a grid unit object.")
+    vp_h <- unit(diagram_height, "npc")
+  }
+
+  grobTree(grobs_list,
            name = "consort",
-           vp = viewport(width = unit(0.98, "npc"),
-                         height = unit(0.98, "npc")))
-  
-  # return(grobs_list)
+           vp = viewport(width = vp_w,
+                         height = vp_h))
   
 }
 

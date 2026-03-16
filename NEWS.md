@@ -1,9 +1,11 @@
 # consort 1.2.2
 
--   Use comma separators for large number. 
+-   Use comma separators for large number.
 -   Support two level randomisation/stratification
 -   Support multiple variables in one node
 -   Better node alignment
+-   Added `diagram_width` and `diagram_height` parameters to `build_grid()` and `plot.consort()` for controlling the overall diagram size
+-   Added `indent` parameter to `textbox()` for left indentation of text inside boxes
 -   Improved documentation
 
 # consort 1.2.1

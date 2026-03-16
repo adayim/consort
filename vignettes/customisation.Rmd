@@ -1,0 +1,491 @@
+---
+title: "Customising CONSORT Diagrams"
+output:
+  rmarkdown::html_vignette:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{Customising CONSORT Diagrams}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(consort)
+library(grid)
+```
+
+This vignette covers customisation options for CONSORT diagrams created with the `consort` package. For the basics of building diagrams, see `vignette("consort_diagram")`.
+
+# Controlling Diagram Size
+
+By default, the diagram fills 98% of the available device area. You can control the viewport size using the `diagram_width` and `diagram_height` parameters in `plot()` or `build_grid()`.
+
+## Proportional sizing
+
+Pass a number between 0 and 1 to scale relative to the device:
+
+```{r proportional-width, fig.width = 8, fig.height = 5}
+g <- add_box(txt = "Assessed for eligibility (n=450)") |>
+  add_side_box(txt = "Excluded (n=60):\n\u2022 Not meeting criteria (n=30)\n\u2022 Declined (n=20)\n\u2022 Other (n=10)") |>
+  add_box(txt = "Randomized (n=390)") |>
+  add_split(txt = c("Allocated to intervention (n=195)", "Allocated to control (n=195)")) |>
+  add_box(txt = c("Received intervention (n=190)", "Received control (n=193)"))
+
+# Use 70% of device width, full height
+plot(g, diagram_width = 0.7)
+```
+
+## Absolute sizing with grid units
+
+For precise output dimensions, pass a `grid::unit()` object. Supported units include `"in"` (inches), `"cm"`, `"mm"`, and `"pt"`:
+
+```{r absolute-width, eval = FALSE}
+# Fixed 5 inch wide, 7 inch tall viewport
+plot(g, diagram_width = unit(5, "in"), diagram_height = unit(7, "in"))
+
+# Fixed centimetre dimensions
+plot(g, diagram_width = unit(12, "cm"), diagram_height = unit(18, "cm"))
+```
+
+## Width control with ggsave
+
+When saving with `ggplot2::ggsave`, use `build_grid()` directly:
+
+```{r ggsave-width, eval = FALSE}
+grob_obj <- build_grid(g, diagram_width = 0.8)
+ggplot2::ggsave("consort.pdf", plot = grob_obj, width = 10, height = 8)
+```
+
+# Styling Text and Boxes
+
+## Global text appearance
+
+Use `options(txt_gp = gpar(...))` to set font properties for all boxes:
+
+```{r text-styling, fig.width = 7, fig.height = 4}
+# Smaller text with blue colour
+options(txt_gp = gpar(cex = 0.7, col = "navy"))
+
+g <- add_box(txt = "Screened (n=500)") |>
+  add_side_box(txt = "Excluded (n=50)") |>
+  add_box(txt = "Enrolled (n=450)")
+
+plot(g)
+
+# Reset to defaults
+options(txt_gp = gpar())
+```
+
+## Global box appearance
+
+Use `options(box_gp = gpar(...))` to change box fill, border colour and line width:
+
+```{r box-styling, fig.width = 7, fig.height = 4}
+options(
+  txt_gp = gpar(cex = 0.8),
+  box_gp = gpar(fill = "lightyellow", col = "steelblue", lwd = 2)
+)
+
+g <- add_box(txt = "Assessed for eligibility (n=200)") |>
+  add_side_box(txt = "Excluded (n=20)") |>
+  add_box(txt = "Randomized (n=180)") |>
+  add_split(txt = c("Treatment A (n=90)", "Treatment B (n=90)"))
+
+plot(g)
+
+# Reset
+options(txt_gp = gpar(), box_gp = gpar(fill = "white"))
+```
+
+## Per-box styling
+
+You can pass `gpar` arguments to individual box functions via `txt_gp` and `box_gp`:
+
+```{r per-box-styling, fig.width = 7, fig.height = 5}
+options(txt_gp = gpar(cex = 0.8))
+
+g <- add_box(txt = "Total screened (n=500)",
+             box_gp = gpar(fill = "#E8F4FD", col = "#2171B5", lwd = 2)) |>
+  add_side_box(txt = "Screen failures (n=100)") |>
+  add_box(txt = "Randomized (n=400)") |>
+  add_split(txt = c("Drug (n=200)", "Placebo (n=200)")) |>
+  add_box(txt = c("Completed (n=185)", "Completed (n=190)"))
+
+plot(g)
+
+options(txt_gp = gpar())
+```
+
+# Text Indentation
+
+Use the `indent` parameter in `textbox()` (passed through via `...` in `add_box`, `add_side_box`, `add_split`) to add left indentation to the text inside a box. The value is in millimetres by default, or you can pass a `grid::unit()` object.
+
+## Per-box indentation
+
+```{r indent-per-box, fig.width = 7, fig.height = 4}
+options(txt_gp = gpar(cex = 0.8))
+
+g <- add_box(txt = "Screened (n=500)") |>
+  add_side_box(txt = "Excluded (n=50):\n\u2022 Not eligible (n=30)\n\u2022 Declined (n=20)",
+               indent = 5) |>
+  add_box(txt = "Enrolled (n=450)")
+
+plot(g)
+
+options(txt_gp = gpar())
+```
+
+## Global indentation
+
+Set `options(box_indent = ...)` to apply indentation to all boxes:
+
+```{r indent-global, fig.width = 7, fig.height = 4}
+options(txt_gp = gpar(cex = 0.8), box_indent = 4)
+
+g <- add_box(txt = "Population (n=300)") |>
+  add_side_box(txt = "Excluded (n=15)") |>
+  add_box(txt = "Randomized (n=285)") |>
+  add_split(txt = c("Arm A (n=142)", "Arm B (n=143)"))
+
+plot(g)
+
+# Reset
+options(txt_gp = gpar(), box_indent = 0)
+```
+
+## Using unit objects for indent
+
+For precise control, pass a `grid::unit()` object with any supported unit (`"in"`, `"cm"`, `"mm"`, `"pt"`):
+
+```{r indent-unit, eval = FALSE}
+# Indent by 0.2 inches
+add_box(txt = "My text", indent = unit(0.2, "in"))
+
+# Indent by 1 centimetre
+add_box(txt = "My text", indent = unit(1, "cm"))
+```
+
+# Text Wrapping
+
+Long text labels can make boxes too wide. Use `text_width` to wrap text at a specified column width:
+
+```{r text-wrapping, fig.width = 8, fig.height = 5}
+options(txt_gp = gpar(cex = 0.8))
+
+long_text <- "Excluded from analysis due to protocol deviation, withdrawal of consent, or missing primary endpoint data"
+
+g <- add_box(txt = "Enrolled participants in the study (n=350)") |>
+  add_side_box(txt = paste0(long_text, " (n=30)"), text_width = 40) |>
+  add_box(txt = "Included in primary analysis (n=320)")
+
+plot(g)
+
+options(txt_gp = gpar())
+```
+
+The `text_width` parameter is also available in `consort_plot()` and applies to all nodes.
+
+# Working with gen_text
+
+The `gen_text()` function generates formatted labels from data. It is used internally by `consort_plot()`, but is also useful on its own for building manual diagrams from data.
+
+## Basic counts
+
+```{r gen-text-basic}
+# Simple count
+ids <- c("P001", "P002", "P003", "P004", "P005")
+gen_text(ids, label = "Enrolled")
+```
+
+## Categorical breakdowns
+
+```{r gen-text-factor}
+# With bullet points showing breakdown
+reasons <- factor(c("Withdrew consent", "Adverse event", "Withdrew consent",
+                     "Lost to follow-up", "Adverse event"))
+gen_text(reasons, label = "Discontinued", bullet = TRUE)
+```
+
+## Without a label (counts only)
+
+```{r gen-text-nolabel}
+# Returns individual category counts
+gen_text(reasons)
+```
+
+## Split by group
+
+When your data is split by treatment arm, `gen_text()` returns one label per group:
+
+```{r gen-text-split}
+arms <- factor(c("Drug", "Drug", "Placebo", "Placebo", "Drug"))
+ids_by_arm <- split(ids, arms)
+gen_text(ids_by_arm, label = "Randomized")
+```
+
+## Nested reasons with data frames
+
+For two-level breakdowns (e.g., reason within subgroup), pass a two-column data frame:
+
+```{r gen-text-dataframe}
+df <- data.frame(
+  category = factor(c("AE", "AE", "Withdrew", "Withdrew", "AE")),
+  detail = c("Headache", "Nausea", "Personal", "Travel", "Fatigue")
+)
+gen_text(df, label = "Discontinued")
+```
+
+## Using gen_text in manual diagrams
+
+```{r gen-text-manual, fig.width = 7, fig.height = 5}
+options(txt_gp = gpar(cex = 0.8))
+
+data(dispos.data)
+
+# Build labels from data
+txt_enrolled <- gen_text(dispos.data$trialno, label = "Screened")
+txt_excluded <- gen_text(dispos.data$exclusion, label = "Excluded", bullet = TRUE)
+txt_rand <- gen_text(dispos.data$arm, label = "Randomized")
+txt_arms <- gen_text(dispos.data$arm)
+
+g <- add_box(txt = txt_enrolled) |>
+  add_side_box(txt = txt_excluded) |>
+  add_box(txt = txt_rand) |>
+  add_split(txt = txt_arms)
+
+plot(g)
+
+options(txt_gp = gpar())
+```
+
+# Complete Examples
+
+## Example 1: Observational cohort study
+
+Not all CONSORT-style diagrams are for randomised trials. Here is an observational cohort study with screening, enrolment and follow-up, using custom styling throughout:
+
+```{r example-observational, fig.width = 8, fig.height = 7}
+options(
+  txt_gp = gpar(cex = 0.8, col = "grey20"),
+  box_gp = gpar(fill = "#F0F4F8", col = "#4A90D9", lwd = 1.5)
+)
+
+g <- add_box(txt = "Medical records reviewed (n=1,200)") |>
+  add_side_box(txt = "Excluded (n=320):\n\u2022 Incomplete records (n=180)\n\u2022 Age < 18 years (n=85)\n\u2022 Duplicate entries (n=55)",
+               indent = 3) |>
+  add_box(txt = "Eligible participants (n=880)") |>
+  add_side_box(txt = "Declined consent (n=130)") |>
+  add_box(txt = "Enrolled in cohort (n=750)") |>
+  add_side_box(txt = "Lost to follow-up (n=45):\n\u2022 Relocated (n=28)\n\u2022 Unreachable (n=17)",
+               indent = 3) |>
+  add_box(txt = "Completed 12-month follow-up (n=705)") |>
+  add_label_box(txt = c("1" = "Screening",
+                         "3" = "Enrolment",
+                         "5" = "Follow-up"))
+
+plot(g)
+
+options(txt_gp = gpar(), box_gp = gpar(fill = "white"))
+```
+
+## Example 2: Three-arm trial with detailed exclusions
+
+A trial with three treatment arms, showing left-justified side boxes with bullet-point exclusions and indentation:
+
+```{r example-three-arm, fig.width = 10, fig.height = 7}
+options(txt_gp = gpar(cex = 0.7))
+
+g <- add_box(txt = "Assessed for eligibility (n=600)") |>
+  add_side_box(txt = "Excluded (n=90):\n\u2022 Not meeting inclusion criteria (n=45)\n\u2022 Declined to participate (n=30)\n\u2022 Other reasons (n=15)",
+               indent = 4) |>
+  add_box(txt = "Randomized (n=510)") |>
+  add_split(txt = c("Arm A: High dose (n=170)",
+                     "Arm B: Low dose (n=170)",
+                     "Arm C: Placebo (n=170)")) |>
+  add_side_box(txt = c("Discontinued (n=12):\n\u2022 Adverse event (n=7)\n\u2022 Withdrew consent (n=5)",
+                        "Discontinued (n=8):\n\u2022 Adverse event (n=3)\n\u2022 Withdrew consent (n=5)",
+                        "Discontinued (n=15):\n\u2022 Adverse event (n=4)\n\u2022 Withdrew consent (n=11)"),
+               indent = 3) |>
+  add_box(txt = c("Analysed (n=158)", "Analysed (n=162)", "Analysed (n=155)")) |>
+  add_label_box(txt = c("1" = "Enrolment",
+                         "3" = "Allocation",
+                         "5" = "Analysis"))
+
+plot(g)
+
+options(txt_gp = gpar())
+```
+
+## Example 3: Compact diagram with narrow width
+
+When publishing in a journal column, use `diagram_width` with smaller font sizes to fit:
+
+```{r example-compact, fig.width = 6, fig.height = 5}
+options(txt_gp = gpar(cex = 0.65))
+
+g <- add_box(txt = "Screened (n=250)") |>
+  add_side_box(txt = "Excluded (n=50)") |>
+  add_box(txt = "Randomized (n=200)") |>
+  add_split(txt = c("Treatment (n=100)", "Control (n=100)")) |>
+  add_side_box(txt = c("Lost (n=5)", "Lost (n=8)")) |>
+  add_box(txt = c("Analysed (n=95)", "Analysed (n=92)"))
+
+plot(g, diagram_width = 0.6)
+
+options(txt_gp = gpar())
+```
+
+## Example 4: Using data with gen_text and custom formatting
+
+Build a complete diagram from the demo dataset, combining `gen_text()` for automatic label generation with manual styling:
+
+```{r example-data-driven, fig.width = 9, fig.height = 7}
+options(
+  txt_gp = gpar(cex = 0.75),
+  box_gp = gpar(fill = "#FFFDF5", col = "grey40")
+)
+
+data(dispos.data)
+
+# Build all text labels from the data
+txt1 <- gen_text(dispos.data$trialno, label = "Patients screened")
+txt2 <- gen_text(dispos.data$exclusion, label = "Excluded", bullet = TRUE)
+txt3 <- gen_text(dispos.data$arm, label = "Randomized")
+txt4 <- gen_text(dispos.data$arm)
+
+# Subset for per-arm labels
+dispos_clean <- dispos.data[is.na(dispos.data$exclusion), ]
+txt5 <- gen_text(split(dispos_clean$subjid_notdosed, dispos_clean$arm),
+                 label = "Not dosed", bullet = TRUE)
+txt6 <- gen_text(split(dispos_clean$mitt, dispos_clean$arm),
+                 label = "mITT population")
+
+g <- add_box(txt = txt1) |>
+  add_side_box(txt = txt2, indent = 3) |>
+  add_box(txt = txt3) |>
+  add_split(txt = txt4) |>
+  add_side_box(txt = txt5, indent = 3) |>
+  add_box(txt = txt6) |>
+  add_label_box(txt = c("1" = "Screening",
+                         "3" = "Randomization",
+                         "5" = "Treatment",
+                         "6" = "Analysis"))
+
+plot(g)
+
+options(txt_gp = gpar(), box_gp = gpar(fill = "white"))
+```
+
+## Example 5: Graphviz output for web and Shiny
+
+The same diagram can be rendered with Graphviz for interactive web use. This produces cleaner SVG output and supports Shiny:
+
+```{r example-grviz}
+g <- add_box(txt = "Assessed (n=400)") |>
+  add_side_box(txt = "Excluded (n=50)") |>
+  add_box(txt = "Randomized (n=350)") |>
+  add_split(txt = c("Drug A (n=175)", "Drug B (n=175)")) |>
+  add_side_box(txt = c("Withdrew (n=10)", "Withdrew (n=15)")) |>
+  add_box(txt = c("Completed (n=165)", "Completed (n=160)"))
+
+plot(g, grViz = TRUE)
+```
+
+## Example 6: Combining features — indent, wrapping and styling
+
+This example shows how indent, text wrapping and per-box styling can be combined in one diagram:
+
+```{r example-combined, fig.width = 8, fig.height = 7}
+options(txt_gp = gpar(cex = 0.75))
+
+g <- add_box(txt = "Patients identified from electronic health records across 12 participating sites (n=2,500)",
+             text_width = 45,
+             box_gp = gpar(fill = "#E3F2FD", col = "#1565C0", lwd = 2)) |>
+  add_side_box(txt = "Excluded (n=600):\n\u2022 Did not meet age criteria 18-75 years (n=220)\n\u2022 Prior enrolment in competing trial (n=185)\n\u2022 Unable to provide informed consent (n=110)\n\u2022 Other protocol exclusions (n=85)",
+               text_width = 45,
+               indent = 4) |>
+  add_box(txt = "Eligible and consented (n=1,900)") |>
+  add_split(txt = c("Intervention (n=950)", "Standard care (n=950)")) |>
+  add_side_box(txt = c("Discontinued (n=60):\n\u2022 Adverse events (n=25)\n\u2022 Withdrew consent (n=20)\n\u2022 Protocol deviation (n=15)",
+                        "Discontinued (n=45):\n\u2022 Adverse events (n=15)\n\u2022 Withdrew consent (n=18)\n\u2022 Lost to follow-up (n=12)"),
+               text_width = 38,
+               indent = 3) |>
+  add_box(txt = c("Included in ITT analysis (n=950)",
+                   "Included in ITT analysis (n=950)")) |>
+  add_label_box(txt = c("1" = "Identification",
+                         "3" = "Randomization",
+                         "5" = "Analysis"))
+
+plot(g, diagram_width = 0.9)
+
+options(txt_gp = gpar())
+```
+
+# Combining with patchwork
+
+The `build_grid()` function returns a grob that can be combined with other plots using the `patchwork` package:
+
+```{r patchwork-example, eval = FALSE}
+library(patchwork)
+
+g <- add_box(txt = "Screened (n=500)") |>
+  add_side_box(txt = "Excluded (n=50)") |>
+  add_box(txt = "Enrolled (n=450)")
+
+wrap_elements(build_grid(g)) + plot_annotation(
+  title = "CONSORT Flow Diagram",
+  subtitle = "Randomized controlled trial of Treatment X vs Placebo",
+  caption = "Figure 1"
+)
+```
+
+# Saving Diagrams
+
+## Using base R graphics device
+
+```{r save-base, eval = FALSE}
+png("consort.png", width = 29, height = 21, res = 300, units = "cm", type = "cairo")
+plot(g)
+dev.off()
+
+pdf("consort.pdf", width = 10, height = 8)
+plot(g)
+dev.off()
+```
+
+## Using ggsave with width control
+
+```{r save-ggsave, eval = FALSE}
+# Control both the output file dimensions and the diagram viewport
+grob_obj <- build_grid(g, diagram_width = 0.85, diagram_height = 0.9)
+ggplot2::ggsave("consort.pdf", plot = grob_obj, width = 10, height = 8)
+```
+
+## Saving Graphviz output as SVG or PDF
+
+```{r save-grviz, eval = FALSE}
+plot(g, grViz = TRUE) |>
+  DiagrammeRsvg::export_svg() |>
+  charToRaw() |>
+  rsvg::rsvg_pdf("consort_grviz.pdf")
+```
+
+# Summary of Key Parameters
+
+| Parameter | Where | What it controls |
+|-----------|-------|------------------|
+| `diagram_width` | `plot()`, `build_grid()` | Overall diagram viewport width (0-1 or `unit()`) |
+| `diagram_height` | `plot()`, `build_grid()` | Overall diagram viewport height (0-1 or `unit()`) |
+| `text_width` | `add_box()`, `add_split()`, `add_side_box()`, `consort_plot()` | Character column for text wrapping within boxes |
+| `txt_gp` | `textbox()`, `options()` | Text appearance (`gpar`: font size, colour, face) |
+| `box_gp` | `textbox()`, `options()` | Box appearance (`gpar`: fill, border, line width) |
+| `cex` | `consort_plot()` | Font size multiplier (shorthand for `txt_gp`) |
+| `indent` | `textbox()`, `options()` | Left indentation in mm or `unit()` |
+| `just` | `add_box()` | Text justification: `"center"`, `"left"`, `"right"` |
