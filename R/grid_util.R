@@ -16,8 +16,8 @@ calc_coords <- function(consort_plot){
 
 
   # Calculate Y
-  # Use configurable padding via global option, default 3 for backward compatibility
-  pad_u <- getOption("consort_pad_u", default = 3)
+  # pad_u <- convertUnit(unit(1, "char"), "mm", valueOnly = TRUE)
+  pad_u <- 3
   
   nd_y <- vector("list", length = length(nodes_layout))
   for(i in seq_along(nodes_layout)){
@@ -251,3 +251,4 @@ gp_consecutive <- function(x){
   }
   return(gp)
 }
+
