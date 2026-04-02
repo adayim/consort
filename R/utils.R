@@ -41,20 +41,11 @@ is_empty <- function(x){
   is.null(x) | x == "" | is.na(x)
 }
 
-# Synchronizing inside a gpar of fill with col
-#' @keywords internal
-sync_gpar <- function(gp) {
-  # If col exists, force fill to match it
-  if (!is.null(gp$col)) {
-    gp$fill <- gp$col
-  }
-  return(gp)
-}
 
 # Wrap text
 #' @keywords internal
 #'
-text_wrap <- function(txt, width = 0.9 * getOption("width")) {
+text_wrap <- function(txt, width = 0.9) {
   if (length(txt) > 1) {
     stop("Vector does not supported!")
   }

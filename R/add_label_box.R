@@ -10,7 +10,8 @@
 #' @param only_terminal If the txt is only for the terminal box, default. Otherwise, the side box will
 #' also be accounted for.
 #' @param just The justification for the text: center (default), left or right.
-#' @param ... Other parameters pass to \link{textbox},
+#' @param box_fn The function to create the box grob. Default is \code{\link[grid]{roundrectGrob}}.
+#' @param ... Other parameters pass to \link{textbox}. 
 #'
 #' @export
 #' @seealso \code{\link{add_side_box}} \code{\link{add_split}} \code{\link{textbox}} 
@@ -24,6 +25,7 @@ add_label_box <- function(prev_box,
                           txt,
                           only_terminal = TRUE,
                           just = c("center", "left", "right"),
+                          box_fn = roundrectGrob,
                           ...) {
 
   just <- match.arg(just)
@@ -47,13 +49,20 @@ add_label_box <- function(prev_box,
     stop("prev_box must be consort object")
   }
 
-  cex <- ifelse("cex" %in% names(getOption("txt_gp")), getOption("txt_gp")$cex, 1)
+  if(!"txt_gp" %in% names(dots)){
+    dots$txt_gp <- consort_opt("label_txt_gp")
+  }
+
+  if(!"box_gp" %in% names(dots)){
+    dots$box_gp <- consort_opt("label_box_gp")
+  }
+
   # Set default values
   args_list <- list()
   # args_list$text <- txt
-  args_list$txt_gp <- gpar(col = "#4F81BD", cex = cex, fontface = "bold")
-  args_list$box_gp <- gpar(fill = "#A9C7FD")
-  args_list$box_fn <- roundrectGrob
+  # args_list$txt_gp <- label_txt_gp
+  # args_list$box_gp <- label_box_gp
+  # args_list$box_fn <- roundrectGrob
   args_list$name <- "label"
 
   args_list <- modifyList(args_list, dots)

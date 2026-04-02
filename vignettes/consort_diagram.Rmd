@@ -111,15 +111,10 @@ cat(build_grviz(g), file = "consort.gv")
 ```
 
 # Some default settings
-The package has some default settings for the line width, color, arrow type and length. These can be easily changed by setting the global options. For example, you can set `options(consort_arrow_gp = gpar(col = "red", lwd = 2))` to change the arrow graphical parameters. The following options are available:
--   `consort_arrow_gp`: arrow graphical parameters, default is `gpar(col = "black", lwd = 1)`.
--   `consort_arrow_length`: arrow length, default is 0.1.
--   `consort_arrow_type`: arrow type, default is "closed". See `?grid::arrow` for more details.
--   `consort_pad_u`: padding between boxes, default is 3.
--   `consort_bullet`: bullet symbol for the side box, default is "\u2022". 
--   `consort_txt_gp`: a `gpar` object for the text, default is `gpar(cex = 0.8)`. This will be overridden by the `cex` argument in `consort_plot` if provided.
--  `consort_box_gp`: a `gpar` object for the box, default is `gpar(fill = "white", col = "black")`. 
-
+The package has some default settings for the line width, color, arrow type and length. These can be easily changed with `set_consort_defaults()`. For example, you can set `set_consort_defaults(arrow_gp = gpar(col = "red", lwd = 2))` to change the arrow graphical parameters. Use `get_consort_defaults()` to view current settings. The default parameters are below:
+```{r defualts}
+get_consort_defaults()
+```
 
 
 # Working example (self generation)
@@ -217,7 +212,7 @@ The previous is to easily generate a consort diagram based on a disposition data
 ```{r providetext1, fig.width  = 7, fig.height = 4}
 library(grid)
 # Might want to change some settings
-options(consort_txt_gp = gpar(cex = 0.8))
+set_consort_defaults(txt_gp = gpar(cex = 0.8))
 
 txt0 <- c("Study 1 (n=160)", "Study 2 (n=140)")
 txt1 <- "Population (n=300)"
@@ -287,7 +282,7 @@ plot(g)
 
 ## Using disposition table
 ```{r disposition-data, fig.width  = 7, fig.height = 6.5}
-options(consort_txt_gp = gpar(cex = 0.8))
+set_consort_defaults(txt_gp = gpar(cex = 0.8))
 
 dispos.data$arm <- factor(dispos.data$arm)
 

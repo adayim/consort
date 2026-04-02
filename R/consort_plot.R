@@ -22,8 +22,8 @@
 #' is defined.
 #' @param kickoff_sidebox remove (default) the side box observations from the 
 #' following counting.
-#' @param cex Multiplier applied to font size, Default is 0.8. This will override 
-#' the global option of \code{"consort_txt_gp"} if defined.
+#' @param cex Multiplier applied to font size, default is 0.8. Prefer using
+#' \code{\link{set_consort_defaults}(txt_gp = gpar(cex = ...))} instead.
 #' @param text_width a positive integer giving the target column for wrapping
 #' lines in the output. String will not be wrapped if not defined (default).
 #' The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
@@ -41,7 +41,8 @@
 #' @export
 #'
 #' @seealso \code{\link{add_side_box}},\code{\link{add_split}},
-#' \code{\link{add_side_box}} \code{\link{textbox}}
+#' \code{\link{add_side_box}} \code{\link{textbox}} 
+#' \code{\link{set_consort_defaults}}
 #' @example inst/examples/consort-plot-example.R
 #' @import grid
 #' @importFrom stats na.omit
@@ -54,9 +55,13 @@ consort_plot <- function(data,
                          kickoff_sidebox = TRUE,
                          cex = 0.8,
                          text_width = NULL) {
-  options(consort_txt_gp = gpar(cex = cex))
-  on.exit(options(consort_txt_gp = gpar()))
-  
+
+  if(!is.null(cex)){
+    message("Please define this via `set_consort_defaults(txt_gp = gpar(cex = ...))` instead.")
+    old <- set_consort_defaults(txt_gp = gpar(cex = cex))
+    on.exit(consort_global$defaults$txt_gp <- old$txt_gp, add = TRUE)
+  }
+
   data <- as.data.frame(data)
 
   if(!is.list(orders)){

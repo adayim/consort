@@ -1,32 +1,31 @@
 digraph consort_diagram {
   graph [layout = dot, splines=ortho]
 
-node [shape = rectangle, style = "rounded,filled", fillcolor = "#A9C7FD" color = "#4F81BD"]
-label14 [label = "Screening"]
-label15 [label = "Randomization"]
-label16 [label = "Final"]
+node [shape = rectangle]
 
+label14 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label15 [label = "Randomization" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label16 [label = "Final" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
 
 edge[style=invis];
 label14 -> label15 -> label16;
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Population (n=300)" group=A1]
-node2 [label = "Excluded (n=15)\l MRI not collected (n=3)\l Other (n=4)\l Sample not collected (n=8)\l"]
-node3 [label = "Allocated (n=285)" group=A1]
-node4 [label = "Conc (n=158)" group=B1]
-node5 [label = "Seq (n=127)" group=B2]
-node6 [label = "Lost of Follow-up (n=33)\l Death (n=12)\l Discontinued (n=4)\l Other (n=11)\l Withdraw (n=6)\l"]
-node7 [label = "Lost of Follow-up (n=26)\l Death (n=5)\l Discontinued (n=6)\l Other (n=11)\l Withdraw (n=4)\l"]
-node8 [label = "Finished Followup (n=125)" group=B1]
-node9 [label = "Finished Followup (n=101)" group=B2]
-node10 [label = "Not evaluable for the final analysis (n=6)\l Outcome missing (n=4)\l Protocol deviation (n=2)\l"]
-node11 [label = "Not evaluable for the final analysis (n=5)\l Outcome missing (n=4)\l Protocol deviation (n=1)\l"]
-node12 [label = "Final Analysis (n=119)" group=B1]
-node13 [label = "Final Analysis (n=96)" group=B2]
+node1 [label = "Population (n=300)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node2 [label = "Excluded (n=15)\l MRI not collected (n=3)\l Other (n=4)\l Sample not collected (n=8)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node3 [label = "Allocated (n=285)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node4 [label = "Conc (n=158)" group=B1 fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node5 [label = "Seq (n=127)" group=B2 fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node6 [label = "Lost of Follow-up (n=33)\l Death (n=12)\l Discontinued (n=4)\l Other (n=11)\l Withdraw (n=6)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node7 [label = "Lost of Follow-up (n=26)\l Death (n=5)\l Discontinued (n=6)\l Other (n=11)\l Withdraw (n=4)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node8 [label = "Finished Followup (n=125)" group=B1 fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node9 [label = "Finished Followup (n=101)" group=B2 fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node10 [label = "Not evaluable for the final analysis (n=6)\l Outcome missing (n=4)\l Protocol deviation (n=2)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node11 [label = "Not evaluable for the final analysis (n=5)\l Outcome missing (n=4)\l Protocol deviation (n=1)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node12 [label = "Final Analysis (n=119)" group=B1 fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
+node13 [label = "Final Analysis (n=96)" group=B2 fillcolor="white" style="filled" fontcolor="black" fontsize=12.6]
 
 
 ## Invisible point node for joints
@@ -82,7 +81,7 @@ subgraph {
   rank = same; rankdir = LR; label15; node3;
   }
 
-edge[style=""];
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
 
 node1 -> P1 [arrowhead = none];
 P1 -> node2;

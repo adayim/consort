@@ -1,32 +1,31 @@
 digraph consort_diagram {
   graph [layout = dot, splines=ortho]
 
-node [shape = rectangle, style = "rounded,filled", fillcolor = "#A9C7FD" color = "#4F81BD"]
-label14 [label = "Screening"]
-label15 [label = "Randomized"]
-label16 [label = "Final analysis"]
+node [shape = rectangle]
 
+label14 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label15 [label = "Randomized" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label16 [label = "Final analysis" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
 
 edge[style=invis];
 label14 -> label15 -> label16;
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Study 1 (n=8)" group=A1]
-node2 [label = "Study 2 (n=12)" group=A2]
-node3 [label = "Included All (n=20)" group=B1]
-node4 [label = "Excluded (n=7):\l MRI not collected (n=3)\l"]
-node5 [label = "Randomised" group=B1]
-node6 [label = "Arm A (n=143)" group=A1]
-node7 [label = "Arm B (n=142)" group=A2]
-node8 [label = "Follow-up (n=20)" group=A1]
-node9 [label = "Follow-up (n=7)" group=A2]
-node10 [label = "Excluded (n=15):\l MRI not collected (n=3)\l Tissues not collected (n=4)\l Other (n=8)\l"]
-node11 [label = "Excluded (n=7):\l MRI not collected (n=3)\l Tissues not collected (n=4)\l"]
-node12 [label = "Final analysis (n=128)" group=A1]
-node13 [label = "Final analysis (n=135)" group=A2]
+node1 [label = "Study 1 (n=8)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node2 [label = "Study 2 (n=12)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node3 [label = "Included All (n=20)" group=B1 fillcolor="white" style="filled" fontcolor="black"]
+node4 [label = "Excluded (n=7):\l MRI not collected (n=3)\l" fillcolor="white" style="filled" fontcolor="black"]
+node5 [label = "Randomised" group=B1 fillcolor="white" style="filled" fontcolor="black"]
+node6 [label = "Arm A (n=143)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node7 [label = "Arm B (n=142)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node8 [label = "Follow-up (n=20)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node9 [label = "Follow-up (n=7)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node10 [label = "Excluded (n=15):\l MRI not collected (n=3)\l Tissues not collected (n=4)\l Other (n=8)\l" fillcolor="white" style="filled" fontcolor="black"]
+node11 [label = "Excluded (n=7):\l MRI not collected (n=3)\l Tissues not collected (n=4)\l" fillcolor="white" style="filled" fontcolor="black"]
+node12 [label = "Final analysis (n=128)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node13 [label = "Final analysis (n=135)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
 
 
 ## Invisible point node for joints
@@ -80,7 +79,7 @@ subgraph {
   rank = same; rankdir = LR; label15; node5;
   }
 
-edge[style=""];
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
 
 P2 -> node3;
 node1 -> P1 [arrowhead = none];

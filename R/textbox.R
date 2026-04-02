@@ -11,14 +11,14 @@
 #' @param just The justification of the text, `"left"`, `"right` and `"center"`.
 #' See \link[grid]{textGrob} for more details.
 #' @param txt_gp An object of class \link[grid]{gpar} style to be applied to the
-#' text. This will also be read from global options of \code{"consort_txt_gp"}. For
-#' example, if one wants to set a font size for all the text inside box,
-#' \code{options(consort_txt_gp = gpar(cex = 0.8))} will do the trick.
+#' text. Defaults are read from \code{\link{set_consort_defaults}}. For
+#' example, to set a font size for all text inside boxes, use
+#' \code{set_consort_defaults(txt_gp = gpar(cex = 0.8))}.
 #' @param leftrotate If the text box will be rotated 90 degrees counter-clockwise.
 #' Default is \code{FALSE}.
 #' @param box_fn Function to create box for the text. Parameters of `x=0.5`,
 #' `y=0.5` and `box_gp` will be passed to this function and return a \code{grob}
-#' object. This will also be read from global options of \code{"consort_box_gp"}.
+#' object.
 #' @param box_gp An object of class \link[grid]{gpar} style to be applied to the
 #' box.
 #' @param name A character identifier.
@@ -37,20 +37,21 @@ textbox <- function(text,
                     x = unit(.5, "npc"),
                     y = unit(.5, "npc"),
                     just = c("center", "left", "right"),
-                    txt_gp = getOption("consort_txt_gp", default = gpar(
-                      color = "black",
-                      cex = 1
-                    )),
+                    txt_gp = consort_opt("txt_gp"),
                     leftrotate = FALSE,
                     box_fn = roundrectGrob,
-                    box_gp = getOption("consort_box_gp", default = gpar(fill = "white")),
+                    box_gp = consort_opt("box_gp"),
                     name = "textbox") {
   just <- match.arg(just)
+
+  if (!is.logical(leftrotate) || length(leftrotate) != 1 || is.na(leftrotate)) {
+    stop("`leftrotate` must be a single TRUE/FALSE value.")
+  }
 
   if (!is.unit(x)) x <- unit(x, units = "npc")
   if (!is.unit(y)) y <- unit(y, units = "npc")
 
-  angle <- ifelse(leftrotate, 90, 0)
+  angle <- if (isTRUE(leftrotate)) 90 else 0
 
   # class(fg) <- union("box", class(fg))
   name <- paste(name, auto_index(), sep = ".")

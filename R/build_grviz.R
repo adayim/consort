@@ -41,19 +41,17 @@ build_grviz <- function(x) {
     label_plot <- x[grepl("label", names(x))]
     
     lab_txt <- lapply(names(label_plot), function(x){
-      txt_lab <- mk_text_align(label_plot[[x]]$text, label_plot[[x]]$just)
+      box <- label_plot[[x]]$box
+      grviz_style <- gpar_to_grviz_attrs(box$txt_gp, box$box_gp, box$box_fn)
+      txt_lab <- mk_text_align(label_plot[[x]]$text, label_plot[[x]]$just,
+                               grviz_style = grviz_style)
       c(nam = x,
         node = paste(x, txt_lab),
         pos = label_plot[[x]]$prev_node)
     })
     lab_txt <- do.call(rbind, lab_txt)
-    
-    lab_gpar <- label_plot[[1]]$gpar
-    
-    lab_nd <- sprintf("node [shape = rectangle, style = \"rounded,filled\", fillcolor = \"%s\" color = \"%s\"]\n%s\n",
-                      lab_gpar$box_gp$fill, 
-                      lab_gpar$txt_gp$col, 
-                      paste(lab_txt[,"node"], collapse = "\n"))
+
+    lab_nd <- paste(lab_txt[,"node"], collapse = "\n")
     lab_edge <- sprintf("edge[style=invis];\n%s;\n", 
                         paste(lab_txt[,"nam"], collapse = " -> "))
     lab_rnk <- nodes_layout[as.numeric(lab_txt[,"pos"])]
@@ -80,8 +78,11 @@ build_grviz <- function(x) {
   main_txt <- lapply(names(consort_plot), function(nd){
     text <- consort_plot[[nd]]$text
     just <- consort_plot[[nd]]$just
-    txt_lab <- mk_text_align(text, just)
-    c(nam = nd, text = text, just = just, node = paste(nd, txt_lab))
+    box <- consort_plot[[nd]]$box
+    grviz_style <- gpar_to_grviz_attrs(box$txt_gp, box$box_gp, box$box_fn)
+    style_str <- if(is.null(grviz_style)) "" else grviz_style
+    txt_lab <- mk_text_align(text, just, grviz_style = grviz_style)
+    c(nam = nd, text = text, just = just, grviz_style = style_str, node = paste(nd, txt_lab))
   })
   main_txt <- do.call(rbind, main_txt)
   # Remove empty label
@@ -282,21 +283,26 @@ build_grviz <- function(x) {
   
   # Build dot
 
+  # Edge attributes from arrow settings
+  edge_attrs <- arrow_to_grviz_attrs(consort_opt("arrow_gp"),
+                                     consort_opt("arrow_type"),
+                                     consort_opt("arrow_length"))
+  edge_stmt <- sprintf("edge[%s];", edge_attrs)
+
   grviz_txt <- paste("digraph consort_diagram {
   graph [layout = dot, splines=ortho]",
+  "node [shape = rectangle]",
   lab_nd,
   lab_edge,
-  "# node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style=\"\", fillcolor = \"\", color = \"\"]",
-  paste(main_txt[,"node"], collapse = "\n"), # Node 
+  "# node definitions with substituted label text",
+  paste(main_txt[,"node"], collapse = "\n"), # Node
   "\n## Invisible point node for joints",
   "node [shape = point, width = 0, style=invis]",
-  paste(inv_nd, collapse = "\n"),             # Invisible node 
+  paste(inv_nd, collapse = "\n"),             # Invisible node
   paste(rnk_nd, collapse = "\n"),            # Ranks
-  "edge[style=\"\"];",
+  edge_stmt,
   paste(con_nd, collapse = "\n"),            # Connections
   "\n}\n",
-  # paste(main_txt[,"txt"], collapse = "\n"),  # Text 
   sep = "\n\n")
   
   return(grviz_txt)
@@ -308,15 +314,18 @@ build_grviz <- function(x) {
 #' @keywords internal
 
 update_node_label <- function(main_txt, node, group_name){
-  
+
   for(j in seq_along(node)){
     idx_row <- main_txt[,1] == node[j]
+    style <- main_txt[idx_row, "grviz_style"]
+    if(nchar(style) == 0) style <- NULL
     main_txt[idx_row, "node"] <- paste(node[j],
-                                       mk_text_align(main_txt[idx_row, "text"], 
+                                       mk_text_align(main_txt[idx_row, "text"],
                                                      main_txt[idx_row, "just"],
-                                                     group = group_name[j]))
+                                                     group = group_name[j],
+                                                     grviz_style = style))
   }
-  
+
   return(main_txt)
 }
 

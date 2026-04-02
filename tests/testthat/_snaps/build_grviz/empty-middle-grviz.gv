@@ -1,22 +1,23 @@
 digraph consort_diagram {
   graph [layout = dot, splines=ortho]
 
+node [shape = rectangle]
+
 
 
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Cohort 1 (n=6)" group=A1]
-node2 [label = "Cohort 2 (n=6)" group=A2]
-node3 [label = "Cohort 3 (n=6)" group=A3]
-node4 [label = "Excluded (n=1)\l"]
-node5 [label = "Excluded (n=3)\l"]
-node7 [label = "Cohort 1 (n=5)" group=A1]
-node8 [label = "Cohort 2 (n=3)" group=A2]
-node9 [label = "" group=A3 shape=none height=0 width=0]
-node10 [label = "Total (n=14)" group=B1]
+node1 [label = "Cohort 1 (n=6)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node2 [label = "Cohort 2 (n=6)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node3 [label = "Cohort 3 (n=6)" group=A3 fillcolor="white" style="filled" fontcolor="black"]
+node4 [label = "Excluded (n=1)\l" fillcolor="white" style="filled" fontcolor="black"]
+node5 [label = "Excluded (n=3)\l" fillcolor="white" style="filled" fontcolor="black"]
+node7 [label = "Cohort 1 (n=5)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node8 [label = "Cohort 2 (n=3)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node9 [label = "" group=A3 fillcolor="white" style="filled" fontcolor="black" shape=none height=0 width=0]
+node10 [label = "Total (n=14)" group=B1 fillcolor="white" style="filled" fontcolor="black"]
 
 
 ## Invisible point node for joints
@@ -51,7 +52,7 @@ subgraph {
   rank = same; rankdir = LR; P3; P4; P5;
   }
 
-edge[style=""];
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
 
 node1 -> P1 [arrowhead = none];
 P1 -> node4;

@@ -5,7 +5,8 @@
 #'   is done by creating a standardized disposition data, and using this data
 #'    as the source for the creation a standard CONSORT diagram. Human effort
 #'     by supplying text labels on the node can also be achieved.
-#'
-#' @name consort-package
+#'     
 #' @docType package
-NULL
+#' @name consort
+#' @keywords internal
+"_PACKAGE"

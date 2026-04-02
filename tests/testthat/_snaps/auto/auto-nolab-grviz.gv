@@ -1,20 +1,21 @@
 digraph consort_diagram {
   graph [layout = dot, splines=ortho]
 
+node [shape = rectangle]
+
 
 
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Screened (n=1,000)" group=A1]
-node2 [label = "Excluded (n=286)\l Hx medication (n=48)\l age < 40 (n=82)\l pain-free (n=156)\l"]
-node3 [label = "Qualified for Randomization (n=714)" group=A1]
-node4 [label = "Consented (n=634)" group=A1]
-node5 [label = "Randomized (n=534)" group=A1]
-node6 [label = "Treatment A (n=285)" group=B1]
-node7 [label = "Treatment B (n=249)" group=B2]
+node1 [label = "Screened (n=1,000)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node2 [label = "Excluded (n=286)\l Hx medication (n=48)\l age < 40 (n=82)\l pain-free (n=156)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node3 [label = "Qualified for Randomization (n=714)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node4 [label = "Consented (n=634)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node5 [label = "Randomized (n=534)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node6 [label = "Treatment A (n=285)" group=B1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node7 [label = "Treatment B (n=249)" group=B2 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
 
 
 ## Invisible point node for joints
@@ -48,7 +49,7 @@ subgraph {
   rank = same; rankdir = LR; node6; node7;
   }
 
-edge[style=""];
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
 
 node1 -> P1 [arrowhead = none];
 P1 -> node2;

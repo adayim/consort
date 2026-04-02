@@ -1,4 +1,116 @@
 
+# Convert R gpar to Graphviz node attributes
+#' @keywords internal
+gpar_to_grviz_attrs <- function(txt_gp, box_gp, box_fn = NULL) {
+  attrs <- character()
+  style_parts <- character()
+
+  # Rounded corners for roundrectGrob
+  if (!is.null(box_fn) && identical(box_fn, grid::roundrectGrob)) {
+    style_parts <- c(style_parts, "rounded")
+  }
+
+  # Box fill color
+  if (!is.null(box_gp$fill) && nzchar(box_gp$fill)) {
+    attrs <- c(attrs, sprintf('fillcolor="%s"', box_gp$fill))
+    style_parts <- c(style_parts, "filled")
+  }
+
+  # Box border color
+  if (!is.null(box_gp$col)) {
+    attrs <- c(attrs, sprintf('color="%s"', box_gp$col))
+  }
+
+  # Box border width
+  if (!is.null(box_gp$lwd)) {
+    attrs <- c(attrs, sprintf('penwidth=%s', box_gp$lwd))
+  }
+
+  # Line type
+  if (!is.null(box_gp$lty)) {
+    lty_val <- box_gp$lty
+    lty_map <- c("2" = "dashed", "3" = "dotted", "4" = "dotdash",
+                 "5" = "longdash", "6" = "twodash",
+                 "dashed" = "dashed", "dotted" = "dotted",
+                 "dotdash" = "dotdash", "longdash" = "longdash",
+                 "twodash" = "twodash")
+    lty_str <- as.character(lty_val)
+    if (lty_str %in% names(lty_map)) {
+      style_parts <- c(style_parts, lty_map[lty_str])
+    }
+  }
+
+  # Style attribute
+  if (length(style_parts) > 0) {
+    attrs <- c(attrs, sprintf('style="%s"', paste(style_parts, collapse = ",")))
+  }
+
+  # Text color
+  if (!is.null(txt_gp$col)) {
+    attrs <- c(attrs, sprintf('fontcolor="%s"', txt_gp$col))
+  }
+
+  # Font size
+  if (!is.null(txt_gp$fontsize)) {
+    attrs <- c(attrs, sprintf('fontsize=%s', txt_gp$fontsize))
+  } else if (!is.null(txt_gp$cex) && txt_gp$cex != 1) {
+    attrs <- c(attrs, sprintf('fontsize=%s', round(14 * txt_gp$cex, 1)))
+  }
+
+  # Font family
+  if (!is.null(txt_gp$fontfamily) && nzchar(txt_gp$fontfamily)) {
+    attrs <- c(attrs, sprintf('fontname="%s"', txt_gp$fontfamily))
+  }
+
+  if (length(attrs) == 0) return(NULL)
+  paste(attrs, collapse = " ")
+}
+
+# Convert arrow settings to Graphviz edge attributes
+#' @keywords internal
+arrow_to_grviz_attrs <- function(arrow_gp, arrow_type, arrow_length) {
+  attrs <- character()
+
+  # Edge color
+  if (!is.null(arrow_gp$col)) {
+    attrs <- c(attrs, sprintf('color="%s"', arrow_gp$col))
+  }
+
+  # Edge line width
+  if (!is.null(arrow_gp$lwd)) {
+    attrs <- c(attrs, sprintf('penwidth=%s', arrow_gp$lwd))
+  }
+
+  # Edge line type — always emit style to reset from label edges' style=invis
+  edge_style <- ""
+  if (!is.null(arrow_gp$lty)) {
+    lty_map <- c("2" = "dashed", "3" = "dotted", "4" = "dotdash",
+                 "5" = "longdash", "6" = "twodash",
+                 "dashed" = "dashed", "dotted" = "dotted",
+                 "dotdash" = "dotdash", "longdash" = "longdash",
+                 "twodash" = "twodash")
+    lty_str <- as.character(arrow_gp$lty)
+    if (lty_str %in% names(lty_map)) {
+      edge_style <- lty_map[lty_str]
+    }
+  }
+  attrs <- c(attrs, sprintf('style="%s"', edge_style))
+
+  # Arrowhead type: R "closed" -> Graphviz "normal", R "open" -> "vee"
+  if (!is.null(arrow_type)) {
+    ah <- if (arrow_type == "open") "vee" else "normal"
+    attrs <- c(attrs, sprintf('arrowhead="%s"', ah))
+  }
+
+  # Arrow size: scale relative to default 0.1 inches
+  if (!is.null(arrow_length) && is.numeric(arrow_length)) {
+    attrs <- c(attrs, sprintf('arrowsize=%.2f', arrow_length / 0.1))
+  }
+
+  if (length(attrs) == 0) return("")
+  paste(attrs, collapse = " ")
+}
+
 # Make subgraph same rank
 #' @keywords internal
 mk_subgraph_rank <- function(x){
@@ -15,25 +127,27 @@ mk_invs_connect <- function(x){
 
 # Make text alignment
 #' @keywords internal
-mk_text_align <- function(text, just, group = NULL){
+mk_text_align <- function(text, just, group = NULL, grviz_style = NULL){
   # If empty
   # if(is_empty(text))
   #   return("")
-  
-  jst <- ifelse(just == "center", "", 
+
+  jst <- ifelse(just == "center", "",
                 ifelse(just == "left", "\\l", "\r"))
-  
+
   if(just %in% c("left", "right")){
     text <- unlist(strsplit(text, "\n"))
     text <- ifelse(just == "left",
                    paste(text, collapse = "\\l"),
                    paste(text, collapse = "\r"))
   }
-  
-  if(is.null(group))
-    r <- sprintf("[label = \"%s%s\"]", text, jst)
-  else
-    r <- sprintf("[label = \"%s%s\" group=%s]", text, jst, group)
+
+  # Build attributes
+  attr_parts <- sprintf('label = "%s%s"', text, jst)
+  if(!is.null(group)) attr_parts <- paste(attr_parts, sprintf("group=%s", group))
+  if(!is.null(grviz_style)) attr_parts <- paste(attr_parts, grviz_style)
+
+  r <- sprintf("[%s]", attr_parts)
 
   if(is_empty(text)){
     r <- gsub('.{1}$', ' shape=none height=0 width=0]', r)

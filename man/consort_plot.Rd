@@ -40,8 +40,8 @@ is defined.}
 \item{kickoff_sidebox}{remove (default) the side box observations from the 
 following counting.}
 
-\item{cex}{Multiplier applied to font size, Default is 0.8. This will override 
-the global option of \code{"consort_txt_gp"} if defined.}
+\item{cex}{Multiplier applied to font size, default is 0.8. Prefer using
+\code{\link{set_consort_defaults}(txt_gp = gpar(cex = ...))} instead.}
 
 \item{text_width}{a positive integer giving the target column for wrapping
 lines in the output. String will not be wrapped if not defined (default).
@@ -86,5 +86,6 @@ p <- consort_plot(data = df,
 }
 \seealso{
 \code{\link{add_side_box}},\code{\link{add_split}},
-\code{\link{add_side_box}} \code{\link{textbox}}
+\code{\link{add_side_box}} \code{\link{textbox}} 
+\code{\link{set_consort_defaults}}
 }
