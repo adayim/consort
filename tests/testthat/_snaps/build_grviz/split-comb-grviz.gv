@@ -1,29 +1,30 @@
 digraph consort_diagram {
   graph [layout = dot, splines=ortho]
 
+node [shape = rectangle]
+
 
 
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Study 1 (n=8)" group=A1]
-node2 [label = "Study 2 And this is long (n=12)" group=A2]
-node3 [label = "Study 3 (n=12)" group=A3]
-node4 [label = "Study 3 (n=12)" group=A4]
-node5 [label = "Study 3 (n=12)" group=A5]
-node6 [label = "Included All (n=20)" group=B1]
-node7 [label = "Excluded (n=7):\l MRI not collected (n=3)\l"]
-node8 [label = "Randomised" group=B1]
-node9 [label = "Arm A (n=143)" group=C1]
-node10 [label = "Arm B (n=142)" group=C2]
-node11 [label = "" group=C1 shape=none height=0 width=0]
-node12 [label = "From Arm B" group=C2]
-node13 [label = "Combine all" group=B1]
-node14 [label = "Process 1 (n=140)" group=D1]
-node15 [label = "Process 2 (n=140)" group=D2]
-node16 [label = "Process 3 (n=142)" group=D3]
+node1 [label = "Study 1 (n=8)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node2 [label = "Study 2 And this is long (n=12)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node3 [label = "Study 3 (n=12)" group=A3 fillcolor="white" style="filled" fontcolor="black"]
+node4 [label = "Study 3 (n=12)" group=A4 fillcolor="white" style="filled" fontcolor="black"]
+node5 [label = "Study 3 (n=12)" group=A5 fillcolor="white" style="filled" fontcolor="black"]
+node6 [label = "Included All (n=20)" group=B1 fillcolor="white" style="filled" fontcolor="black"]
+node7 [label = "Excluded (n=7):\l MRI not collected (n=3)\l" fillcolor="white" style="filled" fontcolor="black"]
+node8 [label = "Randomised" group=B1 fillcolor="white" style="filled" fontcolor="black"]
+node9 [label = "Arm A (n=143)" group=C1 fillcolor="white" style="filled" fontcolor="black"]
+node10 [label = "Arm B (n=142)" group=C2 fillcolor="white" style="filled" fontcolor="black"]
+node11 [label = "" group=C1 fillcolor="white" style="filled" fontcolor="black" shape=none height=0 width=0]
+node12 [label = "From Arm B" group=C2 fillcolor="white" style="filled" fontcolor="black"]
+node13 [label = "Combine all" group=B1 fillcolor="white" style="filled" fontcolor="black"]
+node14 [label = "Process 1 (n=140)" group=D1 fillcolor="white" style="filled" fontcolor="black"]
+node15 [label = "Process 2 (n=140)" group=D2 fillcolor="white" style="filled" fontcolor="black"]
+node16 [label = "Process 3 (n=142)" group=D3 fillcolor="white" style="filled" fontcolor="black"]
 
 
 ## Invisible point node for joints
@@ -77,7 +78,7 @@ subgraph {
   rank = same; rankdir = LR; node14; node15; node16;
   }
 
-edge[style=""];
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
 
 P3 -> node6;
 node1 -> P1 [arrowhead = none];

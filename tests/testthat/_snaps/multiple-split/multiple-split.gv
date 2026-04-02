@@ -1,48 +1,49 @@
 digraph consort_diagram {
   graph [layout = dot, splines=ortho]
 
+node [shape = rectangle]
+
 
 
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Population (n=300)" group=A1]
-node2 [label = "Excluded (n=33)\l Dead (n=4)\l MRI not collected (n=3)\l Other (n=8)\l Sample not collected (n=18)\l"]
-node3 [label = "Randomized patient (n=267)" group=A1]
-node4 [label = "Conc (n=142)" group=B1]
-node5 [label = "Seq (n=125)" group=B2]
-node6 [label = "Trt A (n=42)" group=C1]
-node7 [label = "Trt B (n=44)" group=C2]
-node8 [label = "Trt C (n=56)" group=C3]
-node9 [label = "Trt A (n=44)" group=C4]
-node10 [label = "Trt B (n=39)" group=C5]
-node11 [label = "Trt C (n=42)" group=C6]
-node12 [label = "Lost of Follow-up (n=2)\l Never dosed (n=2)\l"]
-node13 [label = "Lost of Follow-up (n=1)\l Never dosed (n=1)\l"]
-node14 [label = "Lost of Follow-up (n=2)\l Never dosed (n=2)\l"]
-node15 [label = "Lost of Follow-up (n=7)\l Declined (n=2)\l Never dosed (n=3)\l Ranomised by error (n=2)\l"]
-node16 [label = "Lost of Follow-up (n=2)\l Never dosed (n=1)\l Ranomised by error (n=1)\l"]
-node17 [label = "Lost of Follow-up (n=4)\l Never dosed (n=3)\l Ranomised by error (n=1)\l"]
-node18 [label = "Followup-up (n=40)" group=C1]
-node19 [label = "Followup-up (n=43)" group=C2]
-node20 [label = "Followup-up (n=54)" group=C3]
-node21 [label = "Followup-up (n=37)" group=C4]
-node22 [label = "Followup-up (n=37)" group=C5]
-node23 [label = "Followup-up (n=38)" group=C6]
-node24 [label = "Lost to follow-up (n=12)\l Death (n=2)\l Discontinued (n=4)\l Other (n=3)\l Withdraw (n=3)\l"]
-node25 [label = "Lost to follow-up (n=5)\l Discontinued (n=2)\l Other (n=2)\l Withdraw (n=1)\l"]
-node26 [label = "Lost to follow-up (n=9)\l Death (n=1)\l Discontinued (n=5)\l Other (n=2)\l Withdraw (n=1)\l"]
-node27 [label = "Lost to follow-up (n=12)\l Death (n=2)\l Other (n=4)\l Withdraw (n=6)\l"]
-node28 [label = "Lost to follow-up (n=7)\l Death (n=1)\l Discontinued (n=4)\l Withdraw (n=2)\l"]
-node29 [label = "Lost to follow-up (n=7)\l Death (n=2)\l Discontinued (n=2)\l Other (n=1)\l Withdraw (n=2)\l"]
-node30 [label = "Final Analysis (n=28)" group=C1]
-node31 [label = "Final Analysis (n=38)" group=C2]
-node32 [label = "Final Analysis (n=45)" group=C3]
-node33 [label = "Final Analysis (n=25)" group=C4]
-node34 [label = "Final Analysis (n=30)" group=C5]
-node35 [label = "Final Analysis (n=31)" group=C6]
+node1 [label = "Population (n=300)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node2 [label = "Excluded (n=33)\l Dead (n=4)\l MRI not collected (n=3)\l Other (n=8)\l Sample not collected (n=18)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node3 [label = "Randomized patient (n=267)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node4 [label = "Conc (n=142)" group=B1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node5 [label = "Seq (n=125)" group=B2 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node6 [label = "Trt A (n=42)" group=C1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node7 [label = "Trt B (n=44)" group=C2 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node8 [label = "Trt C (n=56)" group=C3 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node9 [label = "Trt A (n=44)" group=C4 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node10 [label = "Trt B (n=39)" group=C5 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node11 [label = "Trt C (n=42)" group=C6 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node12 [label = "Lost of Follow-up (n=2)\l Never dosed (n=2)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node13 [label = "Lost of Follow-up (n=1)\l Never dosed (n=1)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node14 [label = "Lost of Follow-up (n=2)\l Never dosed (n=2)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node15 [label = "Lost of Follow-up (n=7)\l Declined (n=2)\l Never dosed (n=3)\l Ranomised by error (n=2)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node16 [label = "Lost of Follow-up (n=2)\l Never dosed (n=1)\l Ranomised by error (n=1)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node17 [label = "Lost of Follow-up (n=4)\l Never dosed (n=3)\l Ranomised by error (n=1)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node18 [label = "Followup-up (n=40)" group=C1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node19 [label = "Followup-up (n=43)" group=C2 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node20 [label = "Followup-up (n=54)" group=C3 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node21 [label = "Followup-up (n=37)" group=C4 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node22 [label = "Followup-up (n=37)" group=C5 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node23 [label = "Followup-up (n=38)" group=C6 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node24 [label = "Lost to follow-up (n=12)\l Death (n=2)\l Discontinued (n=4)\l Other (n=3)\l Withdraw (n=3)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node25 [label = "Lost to follow-up (n=5)\l Discontinued (n=2)\l Other (n=2)\l Withdraw (n=1)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node26 [label = "Lost to follow-up (n=9)\l Death (n=1)\l Discontinued (n=5)\l Other (n=2)\l Withdraw (n=1)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node27 [label = "Lost to follow-up (n=12)\l Death (n=2)\l Other (n=4)\l Withdraw (n=6)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node28 [label = "Lost to follow-up (n=7)\l Death (n=1)\l Discontinued (n=4)\l Withdraw (n=2)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node29 [label = "Lost to follow-up (n=7)\l Death (n=2)\l Discontinued (n=2)\l Other (n=1)\l Withdraw (n=2)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node30 [label = "Final Analysis (n=28)" group=C1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node31 [label = "Final Analysis (n=38)" group=C2 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node32 [label = "Final Analysis (n=45)" group=C3 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node33 [label = "Final Analysis (n=25)" group=C4 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node34 [label = "Final Analysis (n=30)" group=C5 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node35 [label = "Final Analysis (n=31)" group=C6 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
 
 
 ## Invisible point node for joints
@@ -139,7 +140,7 @@ subgraph {
   rank = same; rankdir = LR; P22; node29;
   }
 
-edge[style=""];
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
 
 node1 -> P1 [arrowhead = none];
 P1 -> node2;

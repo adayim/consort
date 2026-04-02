@@ -1,3 +1,11 @@
+# consort 1.2.3
+
+-   Allow user configuration of arrow graphical parameters and padding with `set_consort_defaults()`.
+-   Allow custom bullet characters
+-   Figure styles will also be applied to grViz plot.
+-   Improved documentation. 
+-   Special thanks to @Ramsas88
+
 # consort 1.2.2
 
 -   Use comma separators for large number. 

@@ -4,7 +4,16 @@
 \alias{connect_box}
 \title{Connect grob box with arrow.}
 \usage{
-connect_box(start, end, connect, type = c("s", "p"), name = NULL)
+connect_box(
+  start,
+  end,
+  connect,
+  type = c("s", "p"),
+  name = NULL,
+  arrow_gp = consort_opt("arrow_gp"),
+  arrow_length = consort_opt("arrow_length"),
+  arrow_type = consort_opt("arrow_type")
+)
 }
 \arguments{
 \item{start}{Starting point of the arrow.}
@@ -22,6 +31,15 @@ will be started in the middle point.}
 \item{type}{Should be one the \code{"s"} (strait line), or \code{"p"} (polyline).}
 
 \item{name}{A character identifier of the line grob, passed to \code{\link[grid]{linesGrob}}.}
+
+\item{arrow_gp}{Graphical parameters \code{\link[grid]{gpar}} object for the 
+connector line. Defaults to \code{grid::gpar(col = "black", lwd = 1)}.}
+
+\item{arrow_length}{Length of the arrowhead as a \code{\link[grid]{unit}} object. 
+Defaults to \code{unit(0.1, "inches")}.}
+
+\item{arrow_type}{Arrow type, either \code{"closed"} or \code{"open"}. Defaults to 
+\code{"closed"}.}
 }
 \value{
 A lines grob with arrow.
@@ -36,4 +54,10 @@ fg2 <- textbox(text = "This is an other test", 0.7, 0.2)
 grid::grid.draw(fg1)
 grid::grid.draw(fg2)
 connect_box(fg1, fg2, connect = "bl", type = "p")
+
+# Customize line width and color
+connect_box(fg1, fg2, connect = "bl", type = "p", arrow_gp = grid::gpar(lwd = 2, col = "red"))
+
+# Or set globally via set_consort_defaults
+set_consort_defaults(arrow_gp = grid::gpar(lwd = 2, col = "blue"))
 }

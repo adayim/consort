@@ -1,45 +1,44 @@
 digraph consort_diagram {
   graph [layout = dot, splines=ortho]
 
-node [shape = rectangle, style = "rounded,filled", fillcolor = "#A9C7FD" color = "#4F81BD"]
-label26 [label = "Screening"]
-label27 [label = "Randomization"]
-label28 [label = "Follow-up"]
-label29 [label = "Final analysis"]
+node [shape = rectangle]
 
+label26 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label27 [label = "Randomization" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label28 [label = "Follow-up" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label29 [label = "Final analysis" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
 
 edge[style=invis];
 label26 -> label27 -> label28 -> label29;
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Population (n=202)" group=A1]
-node2 [label = "Excluded (n=33)\l Dead (n=4)\l MRI not collected (n=3)\l Other (n=8)\l Sample not collected (n=18)\l"]
-node3 [label = "Randomized patient (n=169)" group=A1]
-node4 [label = "Conc (n=86)" group=B1]
-node5 [label = "Seq (n=83)" group=B2]
-node6 [label = "Trt A (n=42)\lParticipants not treated (n=2)\l Never dosed (n=2)\l" group=C1]
-node7 [label = "Trt B (n=44)\lParticipants not treated (n=1)\l Never dosed (n=1)\l" group=C2]
-node8 [label = "Trt A (n=44)\lParticipants not treated (n=7)\l Declined (n=2)\l Never dosed (n=3)\l Ranomised by error (n=2)\l" group=C3]
-node9 [label = "Trt B (n=39)\lParticipants not treated (n=2)\l Never dosed (n=1)\l Ranomised by error (n=1)\l" group=C4]
-node10 [label = "Pariticpants planned for follow-up (n=40)\lReason for tot followed (n=12)\l Death (n=2)\l Discontinued (n=4)\l Other (n=3)\l Withdraw (n=3)\l" group=C1]
-node11 [label = "Pariticpants planned for follow-up (n=43)\lReason for tot followed (n=5)\l Discontinued (n=2)\l Other (n=2)\l Withdraw (n=1)\l" group=C2]
-node12 [label = "Pariticpants planned for follow-up (n=37)\lReason for tot followed (n=13)\l Death (n=2)\l Discontinued (n=1)\l Other (n=4)\l Withdraw (n=6)\l" group=C3]
-node13 [label = "Pariticpants planned for follow-up (n=37)\lReason for tot followed (n=9)\l Death (n=2)\l Discontinued (n=4)\l Withdraw (n=3)\l" group=C4]
-node14 [label = "Assessed for final outcome (n=28)" group=C1]
-node15 [label = "Assessed for final outcome (n=38)" group=C2]
-node16 [label = "Assessed for final outcome (n=25)" group=C3]
-node17 [label = "Assessed for final outcome (n=30)" group=C4]
-node18 [label = "Reason for not assessed (n=3)\l Outcome missing (n=2)\l Protocol deviation (n=1)\l"]
-node19 [label = "Reason for not assessed (n=4)\l Outcome missing (n=1)\l Protocol deviation (n=3)\l"]
-node20 [label = "Reason for not assessed (n=2)\l Outcome missing (n=2)\l"]
-node21 [label = "Reason for not assessed (n=3)\l Outcome missing (n=2)\l Protocol deviation (n=1)\l"]
-node22 [label = "Included in the mITT analysis (n=40)" group=C1]
-node23 [label = "Included in the mITT analysis (n=43)" group=C2]
-node24 [label = "Included in the mITT analysis (n=37)" group=C3]
-node25 [label = "Included in the mITT analysis (n=37)" group=C4]
+node1 [label = "Population (n=202)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node2 [label = "Excluded (n=33)\l Dead (n=4)\l MRI not collected (n=3)\l Other (n=8)\l Sample not collected (n=18)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node3 [label = "Randomized patient (n=169)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node4 [label = "Conc (n=86)" group=B1 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node5 [label = "Seq (n=83)" group=B2 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node6 [label = "Trt A (n=42)\lParticipants not treated (n=2)\l Never dosed (n=2)\l" group=C1 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node7 [label = "Trt B (n=44)\lParticipants not treated (n=1)\l Never dosed (n=1)\l" group=C2 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node8 [label = "Trt A (n=44)\lParticipants not treated (n=7)\l Declined (n=2)\l Never dosed (n=3)\l Ranomised by error (n=2)\l" group=C3 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node9 [label = "Trt B (n=39)\lParticipants not treated (n=2)\l Never dosed (n=1)\l Ranomised by error (n=1)\l" group=C4 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node10 [label = "Pariticpants planned for follow-up (n=40)\lReason for tot followed (n=12)\l Death (n=2)\l Discontinued (n=4)\l Other (n=3)\l Withdraw (n=3)\l" group=C1 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node11 [label = "Pariticpants planned for follow-up (n=43)\lReason for tot followed (n=5)\l Discontinued (n=2)\l Other (n=2)\l Withdraw (n=1)\l" group=C2 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node12 [label = "Pariticpants planned for follow-up (n=37)\lReason for tot followed (n=13)\l Death (n=2)\l Discontinued (n=1)\l Other (n=4)\l Withdraw (n=6)\l" group=C3 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node13 [label = "Pariticpants planned for follow-up (n=37)\lReason for tot followed (n=9)\l Death (n=2)\l Discontinued (n=4)\l Withdraw (n=3)\l" group=C4 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node14 [label = "Assessed for final outcome (n=28)" group=C1 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node15 [label = "Assessed for final outcome (n=38)" group=C2 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node16 [label = "Assessed for final outcome (n=25)" group=C3 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node17 [label = "Assessed for final outcome (n=30)" group=C4 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node18 [label = "Reason for not assessed (n=3)\l Outcome missing (n=2)\l Protocol deviation (n=1)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node19 [label = "Reason for not assessed (n=4)\l Outcome missing (n=1)\l Protocol deviation (n=3)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node20 [label = "Reason for not assessed (n=2)\l Outcome missing (n=2)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node21 [label = "Reason for not assessed (n=3)\l Outcome missing (n=2)\l Protocol deviation (n=1)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node22 [label = "Included in the mITT analysis (n=40)" group=C1 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node23 [label = "Included in the mITT analysis (n=43)" group=C2 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node24 [label = "Included in the mITT analysis (n=37)" group=C3 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
+node25 [label = "Included in the mITT analysis (n=37)" group=C4 fillcolor="white" style="filled" fontcolor="black" fontsize=9.8]
 
 
 ## Invisible point node for joints
@@ -107,7 +106,7 @@ subgraph {
   rank = same; rankdir = LR; label27; node3;
   }
 
-edge[style=""];
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
 
 node1 -> P1 [arrowhead = none];
 P1 -> node2;

@@ -1,23 +1,24 @@
 digraph consort_diagram {
   graph [layout = dot, splines=ortho]
 
+node [shape = rectangle]
+
 
 
 
 
 # node definitions with substituted label text
-  node [shape = rectangle, fillcolor = Biege, style="", fillcolor = "", color = ""]
 
-node1 [label = "Study 1 (n=8)" group=A1]
-node2 [label = "Study 2 (n=12)" group=A2]
-node3 [label = "Included All (n=20)" group=B1]
-node4 [label = "Excluded (n=7):\l MRI not collected (n=3)\l"]
-node5 [label = "Randomised" group=B1]
-node6 [label = "Arm A (n=143)" group=A1]
-node7 [label = "Arm B (n=142)" group=A2]
-node9 [label = "Exclude (n=3\l"]
-node10 [label = "" group=A1 shape=none height=0 width=0]
-node11 [label = "From Arm B" group=A2]
+node1 [label = "Study 1 (n=8)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node2 [label = "Study 2 (n=12)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node3 [label = "Included All (n=20)" group=B1 fillcolor="white" style="filled" fontcolor="black"]
+node4 [label = "Excluded (n=7):\l MRI not collected (n=3)\l" fillcolor="white" style="filled" fontcolor="black"]
+node5 [label = "Randomised" group=B1 fillcolor="white" style="filled" fontcolor="black"]
+node6 [label = "Arm A (n=143)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
+node7 [label = "Arm B (n=142)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node9 [label = "Exclude (n=3\l" fillcolor="white" style="filled" fontcolor="black"]
+node10 [label = "" group=A1 fillcolor="white" style="filled" fontcolor="black" shape=none height=0 width=0]
+node11 [label = "From Arm B" group=A2 fillcolor="white" style="filled" fontcolor="black"]
 
 
 ## Invisible point node for joints
@@ -58,7 +59,7 @@ subgraph {
   rank = same; rankdir = LR; P8; node9;
   }
 
-edge[style=""];
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
 
 P2 -> node3;
 node1 -> P1 [arrowhead = none];

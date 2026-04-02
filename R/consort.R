@@ -5,7 +5,14 @@
 #'   is done by creating a standardized disposition data, and using this data
 #'    as the source for the creation a standard CONSORT diagram. Human effort
 #'     by supplying text labels on the node can also be achieved.
-#'
-#' @name consort-package
+#'     
 #' @docType package
+#' @name consort
+#' @keywords internal
+"_PACKAGE"
+
+## usethis namespace: start
+#' @import grid
+#' @importFrom utils modifyList
+## usethis namespace: end
 NULL

@@ -9,6 +9,7 @@ add_label_box(
   txt,
   only_terminal = TRUE,
   just = c("center", "left", "right"),
+  box_fn = roundrectGrob,
   ...
 )
 }
@@ -25,7 +26,9 @@ also be accounted for.}
 
 \item{just}{The justification for the text: center (default), left or right.}
 
-\item{...}{Other parameters pass to \link{textbox},}
+\item{box_fn}{The function to create the box grob. Default is \code{\link[grid]{roundrectGrob}}.}
+
+\item{...}{Other parameters pass to \link{textbox}.}
 }
 \value{
 A \code{consort} object.

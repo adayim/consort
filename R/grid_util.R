@@ -1,212 +1,243 @@
+# Stack rows top-to-bottom, with extra padding at split/merge transitions
+#' @keywords internal
+calc_y_coords <- function(consort_plot, nodes_layout, pad_u) {
+  nd_y <- vector("list", length = length(nodes_layout))
+  prev_bt <- 0
+
+  for (i in seq_along(nodes_layout)) {
+    heights <- sapply(consort_plot[nodes_layout[[i]]], function(x)
+      get_coords(x$box)$height
+    )
+
+    if (i == 1) {
+      nd_y[[i]] <- heights / 2 + pad_u / 2
+      prev_bt <- max(heights)
+    } else {
+      # Extra padding when column count changes (split/merge transition)
+      extra_pad <- if (length(nd_y[[i]]) != length(nd_y[[i - 1]])) 2 * pad_u else pad_u
+      nd_y[[i]] <- prev_bt + extra_pad + heights / 2
+      prev_bt <- prev_bt + extra_pad + max(heights)
+    }
+    names(nd_y[[i]]) <- names(heights)
+  }
+
+  list(nd_y = nd_y, total_height = prev_bt + pad_u)
+}
+
+# Calculate X positions for multi-column rows, accounting for sidebox extents.
+# main_col_widths: max node width per column from non-sidebox rows
+# sb_wd_mat: matrix of widths from sidebox rows (rows x columns), or NULL
+# sb_sd_mat: matrix of sides ("left"/"right") from sidebox rows, or NULL
+#' @keywords internal
+calc_column_x <- function(main_col_widths, sb_wd_mat, sb_sd_mat, pad_u) {
+  n_cols <- length(main_col_widths)
+  has_sb <- !is.null(sb_sd_mat)
+  pos <- numeric(n_cols)
+
+  # Left extent of column 1
+  left_space <- main_col_widths[1] / 2
+  if (has_sb && any(sb_sd_mat[, 1] == "left")) {
+    sb_wd <- sb_wd_mat[sb_sd_mat[, 1] == "left", 1]
+    left_space <- max(c(left_space, max(sb_wd)))
+  }
+  pos[1] <- left_space + pad_u
+
+  if (n_cols > 1) {
+    for (j in 2:n_cols) {
+      # Right extent of previous column
+      right_space <- main_col_widths[j - 1] / 2
+      prev_wide_right <- FALSE
+      if (has_sb && any(sb_sd_mat[, j - 1] == "right")) {
+        sb_wd <- sb_wd_mat[sb_sd_mat[, j - 1] == "right", j - 1]
+        right_space <- max(c(right_space, max(sb_wd)))
+        prev_wide_right <- right_space > main_col_widths[j - 1] / 2
+      }
+
+      # Left extent of current column
+      left_space <- main_col_widths[j] / 2
+      if (has_sb && any(sb_sd_mat[, j] == "left")) {
+        sb_wd <- sb_wd_mat[sb_sd_mat[, j] == "left", j]
+        left_space <- max(c(left_space, max(sb_wd)))
+      } else if (prev_wide_right) {
+        # Previous column's sidebox already extends past its center,
+        # so reduce this column's left extent to avoid excessive spacing
+        left_space <- pad_u / 2
+      }
+
+      pos[j] <- pos[j - 1] + right_space + pad_u + left_space
+    }
+  }
+
+  pos - mean(pos)
+}
+
+# Offset sidebox nodes from their parent column's X position
+#' @keywords internal
+place_sideboxes <- function(col_x, sb_widths, sb_sides, pad_u) {
+  n_cols <- length(col_x)
+  sb_x <- numeric(n_cols)
+  for (k in seq_len(n_cols)) {
+    sb_x[k] <- if (sb_sides[k] == "right") {
+      col_x[k] + sb_widths[k] / 2 + pad_u / 2
+    } else {
+      col_x[k] - sb_widths[k] / 2 - pad_u / 2
+    }
+  }
+  sb_x
+}
+
+# Recenter parent nodes at the midpoint of their children after a second split
+#' @keywords internal
+adjust_multisplit <- function(nd_x, nd_type, nodes_layout, consort_plot) {
+  n_splits <- sum(nd_type == "splitbox")
+  if (n_splits <= 1) return(nd_x)
+  if (n_splits > 2) stop("More than two splits are not supported.")
+
+  split_idx <- which(nd_type == "splitbox")[-1]
+  prev_nodes <- sapply(unlist(nodes_layout[split_idx]), function(y) {
+    consort_plot[[y]]$prev_node
+  }, simplify = FALSE)
+  prev_nodes <- unlist(prev_nodes)
+
+  for (parent in unique(prev_nodes)) {
+    children_x <- nd_x[[split_idx]][names(prev_nodes[prev_nodes == parent])]
+    nd_x[[split_idx - 1]][parent] <- mean(range(children_x))
+  }
+
+  nd_x
+}
+
+# Shift all X coordinates so minimum is 0 and compute final bounds
+#' @keywords internal
+normalize_x <- function(nd_x, nd_wd, nodes_layout) {
+  nd_minmax <- lapply(seq_along(nodes_layout), function(i) {
+    n_cols <- length(nodes_layout[[i]])
+    if (n_cols > 1) {
+      wd_mat <- do.call(rbind, nd_wd[i])
+      x_mat  <- do.call(rbind, nd_x[i])
+      c(minx = min(x_mat[, 1] - wd_mat[, 1] / 2),
+        maxx = max(x_mat[, n_cols] + wd_mat[, n_cols] / 2))
+    } else {
+      c(minx = nd_x[[i]] - nd_wd[[i]] / 2,
+        maxx = nd_x[[i]] + nd_wd[[i]] / 2)
+    }
+  })
+
+  bounds <- do.call(rbind, Filter(Negate(is.null), nd_minmax))
+  min_val <- min(bounds[, 1])
+  max_val <- max(bounds[, 2])
+
+  for (i in seq_along(nodes_layout)) {
+    nd_x[[i]] <- nd_x[[i]] - min_val
+  }
+
+  list(nd_x = nd_x, max_width = max_val - min_val)
+}
+
 # Calculate coordinates
 #' @keywords internal
 #' @importFrom stats setNames
-calc_coords <- function(consort_plot){
-  
-  # Get the maximum of height and width of each node
+calc_coords <- function(consort_plot) {
+
   nodes_layout <- attr(consort_plot, "nodes.list")
-  
-  # Node type of each
-  nd_type <- sapply(nodes_layout, function(x) 
+
+  # Node type per row
+  nd_type <- sapply(nodes_layout, function(x)
     unique(sapply(consort_plot[x], "[[", "node_type"))
   )
-  
-  if(nd_type[length(nd_type)] == "sidebox")
+
+  if (nd_type[length(nd_type)] == "sidebox")
     stop("The last node can not be a side box.")
 
+  pad_u <- consort_opt("pad_u")
+  if (!is.numeric(pad_u) || length(pad_u) != 1L || is.na(pad_u))
+    stop("`pad_u` must be a single, non-NA numeric value.")
 
-  # Calculate Y
-  # Use configurable padding via global option, default 3 for backward compatibility
-  pad_u <- getOption("consort_pad_u", default = 3)
-  
-  nd_y <- vector("list", length = length(nodes_layout))
-  for(i in seq_along(nodes_layout)){
-    nd <- sapply(consort_plot[nodes_layout[[i]]], function(x)
-      get_coords(x$box)$height
-    )
-    if(i == 1){
-      nd_y[[i]] <- nd/2 + pad_u/2
-      prev_bt <- max(nd)
-    }else{
-      
-      if(length(nd_y[[i]]) != length(nd_y[[i-1]]))
-        add_padd <- 2*pad_u
-      else
-        add_padd <- pad_u
-      
-      nd_y[[i]] <- prev_bt + add_padd + nd/2
-      prev_bt <- prev_bt + add_padd + max(nd)
-    }
-    names(nd_y[[i]]) <- names(nd)
-  }
-  
-  # Calculate X
+  # --- Phase 1: Y coordinates ---
+  y_result <- calc_y_coords(consort_plot, nodes_layout, pad_u)
+  nd_y <- y_result$nd_y
+
+  # --- Phase 2: Gather node widths and sides ---
+  nd_wd <- lapply(nodes_layout, function(nd) {
+    sapply(consort_plot[nd], function(x) get_coords(x$box)$width)
+  })
+
+  nd_sides <- lapply(nodes_layout, function(nd) {
+    unlist(sapply(consort_plot[nd], function(x) x$side))
+  })
+
+  # --- Phase 3: X coordinates ---
   nd_x <- vector("list", length = length(nodes_layout))
-  idx <- sapply(nodes_layout, length)
-  nd_gp <- gp_consecutive(idx)
-  
-  # Nodes width
-  nd_wd <- lapply(nodes_layout, function(nd){
-    sapply(consort_plot[nd], function(x){
-      get_coords(x$box)$width
-    })
-  })
-  
-  # Nodes side
-  nd_sides <- lapply(nodes_layout, function(nd){
-    unlist(sapply(consort_plot[nd], function(nd)nd$side))
-  })
+  col_counts <- sapply(nodes_layout, length)
+  row_groups <- gp_consecutive(col_counts)
 
-  for(i in unique(nd_gp)){
-    idx_layout <- which(nd_gp %in% i)
-    sub_layout <- nodes_layout[idx_layout]
-    
-    sub_len <- unique(sapply(sub_layout, length))
-    
-    sb_wd <- do.call(rbind, nd_wd[idx_layout])
-    nd_tp <- nd_type[idx_layout]
-    nd_sd <- nd_sides[idx_layout][nd_tp %in% "sidebox"]
-    nd_sd <- do.call(rbind, nd_sd)
+  for (gp in unique(row_groups)) {
+    gp_rows <- which(row_groups == gp)
+    n_cols <- unique(col_counts[gp_rows])
+    gp_types <- nd_type[gp_rows]
 
-    if(sub_len == 1){
-      for(j in idx_layout){
-        if(nd_type[j] != "sidebox"){
-          nd_x[[j]] <- 0
-        }else{
-          nd_x[[j]] <- ifelse(nd_sides[[j]] == "right", 
-                              nd_wd[[j]]/2 + pad_u,
-                              -nd_wd[[j]]/2 - pad_u)
+    if (n_cols == 1) {
+      # Single-column: main nodes at center, sideboxes offset
+      for (r in gp_rows) {
+        if (nd_type[r] != "sidebox") {
+          nd_x[[r]] <- 0
+        } else {
+          nd_x[[r]] <- ifelse(nd_sides[[r]] == "right",
+                              nd_wd[[r]] / 2 + pad_u,
+                              -nd_wd[[r]] / 2 - pad_u)
         }
-        names(nd_x[[j]]) <- nodes_layout[[j]]
+        names(nd_x[[r]]) <- nodes_layout[[r]]
       }
-    }else{
-      
-      if(any(nd_tp %in% "sidebox")){
-        pos_tmp <- apply(sb_wd[!nd_tp %in% "sidebox",], 2, max)
-        pos_x <- vector("numeric", length = sub_len)
-        
-        # Calculate x for splits
-        for(j in 1:sub_len){
-          if(j == 1){
-            if(any("left" %in% nd_sd[,1])){
-              
-              # Width of the left
-              lt_max <- sb_wd[nd_tp %in% "sidebox", 1][nd_sd[,1] %in% "left"]
-              
-              pos_x[1] <- max(c(max(lt_max), pos_tmp[1]/2))
+    } else {
+      # Multi-column
+      wd_mat <- do.call(rbind, nd_wd[gp_rows])
+      is_sb <- gp_types == "sidebox"
 
-            }else{
-              pos_x[1] <- pos_tmp[1]/2
-            }
-            pos_x[1] <- pos_x[1] + pad_u
-          }else{
-            if(any("right" %in% nd_sd[,j-1])){
-              rt_max <- sb_wd[nd_tp %in% "sidebox", j - 1][nd_sd[,j-1] %in% "right"]
-              
-              rt_max <- max(c(max(rt_max), pos_tmp[j-1]/2))
-              prevnd_right <- TRUE
-              
-            }else{
-              rt_max <- pos_tmp[j-1]/2
-              prevnd_right <- FALSE
-            }
-            
-            if(any("left" %in% nd_sd[,j])){
-              lt_max <- sb_wd[nd_tp %in% "sidebox", 1][nd_sd[,j] %in% "left"]
-              
-              lt_max <- max(c(max(lt_max), pos_tmp[j]/2))
+      if (any(is_sb)) {
+        # Column positions with sidebox-aware spacing
+        main_col_widths <- apply(wd_mat[!is_sb, , drop = FALSE], 2, max)
+        sb_wd_mat <- wd_mat[is_sb, , drop = FALSE]
+        sb_sd_mat <- do.call(rbind, nd_sides[gp_rows][is_sb])
 
-            }else{
-              if(prevnd_right & max(rt_max) > pos_tmp[j-1]/2)
-                lt_max <- pad_u/2
-              else
-                lt_max <- pos_tmp[j]/2
-            }
-            
-            pos_x[j] <- pos_x[j-1] + lt_max + rt_max + pad_u
-            
+        col_x <- calc_column_x(main_col_widths, sb_wd_mat, sb_sd_mat, pad_u)
+
+        for (r in gp_rows) {
+          if (nd_type[r] != "sidebox") {
+            nd_x[[r]] <- col_x
+          } else {
+            nd_x[[r]] <- place_sideboxes(col_x, nd_wd[[r]], nd_sides[[r]], pad_u)
           }
+          names(nd_x[[r]]) <- nodes_layout[[r]]
         }
+      } else {
+        # No sideboxes: simple equal spacing
+        col_widths <- apply(wd_mat, 2, max)
+        col_x <- col_widths / 2 + c(0, cumsum(col_widths[-length(col_widths)] + 4 * pad_u))
+        col_x <- col_x - mean(col_x)
 
-        pos_x <- pos_x - mean(pos_x)
-        
-        for(j in idx_layout){
-          if(nd_type[j] != "sidebox"){
-            nd_x[[j]] <- pos_x
-          }else{
-            sd_tmp <- nd_sides[[j]]
-            for(k in 1:sub_len){
-              nd_x[[j]][k] <- ifelse(sd_tmp[k] == "right", 
-                                     pos_x[k] + nd_wd[[j]][k]/2 + pad_u/2,
-                                     pos_x[k] - nd_wd[[j]][k]/2 - pad_u/2)
-            }
-          }
-          
-          names(nd_x[[j]]) <- nodes_layout[[j]]
-        }
-        
-      }else{
-        pos_tmp <- apply(sb_wd, 2, max)
-        pos_x <- pos_tmp/2 + c(0, cumsum(pos_tmp[-length(pos_tmp)] + 4*pad_u))
-        # Make sure center is 0
-        pos_x <- pos_x - mean(pos_x)
-        for(j in idx_layout){
-          nd_x[[j]] <- pos_x
-          names(nd_x[[j]]) <- nodes_layout[[j]]
+        for (r in gp_rows) {
+          nd_x[[r]] <- col_x
+          names(nd_x[[r]]) <- nodes_layout[[r]]
         }
       }
     }
   }
-  
-  # For multiple split
-  if(sum(nd_type == "splitbox") > 1){
-    if(sum(nd_type == "splitbox") > 2)
-      stop("More than two splits are not supported.")
-    
-    # Recalculate the x coordinates for multiple split
-    split_idx <- which(nd_type == "splitbox")[-1]
-    
-    prev_node <- sapply(unlist(nodes_layout[split_idx]), function(y){
-      consort_plot[[y]]$prev_node
-    }, simplify = FALSE)
-    
-    prev_node <- unlist(prev_node)
-    for(i in unique(prev_node)){
-      # Get x of next nodes
-      next_nd_x <- nd_x[[split_idx]][names(prev_node[prev_node==i])]
-      nd_x[[split_idx-1]][i] <- min(next_nd_x) + (max(next_nd_x) - min(next_nd_x))/2
-    }
-  }
-  
-  # Adjust coordinates
-  nd_minmax <- lapply(seq_along(nodes_layout), function(x){
-    nd_len <- length(nodes_layout[[x]])
-    if(nd_len != 1){
-      tmp_wd <- do.call(rbind, nd_wd[x])
-      tmp_x <- do.call(rbind, nd_x[x])
-      max_x <- max(tmp_x[,nd_len] + tmp_wd[,nd_len]/2)
-      min_x <- min(tmp_x[, 1] - tmp_wd[,1]/2)
-      return(c(minx = min_x, maxx = max_x))
-    }else{
-      return(c(minx = nd_x[[x]] - nd_wd[[x]]/2, maxx = nd_x[[x]] + nd_wd[[x]]/2))
-    }
-  })
-  nd_minmax <- Filter(Negate(is.null), nd_minmax)
-  min_val <- min(do.call(rbind, nd_minmax)[,1])
-  max_val <- max(do.call(rbind, nd_minmax)[,2])
-  for(i in seq_along(nodes_layout)){
-    nd_x[[i]] <- nd_x[[i]] - min_val
-  }
-  max_width <- max_val - min_val
-  
-  
-  return(list(x = unlist(nd_x), 
-              y = unlist(nd_y),
-              nodes_hw = nd_wd, 
-              nd_x = nd_x, 
-              nd_y = nd_y,
-              max_width = max_width,
-              max_height = prev_bt + pad_u))
+
+  # --- Phase 4: Multiple split adjustment ---
+  nd_x <- adjust_multisplit(nd_x, nd_type, nodes_layout, consort_plot)
+
+  # --- Phase 5: Normalize to positive coordinates ---
+  x_result <- normalize_x(nd_x, nd_wd, nodes_layout)
+
+  list(
+    x = unlist(x_result$nd_x),
+    y = unlist(nd_y),
+    nodes_hw = nd_wd,
+    nd_x = x_result$nd_x,
+    nd_y = nd_y,
+    max_width = x_result$max_width,
+    max_height = y_result$total_height
+  )
 }
 
 # Calculate coordinates

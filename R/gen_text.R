@@ -12,7 +12,7 @@
 #' @param bullet If shows bullet points. If the value is \code{TRUE}, the bullet points
 #' will be tabulated, default is \code{FALSE}.
 #' @param bullet_char A single character used as the bullet symbol. Defaults to
-#'   \code{getOption("consort_bullet", default = "\u2022")}. Can be any Unicode
+#'   \code{consort_opt("bullet")}. Can be any Unicode
 #'   character such as \code{"\u2013"} (en-dash), \code{"\u25CB"} (circle),
 #'   \code{"\u25A0"} (square), \code{"-"}, etc.
 #'
@@ -38,11 +38,11 @@
 #' # Use a custom bullet character
 #' gen_text(val$car, label = "Cars in the data", bullet = TRUE, bullet_char = "-")
 #'
-#' # Or set globally via options
-#' options(consort_bullet = "\u25CB")
+#' # Or set globally via set_consort_defaults
+#' set_consort_defaults(bullet = "\u25CB")
 #' gen_text(val$car, label = "Cars in the data", bullet = TRUE)
 gen_text <- function(x, label = NULL, bullet = FALSE,
-                     bullet_char = getOption("consort_bullet", default = "\u2022")) {
+                     bullet_char = consort_opt("bullet")) {
   
   if(!is.null(label) & length(label)>1)
     stop("label must be of length 1")
@@ -96,7 +96,7 @@ gen_text <- function(x, label = NULL, bullet = FALSE,
 # Calculate the numbers in the box use the data provided.
 #' @keywords internal
 box_data.frame <- function(x, label = NULL,
-                           bullet_char = getOption("consort_bullet", default = "\u2022")){
+                           bullet_char = consort_opt("bullet")){
   if(ncol(x) != 2)
     stop("only two columns are supported")
   
@@ -120,7 +120,7 @@ box_data.frame <- function(x, label = NULL,
 # Calculate the numbers in the box
 #' @keywords internal
 box_label <- function(x, label, bullet = TRUE,
-                      bullet_char = getOption("consort_bullet", default = "\u2022")) {
+                      bullet_char = consort_opt("bullet")) {
   
   # Blank as NA
   if (is.character(x)) {

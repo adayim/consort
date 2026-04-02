@@ -41,10 +41,11 @@ is_empty <- function(x){
   is.null(x) | x == "" | is.na(x)
 }
 
+
 # Wrap text
 #' @keywords internal
 #'
-text_wrap <- function(txt, width = 0.9 * getOption("width")) {
+text_wrap <- function(txt, width = 0.9) {
   if (length(txt) > 1) {
     stop("Vector does not supported!")
   }

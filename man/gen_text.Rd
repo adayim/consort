@@ -4,7 +4,7 @@
 \alias{gen_text}
 \title{Generate label and bullet points}
 \usage{
-gen_text(x, label = NULL, bullet = FALSE)
+gen_text(x, label = NULL, bullet = FALSE, bullet_char = consort_opt("bullet"))
 }
 \arguments{
 \item{x}{A list or a vector to be used. \code{x} can be atomic vector, a 
@@ -15,8 +15,13 @@ The nested reasons only support two columns and the \code{bullet} will be ignore
 \item{label}{A character string as a label at the beginning of the text label.
 The count for each categories will be returned if no label is provided.}
 
-\item{bullet}{If shows bullet points. If the value is `TRUE`, the bullet points
-will be tabulated, default is `FALSE`.}
+\item{bullet}{If shows bullet points. If the value is \code{TRUE}, the bullet points
+will be tabulated, default is \code{FALSE}.}
+
+\item{bullet_char}{A single character used as the bullet symbol. Defaults to
+\code{consort_opt("bullet")}. Can be any Unicode
+character such as \code{"\u2013"} (en-dash), \code{"\u25CB"} (circle),
+\code{"\u25A0"} (square), \code{"-"}, etc.}
 }
 \value{
 A character string of vector.
@@ -37,4 +42,11 @@ gen_text(split(val$car, val$am), label = "Cars in the data")
 gen_text(split(val$car, val$am), label = "Cars in the data", bullet = FALSE)
 gen_text(split(val[,c("vs", "car")], val$am), label = "Cars in the data", bullet = FALSE)
 gen_text(val[,c("vs", "car")], label = "Cars in the data", bullet = FALSE)
+
+# Use a custom bullet character
+gen_text(val$car, label = "Cars in the data", bullet = TRUE, bullet_char = "-")
+
+# Or set globally via set_consort_defaults
+set_consort_defaults(bullet = "\u25CB")
+gen_text(val$car, label = "Cars in the data", bullet = TRUE)
 }

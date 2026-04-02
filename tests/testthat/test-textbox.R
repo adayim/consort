@@ -17,21 +17,21 @@ test_that("Box width and height", {
 })
 
 test_that("Box options", {
-  options(
+  old <- set_consort_defaults(
     txt_gp = gpar(cex = 0.5),
     box_gp = gpar(fill = "red")
   )
+  on.exit(set_consort_defaults(
+    txt_gp = old$txt_gp,
+    box_gp = old$box_gp
+  ), add = TRUE)
+
   bx1 <- textbox(text = "This is a test")
 
   # Text size
   expect_equal(bx1$txt_gp$cex, 0.5)
   # Box fill
   expect_equal(bx1$box_gp$fill, "red")
-
-  options(
-    txt_gp = gpar(),
-    box_gp = gpar()
-  )
 })
 
 
