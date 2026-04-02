@@ -42,8 +42,8 @@ consort_opt <- function(name) {
 #' @examples
 #' # Change text color and box fill
 #' old <- set_consort_defaults(
-#'   txt_gp = gpar(col = "navy", cex = 0.9),
-#'   box_gp = gpar(fill = "#F0F0F0")
+#'   txt_gp = grid::gpar(col = "navy", cex = 0.9),
+#'   box_gp = grid::gpar(fill = "#F0F0F0")
 #' )
 #'
 #' # View current defaults

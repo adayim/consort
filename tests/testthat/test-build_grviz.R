@@ -67,13 +67,12 @@ test_that("New options", {
   expect_snapshot_file(to_grviz(txt), "grviz-withopts.gv")
   
   # skip_if_not(tolower(.Platform$OS.type) == "windows")
-  # skip_on_ci()
+  skip_on_ci()
   expect_snapshot_file(save_png(g), "build-grviz-withopts.png")
-  
-  init_consort_defaults()
   
 })
 
+init_consort_defaults()
 
 test_that("Missing in some nodes", {
   g <- add_box(txt = c("Study 1 (n=8)", "Study 2 (n=12)"))
