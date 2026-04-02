@@ -15,10 +15,8 @@
 #' will be started in the middle point.
 #' @param type Should be one the \code{"s"} (strait line), or \code{"p"} (polyline).
 #' @param name A character identifier of the line grob, passed to \code{\link[grid]{linesGrob}}.
-#' @param lwd Line width for the connector line. Defaults to 
-#'   \code{getOption("consort_line_lwd", default = 1)}.
-#' @param col Line and arrow fill color. Defaults to 
-#'   \code{getOption("consort_line_col", default = "black")}.
+#' @param arrow_gp Graphical parameters for the connector line. Defaults to 
+#'   \code{grid::gpar(col = "black", lwd = 1)}.
 #' @param arrow_length Length of the arrowhead as a \code{\link[grid]{unit}} object. 
 #'   Defaults to \code{getOption("consort_arrow_length", default = unit(0.1, "inches"))}.
 #' @param arrow_type Arrow type, either \code{"closed"} or \code{"open"}. Defaults to 
@@ -44,8 +42,11 @@ connect_box <- function(start, end,
                         connect,
                         type = c("s", "p"),
                         name = NULL,
-                        lwd = getOption("consort_line_lwd", default = 1),
-                        col = getOption("consort_line_col", default = "black"),
+                        arrow_gp = getOption("consort_arrow_gp", 
+                                            default = gpar(
+                                            color = "black",
+                                            lwd = 1
+                        )),
                         arrow_length = getOption("consort_arrow_length", default = 0.1),
                         arrow_type = getOption("consort_arrow_type", default = "closed")) {
   
@@ -150,7 +151,7 @@ connect_box <- function(start, end,
   linesGrob(
     x = line_coords$x,
     y = line_coords$y,
-    gp = gpar(fill = col, col = col, lwd = lwd),
+    gp = sync_gpar(arrow_gp),
     arrow = arrow(
       length = arrow_length,
       ends = "last", type = arrow_type

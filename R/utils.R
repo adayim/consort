@@ -41,6 +41,16 @@ is_empty <- function(x){
   is.null(x) | x == "" | is.na(x)
 }
 
+# Synchronizing inside a gpar of fill with col
+#' @keywords internal
+sync_gpar <- function(gp) {
+  # If col exists, force fill to match it
+  if (!is.null(gp$col)) {
+    gp$fill <- gp$col
+  }
+  return(gp)
+}
+
 # Wrap text
 #' @keywords internal
 #'

@@ -18,6 +18,9 @@ calc_coords <- function(consort_plot){
   # Calculate Y
   # Use configurable padding via global option, default 3 for backward compatibility
   pad_u <- getOption("consort_pad_u", default = 3)
+  if(!inherits(pad_u, "numeric")){
+    stop("option `consort_pad_u` must be a numeric value.")
+  }
   
   nd_y <- vector("list", length = length(nodes_layout))
   for(i in seq_along(nodes_layout)){

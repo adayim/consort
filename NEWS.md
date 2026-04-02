@@ -1,3 +1,10 @@
+# consort 1.2.3
+
+-   Allow user configuration of arrow grpahical paraemters and padding.
+-   Allow custom bullet characters
+-   Imroved documentations. 
+-   Special thanks to @Ramsas88
+
 # consort 1.2.2
 
 -   Use comma separators for large number. 

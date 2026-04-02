@@ -22,7 +22,8 @@
 #' is defined.
 #' @param kickoff_sidebox remove (default) the side box observations from the 
 #' following counting.
-#' @param cex Multiplier applied to font size, Default is 0.8
+#' @param cex Multiplier applied to font size, Default is 0.8. This will override 
+#' the global option of \code{"consort_txt_gp"} if defined.
 #' @param text_width a positive integer giving the target column for wrapping
 #' lines in the output. String will not be wrapped if not defined (default).
 #' The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
@@ -53,8 +54,8 @@ consort_plot <- function(data,
                          kickoff_sidebox = TRUE,
                          cex = 0.8,
                          text_width = NULL) {
-  options(txt_gp = gpar(cex = cex))
-  on.exit(options(txt_gp = gpar()))
+  options(consort_txt_gp = gpar(cex = cex))
+  on.exit(options(consort_txt_gp = gpar()))
   
   data <- as.data.frame(data)
 

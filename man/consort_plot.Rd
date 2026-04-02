@@ -40,7 +40,8 @@ is defined.}
 \item{kickoff_sidebox}{remove (default) the side box observations from the 
 following counting.}
 
-\item{cex}{Multiplier applied to font size, Default is 0.8}
+\item{cex}{Multiplier applied to font size, Default is 0.8. This will override 
+the global option of \code{"consort_txt_gp"} if defined.}
 
 \item{text_width}{a positive integer giving the target column for wrapping
 lines in the output. String will not be wrapped if not defined (default).

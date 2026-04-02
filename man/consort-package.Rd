@@ -2,6 +2,7 @@
 % Please edit documentation in R/consort.R
 \docType{package}
 \name{consort-package}
+\alias{consort}
 \alias{consort-package}
 \title{Create Consort diagram}
 \description{
@@ -10,4 +11,16 @@ To make it easy to create CONSORT diagrams for the transparent reporting
   is done by creating a standardized disposition data, and using this data
    as the source for the creation a standard CONSORT diagram. Human effort
     by supplying text labels on the node can also be achieved.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/adayim/consort/}
+  \item Report bugs at \url{https://github.com/adayim/consort/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Alim Dayim \email{ad938@cam.ac.uk} (\href{https://orcid.org/0000-0001-9998-7463}{ORCID})
+
 }

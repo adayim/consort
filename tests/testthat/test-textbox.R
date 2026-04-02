@@ -18,8 +18,8 @@ test_that("Box width and height", {
 
 test_that("Box options", {
   options(
-    txt_gp = gpar(cex = 0.5),
-    box_gp = gpar(fill = "red")
+    consort_txt_gp = gpar(cex = 0.5),
+    consort_box_gp = gpar(fill = "red")
   )
   bx1 <- textbox(text = "This is a test")
 
@@ -29,8 +29,8 @@ test_that("Box options", {
   expect_equal(bx1$box_gp$fill, "red")
 
   options(
-    txt_gp = gpar(),
-    box_gp = gpar()
+    consort_txt_gp = gpar(),
+    consort_box_gp = gpar()
   )
 })
 
