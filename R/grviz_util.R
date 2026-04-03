@@ -128,22 +128,36 @@ mk_invs_connect <- function(x){
 # Make text alignment
 #' @keywords internal
 mk_text_align <- function(text, just, group = NULL, grviz_style = NULL){
-  # If empty
-  # if(is_empty(text))
-  #   return("")
 
-  jst <- ifelse(just == "center", "",
-                ifelse(just == "left", "\\l", "\r"))
+  if (has_markup(text)) {
+    # Graphviz HTML-like label: <html> instead of "plain"
+    html <- markup_to_html(text)
 
-  if(just %in% c("left", "right")){
-    text <- unlist(strsplit(text, "\n"))
-    text <- ifelse(just == "left",
-                   paste(text, collapse = "\\l"),
-                   paste(text, collapse = "\r"))
+    if (just == "left") {
+      html <- gsub("<br/>", '<br align="left"/>', html, fixed = TRUE)
+      html <- paste0(html, '<br align="left"/>')
+    } else if (just == "right") {
+      html <- gsub("<br/>", '<br align="right"/>', html, fixed = TRUE)
+      html <- paste0(html, '<br align="right"/>')
+    }
+
+    attr_parts <- sprintf("label = <%s>", html)
+  } else {
+    # Original plain-text label
+    jst <- ifelse(just == "center", "",
+                  ifelse(just == "left", "\\l", "\r"))
+
+    if(just %in% c("left", "right")){
+      text <- unlist(strsplit(text, "\n"))
+      text <- ifelse(just == "left",
+                     paste(text, collapse = "\\l"),
+                     paste(text, collapse = "\r"))
+    }
+
+    attr_parts <- sprintf('label = "%s%s"', text, jst)
   }
 
   # Build attributes
-  attr_parts <- sprintf('label = "%s%s"', text, jst)
   if(!is.null(group)) attr_parts <- paste(attr_parts, sprintf("group=%s", group))
   if(!is.null(grviz_style)) attr_parts <- paste(attr_parts, grviz_style)
 

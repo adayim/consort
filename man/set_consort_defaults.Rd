@@ -16,7 +16,8 @@ set_consort_defaults(
   arrow_length = NULL,
   arrow_type = NULL,
   pad_u = NULL,
-  bullet = NULL
+  bullet = NULL,
+  parse_markup = NULL
 )
 
 get_consort_defaults()
@@ -43,6 +44,11 @@ init_consort_defaults()
 \item{pad_u}{Numeric, padding between nodes.}
 
 \item{bullet}{Character, bullet character for side box items.}
+
+\item{parse_markup}{Logical, whether to parse lightweight markup syntax
+(\code{**bold**}, \code{*italic*}, \code{^{superscript}},
+\code{_{subscript}}, \code{__underline__}) in node labels.
+Default is \code{FALSE}.}
 
 \item{x}{A \code{consort_defaults} object.}
 

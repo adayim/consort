@@ -11,8 +11,10 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  dpi = 300,
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  message = FALSE
 )
 ```
 
@@ -116,11 +118,84 @@ The package has some default settings for the line width, color, arrow type and 
 get_consort_defaults()
 ```
 
+The available options are:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `arrow_gp` | `gpar()` | `gpar(col = "black", lwd = 1)` | Graphical parameters for arrows (colour, line width, line type, etc.). |
+| `txt_gp` | `gpar()` | `gpar(cex = 1, col = "black")` | Graphical parameters for the text inside boxes (font size, colour, font family, etc.). |
+| `box_gp` | `gpar()` | `gpar(fill = "white")` | Graphical parameters for the box border and fill colour. |
+| `label_txt_gp` | `gpar()` | `gpar(col = "#4F81BD", cex = 1, fontface = "bold")` | Graphical parameters for the phase/stage label text. |
+| `label_box_gp` | `gpar()` | `gpar(fill = "#A9C7FD")` | Graphical parameters for the phase/stage label box. |
+| `arrow_length` | numeric | `0.1` | Length of the arrowhead in inches. |
+| `arrow_type` | character | `"closed"` | Arrow type: `"closed"` (filled) or `"open"`. |
+| `pad_u` | numeric | `3` | Padding between nodes (in grid unit multiples). |
+| `bullet` | character | `"\u2022"` | Bullet character used in side box item lists (e.g. `"\u2013"` for en-dash, `"-"` for hyphen). |
+| `parse_markup` | logical | `FALSE` | Whether to parse lightweight markup (`**bold**`, `*italic*`, etc.) in node labels. See [Text formatting with markup] below. |
+
+The `gpar()` options are merged with the existing defaults, so you only need to specify the properties you want to change. Previous settings can be restored by capturing the return value:
+
+```{r set-restore, eval = FALSE}
+set_consort_defaults(arrow_gp = gpar(col = "red", lwd = 2))
+# ... draw diagram ...
+init_consort_defaults() # restore
+```
+
+
+# Text formatting with markup
+
+Node labels support a lightweight markup syntax for text formatting. This works with both the `grid` and `Graphviz` rendering backends. Markup parsing is **off by default**; enable it with:
+
+```r
+set_consort_defaults(parse_markup = TRUE)
+```
+
+The following styles are available:
+
+| Markup | Result |
+|---|---|
+| `**text**` | **Bold** |
+| `*text*` | *Italic* |
+| `^{text}` | Superscript |
+| `_{text}` | Subscript |
+| `__text__` | Underline |
+
+Markup can be mixed with plain text and line breaks (`\n`) as usual.
+
+
+*Note*: the markup may not be perfect. There is known issue with Graphviz that the combination of bold and normal text may not render correctly and it may overlap with the surrounding text. If you encounter this issue, you can try to add some extra space around the styled text.
+
+
+
+## Example
+
+```{r markup-grid, fig.width = 7, fig.height = 5, out.width="70%"}
+library(grid)
+set_consort_defaults(txt_gp = gpar(cex = 0.8), parse_markup = TRUE)
+
+g <- add_box(txt = "**Patients screened** (n=300)") |>
+  add_side_box(txt = "Excluded^{1} (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Other (n=12)") |>
+  add_box(txt = "__Randomised__ (n=285)") |>
+  add_split(txt = c("*Arm A* (n=143)", "*Arm B* (n=142)")) |>
+  add_box(txt = c("Analysed (n=128)", "Analysed (n=135)")) |>
+  add_label_box(txt = c("1" = "Screening", "3" = "Randomisation"))
+plot(g)
+```
+
+The same diagram can be rendered with `Graphviz`:
+
+```{r markup-grviz, out.width="70%", fig.width  = 3, fig.height = 1.5}
+plot(g, grViz = TRUE)
+```
+
+Formatting is applied per-segment, so you can combine styles within a single label — for example `"**Enrolled** (n=300)\n*p* < 0.05^{1}"` renders "Enrolled" in bold, "p" in italic, and "1" as a superscript footnote marker.
+
+Plain text without any markup is rendered exactly as before.
 
 # Working example (self generation)
 ## Single arm
 
-```{r single-arms, message=FALSE, fig.width  = 6, fig.height = 6}
+```{r single-arms, fig.width  = 6, fig.height = 6, out.width="70%"}
 out <- consort_plot(data = dispos.data,
                     orders = c(trialno = "Population",
                                exclusion = "Excluded",
@@ -136,7 +211,7 @@ plot(out)
 
 ## Multiple phase and multiple arms
 
-```{r multiple-phase, fig.width  = 9, fig.height = 6}
+```{r multiple-phase, fig.width  = 9, fig.height = 6, out.width="90%"}
 g <- consort_plot(data = dispos.data,
                   orders = c(trialno = "Population",
                              exclusion1    = "Excluded",
@@ -209,7 +284,7 @@ plot(p)
 The previous is to easily generate a consort diagram based on a disposition data, here we show how to create a consort diagram by providing the label text manually. 
 
 ## Provide text
-```{r providetext1, fig.width  = 7, fig.height = 4}
+```{r providetext1, fig.width  = 7, fig.height = 4, out.width="60%"}
 library(grid)
 # Might want to change some settings
 set_consort_defaults(txt_gp = gpar(cex = 0.8))
@@ -236,7 +311,7 @@ plot(g)
 ## Missing nodes and multiple split
 There might be some cases that the nodes will be missing, this can be handled as well. You can also have multiple splits, but multiple splits for the `grid` hasn't been implemented yet. You can use `plot(g, grViz = TRUE)` to produce the consort plot.
 
-```{r providetext2}
+```{r providetext2, fig.width  = 3, fig.height = 1.5, out.width="80%"}
 g <- add_box(txt = c("Study 1 (n=8)", "Study 2 (n=12)", "Study 3 (n=12)"))
 g <- add_box(g, txt = "Included All (n=20)")
 g <- add_side_box(g, txt = "Excluded (n=7):\n\u2022 MRI not collected (n=3)")
@@ -281,7 +356,7 @@ plot(g)
 ```
 
 ## Using disposition table
-```{r disposition-data, fig.width  = 7, fig.height = 6.5}
+```{r disposition-data, fig.width  = 7, fig.height = 6.5, out.width="70%"}
 set_consort_defaults(txt_gp = gpar(cex = 0.8))
 
 dispos.data$arm <- factor(dispos.data$arm)
@@ -316,7 +391,7 @@ plot(g)
 
 ## For Shiny and HTML
 Although all the efforts has been made to precisely calculate the coordinates of the nodes, it is not very accurate due to limit of my own knowledge. But you can utilize the [DiagrammeR](https://CRAN.R-project.org/package=DiagrammeR) to produce plots for Shiny and HTML by setting `grViz = TRUE` in `plot`. You can get `Graphviz` code with `build_grviz` of the plot. In addition, use [DiagrammeRsvg](https://CRAN.R-project.org/package=DiagrammeRsvg) and [rsvg](https://CRAN.R-project.org/package=rsvg) save plot in various formats.
-```{r save-plot}
+```{r save-plot, fig.width  = 3, fig.height = 1.5, out.width="70%"}
 plot(g, grViz = TRUE)
 ```
 

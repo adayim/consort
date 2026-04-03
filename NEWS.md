@@ -1,7 +1,8 @@
 # consort 1.2.3
 
 -   Allow user configuration of arrow graphical parameters and padding with `set_consort_defaults()`.
--   Allow custom bullet characters
+-   Allow custom bullet characters.
+-   Allow simple markup for bold, italic and superscript.
 -   Figure styles will also be applied to grViz plot.
 -   Improved documentation. 
 -   Special thanks to @Ramsas88

@@ -43,6 +43,7 @@ diagram with a given subject disposition data:
 
 ``` r
 library(consort)
+library(grid)
 ## basic example code
 ```
 
@@ -78,9 +79,12 @@ head(df)
 ```
 
 ``` r
+
+set_consort_defaults(txt_gp = gpar(cex = 0.6), parse_markup = TRUE)
+
 out <- consort_plot(data = df,
              order = c(trialno = "Population",
-                          exc    = "Excluded",
+                          exc    = "**Excluded**",
                           arm     = "Randomized patient",
                           fow1    = "Lost of Follow-up",
                           trialno = "Finished Followup",
@@ -89,13 +93,13 @@ out <- consort_plot(data = df,
              side_box = c("exc", "fow1", "fow2"),
              allocation = "arm",
              labels = c("1" = "Screening", "2" = "Randomization",
-                        "5" = "Final"),
-             cex = 0.6)
+                        "5" = "Final"))
+#> Please define this via `set_consort_defaults(txt_gp = gpar(cex = ...))` instead.
 
 plot(out)
 ```
 
-<img src="man/figures/README-diagram-1.png" width="100%" />
+<img src="man/figures/README-diagram-1.png" alt="" width="100%" />
 
 As the `grid` plotting is not very ideal, calculation of the coodinates
 for the nodes are not easy job and tried my best. Feel free to PR if you
@@ -106,8 +110,6 @@ The plot is ideal for Shiny or HTML output.
 ``` r
 plot(out, grViz = TRUE)
 ```
-
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
 Or save this `Graphviz` plot to `png` or `pdf`
 
