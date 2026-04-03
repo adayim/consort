@@ -14,7 +14,7 @@ calc_y_coords <- function(consort_plot, nodes_layout, pad_u) {
       prev_bt <- max(heights)
     } else {
       # Extra padding when column count changes (split/merge transition)
-      extra_pad <- if (length(nd_y[[i]]) != length(nd_y[[i - 1]])) 2 * pad_u else pad_u
+      extra_pad <- if (length(heights) != length(nd_y[[i - 1]])) 2 * pad_u else pad_u
       nd_y[[i]] <- prev_bt + extra_pad + heights / 2
       prev_bt <- prev_bt + extra_pad + max(heights)
     }
@@ -275,10 +275,12 @@ gp_consecutive <- function(x){
   int <- 1
   gp <- vector("character", length = length(x))
   gp[1] <- letters[int]
-  for(i in 2:length(x)){
-    if(x[i] != x[i-1])
-      int <- int + 1
-    gp[i] <- letters[int]
+  if(length(x) > 1){
+    for(i in 2:length(x)){
+      if(x[i] != x[i-1])
+        int <- int + 1
+      gp[i] <- letters[int]
+    }
   }
   return(gp)
 }

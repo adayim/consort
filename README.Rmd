@@ -44,6 +44,7 @@ This is a basic example which shows you how to solve a create CONSORT diagram wi
 
 ```{r example}
 library(consort)
+library(grid)
 ## basic example code
 ```
 
@@ -73,9 +74,12 @@ head(df)
 
 
 ```{r diagram, fig.width  = 7, fig.height = 6}
+
+set_consort_defaults(txt_gp = gpar(cex = 0.6), parse_markup = TRUE)
+
 out <- consort_plot(data = df,
              order = c(trialno = "Population",
-                          exc    = "Excluded",
+                          exc    = "**Excluded**",
                           arm     = "Randomized patient",
                           fow1    = "Lost of Follow-up",
                           trialno = "Finished Followup",
@@ -84,15 +88,14 @@ out <- consort_plot(data = df,
              side_box = c("exc", "fow1", "fow2"),
              allocation = "arm",
              labels = c("1" = "Screening", "2" = "Randomization",
-                        "5" = "Final"),
-             cex = 0.6)
+                        "5" = "Final"))
 
 plot(out)
 ```
 
 As the `grid` plotting is not very ideal, calculation of the coodinates for the nodes are not easy job and tried my best. Feel free to PR if you want to improve. Or you can produce `Graphviz` plot by setting `grViz = TRUE` in `plot`. This will use `DiagrammeR` to print the plot. The plot is ideal for Shiny or HTML output. 
 
-```{r}
+```{r eval=FALSE}
 plot(out, grViz = TRUE)
 ```
 

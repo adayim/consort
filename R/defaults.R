@@ -11,7 +11,8 @@ consort_defaults_settings <- list(
     arrow_length = 0.1,
     arrow_type = "closed",
     pad_u = 3,
-    bullet = "\u2022"
+    bullet = "\u2022",
+    parse_markup = FALSE
 )
 
 consort_global$defaults <- consort_defaults_settings
@@ -36,6 +37,10 @@ consort_opt <- function(name) {
 #' @param arrow_type Character, arrow type: \code{"closed"} or \code{"open"}.
 #' @param pad_u Numeric, padding between nodes.
 #' @param bullet Character, bullet character for side box items.
+#' @param parse_markup Logical, whether to parse lightweight markup syntax
+#'   (\code{**bold**}, \code{*italic*}, \code{^{superscript}},
+#'   \code{_{subscript}}, \code{__underline__}) in node labels.
+#'   Default is \code{FALSE}.
 #'
 #' @return Invisibly returns the previous defaults (a \code{consort_defaults} object).
 #' @export
@@ -63,7 +68,8 @@ set_consort_defaults <- function(
     arrow_length = NULL,
     arrow_type = NULL,
     pad_u = NULL,
-    bullet = NULL
+    bullet = NULL,
+    parse_markup = NULL
 ) {
 
   old <- get_consort_defaults()
@@ -78,7 +84,8 @@ set_consort_defaults <- function(
     arrow_length = arrow_length,
     arrow_type   = arrow_type,
     pad_u        = pad_u,
-    bullet       = bullet
+    bullet       = bullet,
+    parse_markup = parse_markup
   )
 
   # Keep only non-NULL arguments
@@ -115,6 +122,11 @@ set_consort_defaults <- function(
   if (!is.null(bullet)) {
     if (!is.character(bullet) || length(bullet) != 1)
       stop("`bullet` must be a single character string.")
+  }
+
+  if (!is.null(parse_markup)) {
+    if (!is.logical(parse_markup) || length(parse_markup) != 1 || is.na(parse_markup))
+      stop("`parse_markup` must be a single TRUE/FALSE value.")
   }
 
   # Update stored defaults

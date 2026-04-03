@@ -6,7 +6,7 @@
 #'  \code{\link{build_grviz}} or \code{plot(g, grViz = TRUE)} for 
 #' multiple split nodes instead.
 #'
-#' @param x A conosrt object.
+#' @param x A consort object.
 #' 
 #' @return A \code{gList} object
 #' @export 
@@ -54,13 +54,16 @@ build_grid <- function(x) {
   nodes_coord$y <- (vp_height - nodes_coord$y)/vp_height
 
   if(any(grepl("label", names(x)))){
-    label_coord <- calc_coords_label(label_plot, 
-                                     nodes_coord$nd_y, 
+    label_coord <- calc_coords_label(label_plot,
+                                     nodes_coord$nd_y,
                                      max_h = nodes_coord$max_height)
     vp_width <- sum(label_coord$width[1], vp_width)
 
     nodes_coord$x <- (nodes_coord$x + label_coord$width[1])/vp_width
-    
+
+    # Convert label x from char units to NPC so they scale with the viewport
+    label_coord$x <- label_coord$x / vp_width
+
   }else{
     nodes_coord$x <- (nodes_coord$x)/vp_width
   }
@@ -72,22 +75,17 @@ build_grid <- function(x) {
                   y = unit(nodes_coord$y[i], "npc"))
     r$name <- i
     
-    # Skep empty side box
+    # Skip empty side box
     if(is_empty(consort_plot[[i]]$text))
       return(NULL)
       
     return(r)
   }, simplify = FALSE)
   
+  grobs_list <- gList()
   for (i in seq_along(nodes)) {
-    if(is.null(nodes[[i]]))
-      next
-    
-    if (i == 1) {
-      grobs_list <- gList(gList(), nodes[[i]])
-    } else {
+    if(!is.null(nodes[[i]]))
       grobs_list <- gList(grobs_list, nodes[[i]])
-    }
   }
   
   # Connections
@@ -115,28 +113,22 @@ build_grid <- function(x) {
     for(i in seq_along(label_plot)){
       nam <- names(label_plot)[i]
       r <- move_box(label_plot[[nam]]$box,
-                    x = unit(label_coord$x[nam], "char"),
+                    x = unit(label_coord$x[nam], "npc"),
                     y = unit(label_coord$y[nam], "npc"))
       r$name <- nam
       
-      if (i == 1) {
-        lab_grobs <- gList(gList(), r)
-      } else {
-        lab_grobs <- gList(lab_grobs, r)
-      }
+      lab_grobs <- if (i == 1) gList(r) else gList(lab_grobs, r)
     }
     
     grobs_list <- gList(grobs_list, lab_grobs)
     
   }
   
-  grobTree(grobs_list, 
+  grobTree(grobs_list,
            name = "consort",
            vp = viewport(width = unit(0.98, "npc"),
                          height = unit(0.98, "npc")))
-  
-  # return(grobs_list)
-  
+
 }
 
 
