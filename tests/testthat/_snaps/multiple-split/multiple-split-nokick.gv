@@ -3,10 +3,10 @@ digraph consort_diagram {
 
 node [shape = rectangle]
 
-label26 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
-label27 [label = "Randomization" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
-label28 [label = "Follow-up" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
-label29 [label = "Final analysis" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label26 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=9.8]
+label27 [label = "Randomization" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=9.8]
+label28 [label = "Follow-up" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=9.8]
+label29 [label = "Final analysis" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=9.8]
 
 edge[style=invis];
 label26 -> label27 -> label28 -> label29;

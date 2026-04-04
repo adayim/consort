@@ -3,9 +3,9 @@ digraph consort_diagram {
 
 node [shape = rectangle]
 
-label14 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
-label15 [label = "Randomization" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
-label16 [label = "Final" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label14 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=12.6]
+label15 [label = "Randomization" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=12.6]
+label16 [label = "Final" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=12.6]
 
 edge[style=invis];
 label14 -> label15 -> label16;

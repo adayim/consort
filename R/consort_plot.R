@@ -57,9 +57,9 @@ consort_plot <- function(data,
                          text_width = NULL) {
 
   if(!is.null(cex)){
-    message("Please define this via `set_consort_defaults(txt_gp = gpar(cex = ...))` instead.")
-    old <- set_consort_defaults(txt_gp = gpar(cex = cex))
+    old <- set_consort_defaults(txt_gp = gpar(cex = cex), label_txt_gp = gpar(cex = cex))
     on.exit(consort_global$defaults$txt_gp <- old$txt_gp, add = TRUE)
+    on.exit(consort_global$defaults$label_txt_gp <- old$label_txt_gp, add = TRUE)
   }
 
   data <- as.data.frame(data)

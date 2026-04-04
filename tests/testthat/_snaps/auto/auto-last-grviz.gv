@@ -3,8 +3,8 @@ digraph consort_diagram {
 
 node [shape = rectangle]
 
-label8 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
-label9 [label = "Consent" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD"]
+label8 [label = "Screening" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=11.2]
+label9 [label = "Consent" fillcolor="#A9C7FD" style="rounded,filled" fontcolor="#4F81BD" fontsize=11.2]
 
 edge[style=invis];
 label8 -> label9;
