@@ -94,7 +94,6 @@ out <- consort_plot(data = df,
              allocation = "arm",
              labels = c("1" = "Screening", "2" = "Randomization",
                         "5" = "Final"))
-#> Please define this via `set_consort_defaults(txt_gp = gpar(cex = ...))` instead.
 
 plot(out)
 ```
