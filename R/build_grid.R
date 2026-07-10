@@ -82,33 +82,29 @@ build_grid <- function(x) {
     return(r)
   }, simplify = FALSE)
   
-  grobs_list <- gList()
-  for (i in seq_along(nodes)) {
-    if(!is.null(nodes[[i]]))
-      grobs_list <- gList(grobs_list, nodes[[i]])
-  }
-  
+  grobs_list <- Filter(Negate(is.null), nodes)
+
   # Connections
   for(i in seq_along(nodes_connect)){
     nd <- nodes_connect[[i]]
-    
+
     if(is.null(nodes[[nd$node[1]]]))
       next
-    
+
     for(j in 2:length(nd$node)){
       if(is.null(nodes[[nd$node[j]]])){
         nd_name <- nodes_connect[[nd$node[j]]]$node[2]
       }else{
         nd_name <- nd$node[j]
       }
-      connect_gb <- connect_box(nodes[[nd_name]], nodes[[nd$node[1]]], 
+      connect_gb <- connect_box(nodes[[nd_name]], nodes[[nd$node[1]]],
                                 connect = nd$connect, type = "p")
-      grobs_list <- gList(grobs_list, connect_gb)
+      grobs_list[[length(grobs_list) + 1L]] <- connect_gb
     }
   }
-  
+
   if(any(grepl("label", names(x)))){
-    
+
     # Align labels
     for(i in seq_along(label_plot)){
       nam <- names(label_plot)[i]
@@ -116,13 +112,13 @@ build_grid <- function(x) {
                     x = unit(label_coord$x[nam], "npc"),
                     y = unit(label_coord$y[nam], "npc"))
       r$name <- nam
-      
-      lab_grobs <- if (i == 1) gList(r) else gList(lab_grobs, r)
+
+      grobs_list[[length(grobs_list) + 1L]] <- r
     }
-    
-    grobs_list <- gList(grobs_list, lab_grobs)
-    
+
   }
+
+  grobs_list <- do.call(gList, unname(grobs_list))
   
   grobTree(grobs_list,
            name = "consort",

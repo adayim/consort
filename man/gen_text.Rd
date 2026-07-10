@@ -4,7 +4,13 @@
 \alias{gen_text}
 \title{Generate label and bullet points}
 \usage{
-gen_text(x, label = NULL, bullet = FALSE, bullet_char = consort_opt("bullet"))
+gen_text(
+  x,
+  label = NULL,
+  bullet = FALSE,
+  bullet_char = consort_opt("bullet"),
+  drop_levels = TRUE
+)
 }
 \arguments{
 \item{x}{A list or a vector to be used. \code{x} can be atomic vector, a 
@@ -22,6 +28,12 @@ will be tabulated, default is \code{FALSE}.}
 \code{consort_opt("bullet")}. Can be any Unicode
 character such as \code{"\u2013"} (en-dash), \code{"\u25CB"} (circle),
 \code{"\u25A0"} (square), \code{"-"}, etc.}
+
+\item{drop_levels}{If \code{TRUE} (default), unused factor levels are
+dropped before tabulation, so categories with zero counts are omitted.
+Set to \code{FALSE} to report zero-count factor levels as \code{(n=0)},
+e.g. to display an exclusion criterion that was applied but excluded
+nobody. Only applies when \code{x} (or the reason column) is a factor.}
 }
 \value{
 A character string of vector.
@@ -49,4 +61,10 @@ gen_text(val$car, label = "Cars in the data", bullet = TRUE, bullet_char = "-")
 # Or set globally via set_consort_defaults
 set_consort_defaults(bullet = "\u25CB")
 gen_text(val$car, label = "Cars in the data", bullet = TRUE)
+
+# Report zero-count factor levels with (n=0)
+reason <- factor(c("Ineligible", NA, "Declined", NA),
+                 levels = c("Ineligible", "Declined", "Other"))
+gen_text(reason, label = "Excluded", bullet = TRUE)
+gen_text(reason, label = "Excluded", bullet = TRUE, drop_levels = FALSE)
 }

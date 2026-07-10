@@ -12,7 +12,8 @@ consort_plot(
   labels = NULL,
   kickoff_sidebox = TRUE,
   cex = 0.8,
-  text_width = NULL
+  text_width = NULL,
+  drop_levels = TRUE
 )
 }
 \arguments{
@@ -22,7 +23,7 @@ consort_plot(
 and values as labels in the box. The order of the diagram will be based on this.
 A list can be used to report multiple variable in a single node, the first 
 variable in a list element will be used to report the total and the exact items
-will be summarised for the remaining variable. This is limitted to non-side box.}
+will be summarised for the remaining variable. This is limited to non-side box.}
 
 \item{side_box}{Variable vector, appeared as side box in the diagram. The next
 box will be the subset of the missing values of these variables.}
@@ -37,7 +38,7 @@ length two can be provided. The extra box will be skipped if the values
 position location should plus 1 after the allocation variables if the allocation
 is defined.}
 
-\item{kickoff_sidebox}{remove (default) the side box observations from the 
+\item{kickoff_sidebox}{remove (default) the side box observations from the
 following counting.}
 
 \item{cex}{Multiplier applied to font size, default is 0.8. Prefer using
@@ -47,6 +48,12 @@ following counting.}
 lines in the output. String will not be wrapped if not defined (default).
 The \code{\link[stringi]{stri_wrap}} function will be used if \code{stringi}
 package installed, otherwise \code{\link[base]{strwrap}} will be used.}
+
+\item{drop_levels}{If \code{TRUE} (default), unused factor levels are
+dropped when tabulating counts, so categories with zero counts are omitted
+from the boxes. Set to \code{FALSE} to report zero-count factor levels as
+\code{(n=0)}, e.g. to display an exclusion criterion that was applied but
+excluded nobody. Only applies to factor variables, see \code{\link{gen_text}}.}
 }
 \value{
 A \code{consort} object.

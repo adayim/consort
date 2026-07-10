@@ -7,7 +7,7 @@
 build_grviz(x)
 }
 \arguments{
-\item{x}{A conosrt object.}
+\item{x}{A consort object.}
 }
 \value{
 A \code{Graphviz} code

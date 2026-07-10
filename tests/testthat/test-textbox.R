@@ -35,6 +35,24 @@ test_that("Box options", {
 })
 
 
+test_that("Measurement caching is stable", {
+  bx1 <- textbox(text = "This is a test")
+
+  # Repeated measurements return identical values (served from cache)
+  first <- get_coords(bx1)
+  second <- get_coords(bx1)
+  expect_identical(first$width, second$width)
+  expect_identical(first$height, second$height)
+
+  # Cached measurement matches a freshly built identical textbox
+  bx2 <- textbox(text = "This is a test")
+  expect_equal(first$width, get_coords(bx2)$width)
+  expect_equal(first$height, get_coords(bx2)$height)
+
+  # Cache environment is populated after measuring
+  expect_true(!is.null(bx1$hw_cache$hw))
+})
+
 test_that("Expect class type", {
   tx <- textGrob(label = "text")
   bx1 <- textbox(text = "This is a test")

@@ -3,7 +3,7 @@
 #' Build a \code{grob} consort diagram, use this if you want
 #' to save plots with \code{\link[ggplot2]{ggsave}}
 #'
-#' @param x A conosrt object.
+#' @param x A consort object.
 #' 
 #' @return A \code{Graphviz} code
 #'
@@ -32,10 +32,6 @@ build_grviz <- function(x) {
   # Get the maximum of height and width of each node
   nodes_layout <- attr(x, "nodes.list")
 
-  # Generate connection
-  nodes_connect <- get_connect(x)
-  nodes_connect <- sapply(nodes_connect, function(x)x$node[2])
-  
   if(any(grepl("label", names(x)))){
     consort_plot <- x[grepl("node", names(x))]
     label_plot <- x[grepl("label", names(x))]
@@ -63,7 +59,12 @@ build_grviz <- function(x) {
     lab_edge <- NULL
     lab_rnk <- NULL
   }
-  
+
+  # Generate connection (labels excluded: their prev_node is a row index,
+  # not a node name)
+  nodes_connect <- get_connect(consort_plot)
+  nodes_connect <- sapply(nodes_connect, function(x)x$node[2])
+
   # Reset the indexing to 0
   set_invs(0)
   
@@ -87,7 +88,7 @@ build_grviz <- function(x) {
   main_txt <- do.call(rbind, main_txt)
   # Remove empty label
   null_indx <- is_empty(main_txt[,"text"]) & !main_txt[,"nam"] %in% unlist(nodes_layout[nd_type == "vertbox"])
-  main_txt <- main_txt[!null_indx,]
+  main_txt <- main_txt[!null_indx, , drop = FALSE]
   
   rnk_nd <- vector("character") # Ranking
   inv_nd <- vector("character") # Invisible node
@@ -232,9 +233,10 @@ build_grviz <- function(x) {
   }
   
   # Make sure all connections are linked
-  if(any(!grepl(paste(nodes_connect, collapse = "|"), con_nd))){
+  # Match on word boundaries so e.g. "node1" does not match "node10"
+  if(any(!grepl(paste(sprintf("\\<%s\\>", nodes_connect), collapse = "|"), con_nd))){
     nd_none <- sapply(nodes_connect, function(x){
-      !grepl(x, con_nd)
+      !grepl(sprintf("\\<%s\\>", x), con_nd)
     })
     nd_none <- apply(nd_none, 2, all)
     nd_none <- nodes_connect[nd_none]

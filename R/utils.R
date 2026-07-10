@@ -37,8 +37,10 @@ print.consort <- plot.consort
 #' @keywords internal
 #'
 is_empty <- function(x){
+  if (is.null(x) || length(x) == 0)
+    return(TRUE)
   x <- gsub("[[:space:]]", "", x)
-  is.null(x) | x == "" | is.na(x)
+  is.na(x) | x == ""
 }
 
 

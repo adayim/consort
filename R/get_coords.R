@@ -36,17 +36,20 @@ get_coords <- function(x) {
   half_height <- unit(0.5 * height, "char")
   half_width <- unit(0.5 * width, "char")
 
+  x_mid <- convertX(grobX(x, 90), "npc")
+  y_mid <- convertY(grobY(x, 0), "npc")
+
   list(
-    left = convertX(grobX(x, 90), "npc") - half_width,
-    right = convertX(grobX(x, 90), "npc") + half_width,
-    bottom = convertY(grobY(x, 0), "npc") - half_height,
-    top = convertY(grobY(x, 0), "npc") + half_height,
+    left = x_mid - half_width,
+    right = x_mid + half_width,
+    bottom = y_mid - half_height,
+    top = y_mid + half_height,
     top.mid = unit.c(grobX(x, 90), grobY(x, 90)),
     left.mid = unit.c(grobX(x, 180), grobY(x, 180)),
     bottom.mid = unit.c(grobX(x, 90), grobY(x, 270)),
     right.mid = unit.c(grobX(x, 0), grobY(x, 0)),
-    x = convertX(grobX(x, 90), "npc"),
-    y = convertY(grobY(x, 0), "npc"),
+    x = x_mid,
+    y = y_mid,
     width = width,
     height = height,
     half_width = half_width,

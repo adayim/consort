@@ -9,7 +9,7 @@
 #' and values as labels in the box. The order of the diagram will be based on this.
 #' A list can be used to report multiple variable in a single node, the first 
 #' variable in a list element will be used to report the total and the exact items
-#' will be summarised for the remaining variable. This is limitted to non-side box.
+#' will be summarised for the remaining variable. This is limited to non-side box.
 #' @param side_box Variable vector, appeared as side box in the diagram. The next
 #'  box will be the subset of the missing values of these variables.
 #' @param allocation Name of the grouping/treatment variable (optional), the
@@ -20,8 +20,13 @@
 #' @param labels Named vector, names is the location of the terminal node. The
 #' position location should plus 1 after the allocation variables if the allocation
 #' is defined.
-#' @param kickoff_sidebox remove (default) the side box observations from the 
+#' @param kickoff_sidebox remove (default) the side box observations from the
 #' following counting.
+#' @param drop_levels If \code{TRUE} (default), unused factor levels are
+#' dropped when tabulating counts, so categories with zero counts are omitted
+#' from the boxes. Set to \code{FALSE} to report zero-count factor levels as
+#' \code{(n=0)}, e.g. to display an exclusion criterion that was applied but
+#' excluded nobody. Only applies to factor variables, see \code{\link{gen_text}}.
 #' @param cex Multiplier applied to font size, default is 0.8. Prefer using
 #' \code{\link{set_consort_defaults}(txt_gp = gpar(cex = ...))} instead.
 #' @param text_width a positive integer giving the target column for wrapping
@@ -54,7 +59,8 @@ consort_plot <- function(data,
                          labels = NULL,
                          kickoff_sidebox = TRUE,
                          cex = 0.8,
-                         text_width = NULL) {
+                         text_width = NULL,
+                         drop_levels = TRUE) {
 
   if(!is.null(cex)){
     old <- set_consort_defaults(txt_gp = gpar(cex = cex), label_txt_gp = gpar(cex = cex))
@@ -83,7 +89,7 @@ consort_plot <- function(data,
   if(any(ord_len != 1 & side_alloc))
     stop("The sidebox must be single variable.")
   
-  if(names(orders[[1]]) %in% allocation)
+  if(any(names(orders[[1]]) %in% allocation))
     stop("The first variable can not be a allocation variable.")
 
   # If all defined variables included in the orders
@@ -132,9 +138,10 @@ consort_plot <- function(data,
       val <- get_val(data, nd)
 
       if (any(nd %in% side_box)) {
-        txt <- gen_text(x = unlst(val), 
+        txt <- gen_text(x = unlst(val),
                         label = names(nd),
-                        bullet = TRUE)
+                        bullet = TRUE,
+                        drop_levels = drop_levels)
 
         gp_list <- add_side_box(gp_list,
           txt = txt,
@@ -165,10 +172,10 @@ consort_plot <- function(data,
         
         if(split_ctn == 2){
           txt2 <- lapply(val, function(x){
-            make_text(value = x, varialbe = nd)
+            make_text(value = x, variable = nd, drop_levels = drop_levels)
           })
         }else{
-          txt2 <- make_text(value = val, varialbe = nd)
+          txt2 <- make_text(value = val, variable = nd, drop_levels = drop_levels)
           # txt2 <- gen_text(val)
         }
         
@@ -185,21 +192,24 @@ consort_plot <- function(data,
         if(split_ctn == 2){
           txt <- lapply(val, function(x){
             r <- lapply(x, function(y){
-              make_text(value = y, varialbe = nd, 
-                        label = TRUE, split = FALSE)
+              make_text(value = y, variable = nd,
+                        label = TRUE, split = FALSE,
+                        drop_levels = drop_levels)
             })
             unlist(r)
           })
           txt <- unlist(txt)
         }else if(split_ctn == 1){
           txt <- lapply(val, function(x){
-            make_text(value = x, varialbe = nd, 
-                      label = TRUE, split = FALSE)
+            make_text(value = x, variable = nd,
+                      label = TRUE, split = FALSE,
+                      drop_levels = drop_levels)
           })
           txt <- unlist(txt)
         }else{
-          txt <- make_text(value = val, varialbe = nd, 
-                           label = TRUE, split = FALSE)
+          txt <- make_text(value = val, variable = nd,
+                           label = TRUE, split = FALSE,
+                           drop_levels = drop_levels)
         }
 
         gp_list <- add_box(gp_list,
@@ -225,21 +235,25 @@ consort_plot <- function(data,
 
 # Make text for multiple variable
 #' @keywords internal
-make_text <- function(value, varialbe, label = FALSE, split = TRUE){
-  
-  if(!label | trimws(names(varialbe[1])) == ""){
-    r1 <- gen_text(value[,1])
+make_text <- function(value, variable, label = FALSE, split = TRUE,
+                      drop_levels = TRUE){
+
+  if(!label | trimws(names(variable[1])) == ""){
+    r1 <- gen_text(value[,1], drop_levels = drop_levels)
   }else{
-    r1 <- gen_text(value[,1], label = names(varialbe[1]))
+    r1 <- gen_text(value[,1], label = names(variable[1]),
+                   drop_levels = drop_levels)
   }
-  
-  if(length(varialbe) > 1){
-    r2 <- sapply(2:length(varialbe), function(j){
-      y <- varialbe[j]
+
+  if(length(variable) > 1){
+    r2 <- sapply(2:length(variable), function(j){
+      y <- variable[j]
       if(split)
-        gen_text(split(value[,y], value[,1]), label = names(y), bullet = TRUE)
+        gen_text(split(value[,y], value[,1]), label = names(y), bullet = TRUE,
+                 drop_levels = drop_levels)
       else
-        gen_text(value[,y], label = names(y), bullet = TRUE)
+        gen_text(value[,y], label = names(y), bullet = TRUE,
+                 drop_levels = drop_levels)
     })
     paste(r1, r2, sep = "\n")
   }else{

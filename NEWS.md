@@ -1,3 +1,10 @@
+# consort 1.2.4
+
+-   New `drop_levels` argument in `consort_plot()` and `gen_text()` to report zero-count factor levels as `(n=0)` (#25).
+-   Faster plotting by caching text box measurements.
+-   Fixed node-name confusion (e.g. `node1` vs `node10`) in `build_grviz()`.
+-   Fixed an error with multiple variables in the first element of `orders`.
+
 # consort 1.2.3
 
 -   Allow user configuration of arrow graphical parameters and padding with `set_consort_defaults()`.

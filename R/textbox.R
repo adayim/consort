@@ -60,6 +60,7 @@ textbox <- function(text,
     label = text, x = x, y = y, just = just,
     txt_gp = txt_gp, box_fn = box_fn,
     box_gp = box_gp, angle = angle,
+    hw_cache = new.env(parent = emptyenv()),
     name = name,
     cl = "textbox"
   )
@@ -75,22 +76,41 @@ grid.textbox <- function(...) {
   grid::grid.draw(textbox(...))
 }
 
+#' @importFrom grDevices dev.cur
 get_hw <- function(x) {
-  if (has_markup(x$label)) {
-    return(get_hw_formatted(x))
+  # Text and gpar never change after creation, but the size of a "char" unit
+  # depends on the device and viewport in effect. Cache the measurement and
+  # reuse it only while that context is unchanged.
+  cache <- x$hw_cache
+  sig <- paste(dev.cur(),
+               convertWidth(unit(1, "char"), "in", valueOnly = TRUE),
+               convertHeight(unit(1, "char"), "in", valueOnly = TRUE),
+               sep = "|")
+  if (!is.null(cache) && identical(cache$sig, sig)) {
+    return(cache$hw)
   }
 
-  t <- textGrob(label = x$label, gp = x$txt_gp)
-  # Add padding
-  padding <- unit(1 * ifelse(is.null(x$txt_gp$cex), 1,
-    x$txt_gp$cex
-  ), "char")
-  # height <- grobHeight(t) + padding
-  height <- convertHeight(grobHeight(t), "char") + padding
-  # width <- grobWidth(t) + padding
-  width <- convertWidth(grobWidth(t), "char") + padding
+  if (has_markup(x$label)) {
+    hw <- get_hw_formatted(x)
+  } else {
+    t <- textGrob(label = x$label, gp = x$txt_gp)
+    # Add padding
+    padding <- unit(1 * ifelse(is.null(x$txt_gp$cex), 1,
+      x$txt_gp$cex
+    ), "char")
+    height <- convertHeight(grobHeight(t), "char") + padding
+    width <- convertWidth(grobWidth(t), "char") + padding
 
-  list(width = width, height = height)
+    hw <- list(width = width, height = height)
+  }
+
+  # Objects created by older package versions have no cache environment
+  if (!is.null(cache)) {
+    cache$sig <- sig
+    cache$hw <- hw
+  }
+
+  hw
 }
 
 # Measure width/height for formatted (markup) text

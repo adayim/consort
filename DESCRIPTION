@@ -1,7 +1,7 @@
 Package: consort
 Type: Package
 Title: Create Consort Diagram
-Version: 1.2.3
+Version: 1.2.4
 Authors@R: person("Alim", "Dayim",
                   email = "ad938@cam.ac.uk",
                   role = c("aut", "cre"),
@@ -21,8 +21,8 @@ Suggests:
     covr,
     stringi
 VignetteBuilder: knitr
-RoxygenNote: 7.3.3
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
 LazyData: true
+Config/roxygen2/version: 8.0.0

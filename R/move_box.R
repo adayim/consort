@@ -26,7 +26,7 @@ move_box <- function(obj, x = NULL, y = NULL, pos_type = c("absolute", "relative
     stop("Object obj must be textbox.")
   }
 
-  args <- list(x = obj$x, y = obj$y, width = obj$width, height = obj$width)
+  args <- list(x = obj$x, y = obj$y)
 
   if (!is.null(x)) {
     if (!is.unit(x)) {
