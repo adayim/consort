@@ -1,3 +1,60 @@
+# The current device's drawable area in inches, or NULL if there is no
+# device open yet (or its size can't be determined) -- callers treat NULL
+# as "no constraint".
+#' @keywords internal
+#' @importFrom grDevices dev.size
+get_device_size_in <- function() {
+  if (dev.cur() == 1L) return(NULL)
+  sz <- tryCatch(dev.size("in"), error = function(e) NULL)
+  if (is.null(sz) || length(sz) != 2L || any(!is.finite(sz)) || any(sz <= 0))
+    return(NULL)
+  sz
+}
+
+# Factor (0, 1] to shrink a layout measuring `width_chars` x `height_chars`
+# (in "char" units, as returned by calc_coords()) so that it fits within the
+# current device. Returns 1 (no shrink) when the layout already fits, or
+# when the device size can't be determined.
+#' @keywords internal
+calc_shrink_factor <- function(width_chars, height_chars, margin = 0.98) {
+  dev_sz <- get_device_size_in()
+  if (is.null(dev_sz)) return(1)
+
+  width_in  <- convertWidth(unit(width_chars, "char"), "in", valueOnly = TRUE)
+  height_in <- convertHeight(unit(height_chars, "char"), "in", valueOnly = TRUE)
+  if (!is.finite(width_in) || !is.finite(height_in) || width_in <= 0 || height_in <= 0)
+    return(1)
+
+  min(1, dev_sz[1] * margin / width_in, dev_sz[2] * margin / height_in)
+}
+
+# Return a copy of a textbox grob with its text scaled by `factor`. Used to
+# shrink an already-built box (and its cached measurement) rather than
+# rebuilding it from scratch.
+#' @keywords internal
+rescale_textbox <- function(box, factor) {
+  old_cex <- if (is.null(box$txt_gp$cex)) 1 else box$txt_gp$cex
+  new_gp <- box$txt_gp
+  new_gp$cex <- old_cex * factor
+  editGrob(box, txt_gp = new_gp, hw_cache = new.env(parent = emptyenv()))
+}
+
+# Apply rescale_textbox() to every node's box in a consort-plot-like list
+# (main nodes or label nodes), refreshing the cached box_hw. List-level
+# attributes (nodes.list etc.) are untouched by the element replacement.
+#' @keywords internal
+rescale_nodes <- function(plot_list, factor) {
+  for (nm in names(plot_list)) {
+    nd <- plot_list[[nm]]
+    if (!is.null(nd$box)) {
+      nd$box <- rescale_textbox(nd$box, factor)
+      nd$box_hw <- get_size(nd$box)
+      plot_list[[nm]] <- nd
+    }
+  }
+  plot_list
+}
+
 # Stack rows top-to-bottom, with extra padding at split/merge transitions
 #' @keywords internal
 calc_y_coords <- function(consort_plot, nodes_layout, pad_u) {
@@ -6,7 +63,7 @@ calc_y_coords <- function(consort_plot, nodes_layout, pad_u) {
 
   for (i in seq_along(nodes_layout)) {
     heights <- sapply(consort_plot[nodes_layout[[i]]], function(x)
-      get_coords(x$box)$height
+      get_size(x$box)$height
     )
 
     if (i == 1) {
@@ -32,39 +89,26 @@ calc_y_coords <- function(consort_plot, nodes_layout, pad_u) {
 calc_column_x <- function(main_col_widths, sb_wd_mat, sb_sd_mat, pad_u) {
   n_cols <- length(main_col_widths)
   has_sb <- !is.null(sb_sd_mat)
-  pos <- numeric(n_cols)
 
-  # Left extent of column 1
-  left_space <- main_col_widths[1] / 2
-  if (has_sb && any(sb_sd_mat[, 1] == "left")) {
-    sb_wd <- sb_wd_mat[sb_sd_mat[, 1] == "left", 1]
-    left_space <- max(c(left_space, max(sb_wd)))
+  # Distance from a column's center to its outer edge on `side`: at least
+  # the column's own half-width, further out if a sidebox sits there (a
+  # sidebox on `side` is centered at half its width + pad_u/2 past the
+  # column center, see place_sideboxes()).
+  col_extent <- function(j, side) {
+    extent <- main_col_widths[j] / 2
+    if (has_sb) {
+      on_side <- sb_sd_mat[, j] == side
+      if (any(on_side)) {
+        extent <- max(extent, max(sb_wd_mat[on_side, j]) + pad_u / 2)
+      }
+    }
+    extent
   }
-  pos[1] <- left_space + pad_u
 
-  if (n_cols > 1) {
-    for (j in 2:n_cols) {
-      # Right extent of previous column
-      right_space <- main_col_widths[j - 1] / 2
-      prev_wide_right <- FALSE
-      if (has_sb && any(sb_sd_mat[, j - 1] == "right")) {
-        sb_wd <- sb_wd_mat[sb_sd_mat[, j - 1] == "right", j - 1]
-        right_space <- max(c(right_space, max(sb_wd)))
-        prev_wide_right <- right_space > main_col_widths[j - 1] / 2
-      }
-
-      # Left extent of current column
-      left_space <- main_col_widths[j] / 2
-      if (has_sb && any(sb_sd_mat[, j] == "left")) {
-        sb_wd <- sb_wd_mat[sb_sd_mat[, j] == "left", j]
-        left_space <- max(c(left_space, max(sb_wd)))
-      } else if (prev_wide_right) {
-        # Previous column's sidebox already extends past its center,
-        # so reduce this column's left extent to avoid excessive spacing
-        left_space <- pad_u / 2
-      }
-
-      pos[j] <- pos[j - 1] + right_space + pad_u + left_space
+  pos <- numeric(n_cols)
+  for (j in seq_len(n_cols)) {
+    if (j > 1) {
+      pos[j] <- pos[j - 1] + col_extent(j - 1, "right") + pad_u + col_extent(j, "left")
     }
   }
 
@@ -159,7 +203,7 @@ calc_coords <- function(consort_plot) {
 
   # --- Phase 2: Gather node widths and sides ---
   nd_wd <- lapply(nodes_layout, function(nd) {
-    sapply(consort_plot[nd], function(x) get_coords(x$box)$width)
+    sapply(consort_plot[nd], function(x) get_size(x$box)$width)
   })
 
   nd_sides <- lapply(nodes_layout, function(nd) {
@@ -246,7 +290,8 @@ calc_coords <- function(consort_plot) {
 calc_coords_label <- function(label_plot, node_y, max_h){
 
   lab_wd <- sapply(label_plot, function(x){
-    c(w = get_coords(x$box)$width, h = get_coords(x$box)$height)
+    sz <- get_size(x$box)
+    c(w = sz$width, h = sz$height)
   })
   
   lab_pos <- sapply(label_plot, function(x){
@@ -274,12 +319,12 @@ calc_coords_label <- function(label_plot, node_y, max_h){
 gp_consecutive <- function(x){
   int <- 1
   gp <- vector("character", length = length(x))
-  gp[1] <- letters[int]
+  gp[1] <- as.character(int)
   if(length(x) > 1){
     for(i in 2:length(x)){
       if(x[i] != x[i-1])
         int <- int + 1
-      gp[i] <- letters[int]
+      gp[i] <- as.character(int)
     }
   }
   return(gp)

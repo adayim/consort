@@ -73,19 +73,11 @@ add_side_box <- function(prev_box,
   nodes <- lapply(seq_along(txt), function(i){
     box <- do.call(textbox, c(list(text = txt[i]), args_list))
 
-    # Add width to the side box, calculate horizontal width
-    prev_box <- prev_box[[prev_nodes[i]]]$box_hw
-    box_hw <- get_coords(box)
-    # Add extra width to account for side box 
-    box_hw$width <- box_hw$width + convertWidth(prev_box$half_width, "mm", valueOnly = TRUE)*1.5
-    # Don't know why this is too large in the plot
-    box_hw$height <- box_hw$height/2 
-
     list(
       text = txt[i],
       node_type = "sidebox",
       box = box,
-      box_hw = box_hw,
+      box_hw = get_size(box),
       side = side[i],
       just = "left",
       prev_node = prev_nodes[i]

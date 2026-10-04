@@ -1,9 +1,11 @@
 # consort 1.2.4
 
 -   New `drop_levels` argument in `consort_plot()` and `gen_text()` to report zero-count factor levels as `(n=0)` (#25).
--   Faster plotting by caching text box measurements.
+-   Faster plotting by caching text box measurements and simplifying layout calculations.
 -   Fixed node-name confusion (e.g. `node1` vs `node10`) in `build_grviz()`.
 -   Fixed an error with multiple variables in the first element of `orders`.
+-   `plot()` now shrinks the diagram to fit the device instead of stretching it, fixing overlapping nodes.
+-   Fixed `add_label_box()` ignoring its own `box_fn` and `just` arguments.
 
 # consort 1.2.3
 

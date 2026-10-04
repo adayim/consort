@@ -4,20 +4,39 @@
 \alias{build_grid}
 \title{Build consort diagram}
 \usage{
-build_grid(x)
+build_grid(x, shrink_to_fit = FALSE)
 }
 \arguments{
 \item{x}{A consort object.}
+
+\item{shrink_to_fit}{If \code{TRUE}, shrink the whole diagram (text
+included) so it fits the currently open graphics device, never
+enlarging it beyond its natural size. Default is \code{FALSE}, which
+always lays out the diagram at its natural size -- the right choice
+when the result is passed on to \code{ggsave()} rather than drawn
+directly.}
 }
 \value{
-A \code{gList} object
+A \code{gList} object, with a \code{size} attribute giving the
+  diagram's natural width/height in inches.
 }
 \description{
 Build a \code{grob} consort diagram, use this if you want
 to save plots with \code{\link[ggplot2]{ggsave}}. \code{build_grid}
-does not support multiple split for the moment, please use 
- \code{\link{build_grviz}} or \code{plot(g, grViz = TRUE)} for 
-multiple split nodes instead.
+does not support more than two nested splits for the moment, please use
+ \code{\link{build_grviz}} or \code{plot(g, grViz = TRUE)} for
+such diagrams instead.
+}
+\details{
+The diagram is laid out at a fixed, device-independent "natural" size,
+returned (in inches) as the \code{size} attribute of the result, which
+can be passed straight to \code{\link[ggplot2]{ggsave}}'s \code{width}/
+\code{height} for an undistorted export, e.g.
+\code{sz <- attr(build_grid(x), "size"); ggsave(..., width = sz$width, height = sz$height)}.
+With \code{shrink_to_fit = TRUE}, the diagram is scaled down (text, boxes
+and spacing together, never enlarged) to fit the currently open graphics
+device; this is what \code{\link{plot.consort}} uses so an interactive
+plot window never ends up with overlapping nodes.
 }
 \examples{
 \dontrun{
@@ -32,7 +51,9 @@ g <- add_box(txt = txt1)
 g <- add_side_box(g, txt = txt1_side)
 
 g <- add_box(g, txt = "Randomized (n=200)")
-# g <- ggsave("consort_diagram.pdf", plot = build_grid(g))
+gr <- build_grid(g)
+sz <- attr(gr, "size")
+# ggsave("consort_diagram.pdf", plot = gr, width = sz$width, height = sz$height)
 }
 
 }

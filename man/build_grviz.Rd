@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_grviz.R
 \name{build_grviz}
 \alias{build_grviz}
-\title{Build consort diagram}
+\title{Build consort diagram as Graphviz DOT code}
 \usage{
 build_grviz(x)
 }
@@ -10,11 +10,14 @@ build_grviz(x)
 \item{x}{A consort object.}
 }
 \value{
-A \code{Graphviz} code
+A \code{Graphviz} DOT code string.
 }
 \description{
-Build a \code{grob} consort diagram, use this if you want
-to save plots with \code{\link[ggplot2]{ggsave}}
+Build the Graphviz DOT representation of a consort object, use this if
+you want to render with \code{\link[DiagrammeR]{grViz}} (see
+\code{plot(x, grViz = TRUE)}) or export via
+\code{\link[DiagrammeRsvg]{export_svg}}. Unlike \code{\link{build_grid}},
+this supports nested (multiple) splits.
 }
 \examples{
 \dontrun{

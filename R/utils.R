@@ -16,7 +16,7 @@
 #' @export
 plot.consort <- function(x, grViz = FALSE, ...) {
   if(!grViz){
-    r <- build_grid(x)
+    r <- build_grid(x, shrink_to_fit = TRUE)
     grid.newpage()
     grid.draw(r)
   }else{
@@ -47,7 +47,7 @@ is_empty <- function(x){
 # Wrap text
 #' @keywords internal
 #'
-text_wrap <- function(txt, width = 0.9) {
+text_wrap <- function(txt, width) {
   if (length(txt) > 1) {
     stop("Vector does not supported!")
   }

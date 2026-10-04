@@ -56,3 +56,24 @@ get_coords <- function(x) {
     half_height = half_height
   )
 }
+
+# Width and height of a textbox in char units
+# Lightweight alternative to `get_coords` for layout calculations: reads the
+# cached text measurement without resolving grob x/y positions or building
+# the box grob.
+#' @keywords internal
+get_size <- function(x) {
+  # Custom box functions may have different natural dimensions; measure the
+  # grob for real in that case
+  if (!is_standard_box(x$box_fn)) {
+    return(list(
+      width = convertWidth(grobWidth(x), "char", valueOnly = TRUE),
+      height = convertHeight(grobHeight(x), "char", valueOnly = TRUE)
+    ))
+  }
+  hw <- get_hw(x)
+  list(
+    width = convertWidth(hw$width, "char", valueOnly = TRUE),
+    height = convertHeight(hw$height, "char", valueOnly = TRUE)
+  )
+}

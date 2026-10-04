@@ -40,7 +40,7 @@ add_label_box <- function(prev_box,
     stop("txt must be a named vector.")
   }
 
-  if (length(txt) > 1 & is.null(names(txt)) & !any(is.na(as.numeric(names(txt))))) {
+  if (length(txt) > 1 && any(is.na(suppressWarnings(as.numeric(names(txt)))))) {
     stop("txt names must be number indicating the row position of the terminal
           node to be aligned.")
   }
@@ -58,13 +58,7 @@ add_label_box <- function(prev_box,
   }
 
   # Set default values
-  args_list <- list()
-  # args_list$text <- txt
-  # args_list$txt_gp <- label_txt_gp
-  # args_list$box_gp <- label_box_gp
-  # args_list$box_fn <- roundrectGrob
-  args_list$name <- "label"
-
+  args_list <- list(box_fn = box_fn, just = just, name = "label")
   args_list <- modifyList(args_list, dots)
   
   # Node type of each
@@ -94,7 +88,7 @@ add_label_box <- function(prev_box,
       text = txt[i],
       node_type = "label",
       box = box,
-      box_hw = get_coords(box),
+      box_hw = get_size(box),
       side = NULL,
       just = just,
       gpar = args_list[c("txt_gp", "box_gp")],

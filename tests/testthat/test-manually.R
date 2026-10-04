@@ -1,13 +1,4 @@
 
-save_png <- function(x, width = 9, height = 9) {
-  path <- tempfile(fileext = ".png")
-  png(path, width = width, height = height, 
-      units = "in", type = "cairo-png", res = 300)
-  on.exit(dev.off())
-  plot(x)
-  path
-}
-
 test_that("Generate consort manually", {
   txt1 <- "Population (n=300)"
   txt1_side <- "Excluded (n=15):\n\u2022 MRI not collected (n=3)\n\u2022 Tissues not collected (n=4)\n\u2022 Other (n=8)"

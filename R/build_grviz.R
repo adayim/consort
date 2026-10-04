@@ -1,11 +1,14 @@
-#' Build consort diagram
+#' Build consort diagram as Graphviz DOT code
 #'
-#' Build a \code{grob} consort diagram, use this if you want
-#' to save plots with \code{\link[ggplot2]{ggsave}}
+#' Build the Graphviz DOT representation of a consort object, use this if
+#' you want to render with \code{\link[DiagrammeR]{grViz}} (see
+#' \code{plot(x, grViz = TRUE)}) or export via
+#' \code{\link[DiagrammeRsvg]{export_svg}}. Unlike \code{\link{build_grid}},
+#' this supports nested (multiple) splits.
 #'
 #' @param x A consort object.
-#' 
-#' @return A \code{Graphviz} code
+#'
+#' @return A \code{Graphviz} DOT code string.
 #'
 #' @seealso \code{\link[DiagrammeR]{grViz}}
 #' @export 

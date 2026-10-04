@@ -287,51 +287,55 @@ make_formatted_content <- function(x) {
   do.call(gList, grob_list)
 }
 
+# Rect-like box functions have the exact width/height passed to them, so
+# boundary queries can skip building the box grob. Custom `box_fn` may have
+# different natural dimensions and must be measured for real.
+#' @keywords internal
+is_standard_box <- function(box_fn) {
+  is.null(box_fn) ||
+    identical(box_fn, rectGrob) ||
+    identical(box_fn, roundrectGrob)
+}
+
+# Boundary box grob used for x/y/width/height queries
+#' @keywords internal
+boundary_box <- function(x, hw) {
+  if (is_standard_box(x$box_fn)) {
+    rectGrob(x = .5, y = .5, width = hw$width, height = hw$height)
+  } else {
+    do.call(x$box_fn, list(
+      x = .5,
+      y = .5,
+      width = hw$width,
+      height = hw$height
+    ))
+  }
+}
+
 #' @export
 xDetails.textbox <- function(x, theta) {
-  hw <- get_hw(x)
-  rr <- do.call(x$box_fn, list(
-    x = .5,
-    y = .5,
-    width = hw$width,
-    height = hw$height
-  ))
-  grobX(rr, theta)
+  grobX(boundary_box(x, get_hw(x)), theta)
 }
 
 #' @export
 yDetails.textbox <- function(x, theta) {
-  hw <- get_hw(x)
-  rr <- do.call(x$box_fn, list(
-    x = .5,
-    y = .5,
-    width = hw$width,
-    height = hw$height
-  ))
-
-  grobY(rr, theta)
+  grobY(boundary_box(x, get_hw(x)), theta)
 }
 
 #' @export
 widthDetails.textbox <- function(x) {
   hw <- get_hw(x)
-  rr <- do.call(x$box_fn, list(
-    x = .5,
-    y = .5,
-    width = hw$width,
-    height = hw$height
-  ))
-  grobWidth(rr)
+  if (is_standard_box(x$box_fn)) {
+    return(hw$width)
+  }
+  grobWidth(boundary_box(x, hw))
 }
 
 #' @export
 heightDetails.textbox <- function(x) {
   hw <- get_hw(x)
-  rr <- do.call(x$box_fn, list(
-    x = .5,
-    y = .5,
-    width = hw$width,
-    height = hw$height
-  ))
-  grobHeight(rr)
+  if (is_standard_box(x$box_fn)) {
+    return(hw$height)
+  }
+  grobHeight(boundary_box(x, hw))
 }

@@ -28,7 +28,9 @@ parse_markup <- function(text) {
   }
 
   # Combined pattern — order matters: ** before *, __ before _{}
+  # Capture groups map to styles by position
   pattern <- "\\*\\*(.+?)\\*\\*|__(.+?)__|\\*(.+?)\\*|\\^\\{(.+?)\\}|_\\{(.+?)\\}"
+  group_styles <- c("bold", "underline", "italic", "superscript", "subscript")
 
   matches <- gregexpr(pattern, text, perl = TRUE)[[1]]
 
@@ -38,56 +40,45 @@ parse_markup <- function(text) {
 
   match_starts  <- as.integer(matches)
   match_lengths <- attr(matches, "match.length")
+  cap_starts    <- attr(matches, "capture.start")
+  cap_lengths   <- attr(matches, "capture.length")
 
-  segments <- list()
+  segments <- vector("list", 2L * length(match_starts) + 1L)
+  n <- 0L
   pos <- 1L
 
   for (i in seq_along(match_starts)) {
     # Plain text before this match
     if (match_starts[i] > pos) {
-      segments <- c(segments, list(list(
+      n <- n + 1L
+      segments[[n]] <- list(
         text  = substr(text, pos, match_starts[i] - 1L),
         style = "plain"
-      )))
+      )
     }
 
-    matched <- substr(text, match_starts[i],
-                      match_starts[i] + match_lengths[i] - 1L)
-
-    # Determine which alternative matched
-    if (grepl("^\\*\\*(.+?)\\*\\*$", matched, perl = TRUE)) {
-      inner <- sub("^\\*\\*(.+?)\\*\\*$", "\\1", matched, perl = TRUE)
-      segments <- c(segments, list(list(text = inner, style = "bold")))
-
-    } else if (grepl("^__(.+?)__$", matched, perl = TRUE)) {
-      inner <- sub("^__(.+?)__$", "\\1", matched, perl = TRUE)
-      segments <- c(segments, list(list(text = inner, style = "underline")))
-
-    } else if (grepl("^\\*(.+?)\\*$", matched, perl = TRUE)) {
-      inner <- sub("^\\*(.+?)\\*$", "\\1", matched, perl = TRUE)
-      segments <- c(segments, list(list(text = inner, style = "italic")))
-
-    } else if (grepl("^\\^\\{(.+?)\\}$", matched, perl = TRUE)) {
-      inner <- sub("^\\^\\{(.+?)\\}$", "\\1", matched, perl = TRUE)
-      segments <- c(segments, list(list(text = inner, style = "superscript")))
-
-    } else if (grepl("^_\\{(.+?)\\}$", matched, perl = TRUE)) {
-      inner <- sub("^_\\{(.+?)\\}$", "\\1", matched, perl = TRUE)
-      segments <- c(segments, list(list(text = inner, style = "subscript")))
-    }
+    # The capture group that participated in the match gives the style
+    j <- which(cap_lengths[i, ] > 0L)[1]
+    n <- n + 1L
+    segments[[n]] <- list(
+      text  = substr(text, cap_starts[i, j],
+                     cap_starts[i, j] + cap_lengths[i, j] - 1L),
+      style = group_styles[j]
+    )
 
     pos <- match_starts[i] + match_lengths[i]
   }
 
   # Remaining text after last match
   if (pos <= nchar(text)) {
-    segments <- c(segments, list(list(
+    n <- n + 1L
+    segments[[n]] <- list(
       text  = substr(text, pos, nchar(text)),
       style = "plain"
-    )))
+    )
   }
 
-  segments
+  segments[seq_len(n)]
 }
 
 # Split parsed segments into lines at \n boundaries in plain segments

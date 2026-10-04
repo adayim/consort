@@ -92,17 +92,17 @@ consort_plot <- function(data,
   if(any(names(orders[[1]]) %in% allocation))
     stop("The first variable can not be a allocation variable.")
 
+  ord_vars <- names(unlist(orders))
+
   # If all defined variables included in the orders
-  if (!all(c(side_box, allocation) %in% names(unlist(orders)))) {
-    not_in <- which(!c(side_box, allocation) %in% names(unlist(orders)))
-    not_in <- c(side_box, allocation)[not_in]
+  not_in <- setdiff(c(side_box, allocation), ord_vars)
+  if (length(not_in) > 0) {
     stop("Variable ", paste(not_in, collapse = ", "), " not included in the `orders`")
   }
 
   # If all the orders variables included in the dataset
-  if (!all(names(unlist(orders)) %in% names(data))) {
-    not_in <- which(!names(unlist(orders)) %in% names(data))
-    not_in <- names(unlist(orders))[not_in]
+  not_in <- setdiff(ord_vars, names(data))
+  if (length(not_in) > 0) {
     stop("Variable ", paste(not_in, collapse = ", "), " can not be found in the data")
   }
   
