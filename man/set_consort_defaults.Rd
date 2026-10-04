@@ -27,23 +27,35 @@ init_consort_defaults()
 \method{print}{consort_defaults}(x, ...)
 }
 \arguments{
-\item{arrow_gp}{A \code{\link[grid]{gpar}} object for the arrow line.}
+\item{arrow_gp}{A \code{\link[grid]{gpar}} object for the arrow line (colour,
+line width, line type, etc.). Package default is
+\code{gpar(col = "black", lwd = 1)}.}
 
-\item{txt_gp}{A \code{\link[grid]{gpar}} object for the text inside boxes.}
+\item{txt_gp}{A \code{\link[grid]{gpar}} object for the text inside boxes
+(font size, colour, font family, etc.). Package default is
+\code{gpar(cex = 1, col = "black")}.}
 
-\item{box_gp}{A \code{\link[grid]{gpar}} object for the box border and fill.}
+\item{box_gp}{A \code{\link[grid]{gpar}} object for the box border and fill.
+Package default is \code{gpar(fill = "white")}.}
 
-\item{label_txt_gp}{A \code{\link[grid]{gpar}} object for the label text.}
+\item{label_txt_gp}{A \code{\link[grid]{gpar}} object for the label text.
+Package default is
+\code{gpar(col = "#4F81BD", cex = 1, fontface = "bold")}.}
 
-\item{label_box_gp}{A \code{\link[grid]{gpar}} object for the label box.}
+\item{label_box_gp}{A \code{\link[grid]{gpar}} object for the label box.
+Package default is \code{gpar(fill = "#A9C7FD")}.}
 
-\item{arrow_length}{Numeric, length of the arrowhead in inches.}
+\item{arrow_length}{Numeric, length of the arrowhead in inches. Default is
+\code{0.1}.}
 
-\item{arrow_type}{Character, arrow type: \code{"closed"} or \code{"open"}.}
+\item{arrow_type}{Character, arrow type: \code{"closed"} (default) or
+\code{"open"}.}
 
-\item{pad_u}{Numeric, padding between nodes.}
+\item{pad_u}{Numeric, padding between nodes in character units. Default is
+\code{3}.}
 
-\item{bullet}{Character, bullet character for side box items.}
+\item{bullet}{Character, bullet character for side box items, e.g. an en dash
+or a hyphen. Default is the Unicode bullet (U+2022).}
 
 \item{parse_markup}{Logical, whether to parse lightweight markup syntax
 (\code{**bold**}, \code{*italic*}, \code{^{superscript}},
@@ -62,6 +74,10 @@ A \code{consort_defaults} object containing all current default settings.
 \description{
 Modify the default graphical parameters and other settings for consort diagrams.
 Any parameter set to \code{NULL} (the default) will remain unchanged.
+\code{\link[grid]{gpar}} arguments are merged with the current values, so
+only the properties to change need to be given. Use
+\code{init_consort_defaults()} to restore the package defaults, and
+\code{get_consort_defaults()} to view the current settings.
 }
 \examples{
 # Change text color and box fill

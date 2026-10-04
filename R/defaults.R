@@ -27,16 +27,32 @@ consort_opt <- function(name) {
 #'
 #' Modify the default graphical parameters and other settings for consort diagrams.
 #' Any parameter set to \code{NULL} (the default) will remain unchanged.
+#' \code{\link[grid]{gpar}} arguments are merged with the current values, so
+#' only the properties to change need to be given. Use
+#' \code{init_consort_defaults()} to restore the package defaults, and
+#' \code{get_consort_defaults()} to view the current settings.
 #'
-#' @param arrow_gp A \code{\link[grid]{gpar}} object for the arrow line.
-#' @param txt_gp A \code{\link[grid]{gpar}} object for the text inside boxes.
+#' @param arrow_gp A \code{\link[grid]{gpar}} object for the arrow line (colour,
+#'   line width, line type, etc.). Package default is
+#'   \code{gpar(col = "black", lwd = 1)}.
+#' @param txt_gp A \code{\link[grid]{gpar}} object for the text inside boxes
+#'   (font size, colour, font family, etc.). Package default is
+#'   \code{gpar(cex = 1, col = "black")}.
 #' @param box_gp A \code{\link[grid]{gpar}} object for the box border and fill.
+#'   Package default is \code{gpar(fill = "white")}.
 #' @param label_txt_gp A \code{\link[grid]{gpar}} object for the label text.
+#'   Package default is
+#'   \code{gpar(col = "#4F81BD", cex = 1, fontface = "bold")}.
 #' @param label_box_gp A \code{\link[grid]{gpar}} object for the label box.
-#' @param arrow_length Numeric, length of the arrowhead in inches.
-#' @param arrow_type Character, arrow type: \code{"closed"} or \code{"open"}.
-#' @param pad_u Numeric, padding between nodes.
-#' @param bullet Character, bullet character for side box items.
+#'   Package default is \code{gpar(fill = "#A9C7FD")}.
+#' @param arrow_length Numeric, length of the arrowhead in inches. Default is
+#'   \code{0.1}.
+#' @param arrow_type Character, arrow type: \code{"closed"} (default) or
+#'   \code{"open"}.
+#' @param pad_u Numeric, padding between nodes in character units. Default is
+#'   \code{3}.
+#' @param bullet Character, bullet character for side box items, e.g. an en dash
+#'   or a hyphen. Default is the Unicode bullet (U+2022).
 #' @param parse_markup Logical, whether to parse lightweight markup syntax
 #'   (\code{**bold**}, \code{*italic*}, \code{^{superscript}},
 #'   \code{_{subscript}}, \code{__underline__}) in node labels.

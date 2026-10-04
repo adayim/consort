@@ -7,7 +7,6 @@
 
 There were no ERRORs or WARNINGs. 
 
-CRAN note has been resolved.
 ---
 
-This version includes 5 improvement. 
+This version includes 6 improvements and 1 bug fixes. 
