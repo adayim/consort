@@ -3,8 +3,8 @@
 #' Build the Graphviz DOT representation of a consort object, use this if
 #' you want to render with \code{\link[DiagrammeR]{grViz}} (see
 #' \code{plot(x, grViz = TRUE)}) or export via
-#' \code{\link[DiagrammeRsvg]{export_svg}}. Unlike \code{\link{build_grid}},
-#' this supports nested (multiple) splits.
+#' \code{\link[DiagrammeRsvg]{export_svg}}. At most two nested splits are
+#' supported, use \code{\link{build_grid}} for deeper nesting.
 #'
 #' @param x A consort object.
 #'

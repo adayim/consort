@@ -81,101 +81,181 @@ calc_y_coords <- function(consort_plot, nodes_layout, pad_u) {
   list(nd_y = nd_y, total_height = prev_bt + pad_u)
 }
 
-# Calculate X positions for multi-column rows, accounting for sidebox extents.
-# main_col_widths: max node width per column from non-sidebox rows
-# sb_wd_mat: matrix of widths from sidebox rows (rows x columns), or NULL
-# sb_sd_mat: matrix of sides ("left"/"right") from sidebox rows, or NULL
+# Layout parents of every main (vertbox/splitbox) node, as a named list of
+# node names. Usually the declared `prev_node`. When a node's text is empty,
+# `add_box()` records the placeholder's own parent in the next row instead,
+# but the next node still sits in the placeholder's column, so the node at the
+# same position in the preceding main row is its layout parent.
 #' @keywords internal
-calc_column_x <- function(main_col_widths, sb_wd_mat, sb_sd_mat, pad_u) {
-  n_cols <- length(main_col_widths)
-  has_sb <- !is.null(sb_sd_mat)
+layout_parents <- function(consort_plot, nodes_layout, main_rows) {
+  lay_par <- list()
+  for (i in seq_along(main_rows)) {
+    r <- main_rows[i]
+    prev_row <- if (i > 1) nodes_layout[[main_rows[i - 1]]] else NULL
 
-  # Distance from a column's center to its outer edge on `side`: at least
-  # the column's own half-width, further out if a sidebox sits there (a
-  # sidebox on `side` is centered at half its width + pad_u/2 past the
-  # column center, see place_sideboxes()).
-  col_extent <- function(j, side) {
-    extent <- main_col_widths[j] / 2
-    if (has_sb) {
-      on_side <- sb_sd_mat[, j] == side
-      if (any(on_side)) {
-        extent <- max(extent, max(sb_wd_mat[on_side, j]) + pad_u / 2)
+    for (pos in seq_along(nodes_layout[[r]])) {
+      nm <- nodes_layout[[r]][pos]
+      pn <- as.character(consort_plot[[nm]]$prev_node)
+      if (length(pn) == 1L && !is.null(prev_row) && !pn %in% prev_row &&
+          length(prev_row) == length(nodes_layout[[r]])) {
+        pn <- prev_row[pos]
+      }
+      lay_par[[nm]] <- pn
+    }
+  }
+  lay_par
+}
+
+# A contour holds, per row, the leftmost and rightmost x a subtree reaches
+# (NA where it has nothing on that row).
+#' @keywords internal
+merge_contour <- function(a, b) {
+  list(left = pmin(a$left, b$left, na.rm = TRUE),
+       right = pmax(a$right, b$right, na.rm = TRUE))
+}
+
+#' @keywords internal
+shift_contour <- function(cont, by) {
+  list(left = cont$left + by, right = cont$right + by)
+}
+
+# Calculate X positions of all nodes as a tree layout (Reingold-Tilford).
+#
+# Main nodes form a forest through their layout parents. A node with no or
+# several layout parents (the first row, or a merge) starts a new segment;
+# each segment is laid out on its own and then centred under its parents.
+# Within a segment, sibling subtrees are placed left to right, each one pushed
+# right until its contour clears the contours of the siblings before it by
+# `sib_gap` on every row, and a parent is centred over its first and last
+# child. A side box is not a child: it widens its anchor's contour on the row
+# it occupies, and is placed beside the anchor afterwards.
+#
+# Returns a list with one named numeric vector per row of `nodes_layout`.
+#' @keywords internal
+calc_tree_x <- function(consort_plot, nodes_layout, nd_type, nd_wd, pad_u) {
+  sib_gap   <- 2 * pad_u  # minimum gap between neighbouring subtrees on a row
+  sb_offset <- pad_u / 2  # gap between a column's line and its side box
+
+  n_rows <- length(nodes_layout)
+  all_nd <- unlist(nodes_layout)
+  row_of <- setNames(rep(seq_len(n_rows), lengths(nodes_layout)), all_nd)
+  width  <- setNames(unlist(nd_wd, use.names = FALSE), all_nd)
+
+  main_rows <- which(nd_type %in% c("vertbox", "splitbox"))
+  side_rows <- which(nd_type == "sidebox")
+  main_nd   <- unlist(nodes_layout[main_rows])
+
+  # Side boxes by anchor node
+  side_of <- list()
+  for (r in side_rows) {
+    for (nm in nodes_layout[[r]]) {
+      anchor <- consort_plot[[nm]]$prev_node
+      if (length(anchor) != 1L || !anchor %in% nodes_layout[[r - 1L]])
+        stop("A side box must be attached to a node in the row above it.")
+      side_of[[anchor]] <- c(side_of[[anchor]], nm)
+    }
+  }
+
+  lay_par <- layout_parents(consort_plot, nodes_layout, main_rows)
+
+  children <- list()
+  for (nm in main_nd) {
+    if (length(lay_par[[nm]]) == 1L)
+      children[[lay_par[[nm]]]] <- c(children[[lay_par[[nm]]]], nm)
+  }
+
+  x <- setNames(numeric(length(main_nd)), main_nd)
+  members <- list()  # node -> all nodes in its subtree, itself included
+
+  # Contour of `v` alone: its box, and the line and side box on the row below
+  own_contour <- function(v) {
+    left <- right <- rep(NA_real_, n_rows)
+    r <- row_of[[v]]
+    left[r]  <- x[[v]] - width[[v]] / 2
+    right[r] <- x[[v]] + width[[v]] / 2
+
+    for (sb in side_of[[v]]) {
+      s <- row_of[[sb]]
+      left[s] <- right[s] <- x[[v]]
+      if (!is_empty(consort_plot[[sb]]$text)) {
+        if (identical(consort_plot[[sb]]$side, "left")) {
+          left[s] <- x[[v]] - sb_offset - width[[sb]]
+        } else {
+          right[s] <- x[[v]] + sb_offset + width[[sb]]
+        }
       }
     }
-    extent
+    list(left = left, right = right)
   }
 
-  pos <- numeric(n_cols)
-  for (j in seq_len(n_cols)) {
-    if (j > 1) {
-      pos[j] <- pos[j - 1] + col_extent(j - 1, "right") + pad_u + col_extent(j, "left")
+  # Lay out each subtree in `nodes` and place them side by side; returns the
+  # merged contour of all of them
+  place_siblings <- function(nodes) {
+    combined <- NULL
+    for (k in nodes) {
+      cont <- layout_node(k)
+      if (!is.null(combined)) {
+        gap <- combined$right + sib_gap - cont$left
+        shift <- if (all(is.na(gap))) 0 else max(gap, na.rm = TRUE)
+        x[members[[k]]] <<- x[members[[k]]] + shift
+        cont <- shift_contour(cont, shift)
+      }
+      combined <- if (is.null(combined)) cont else merge_contour(combined, cont)
+    }
+    combined
+  }
+
+  layout_node <- function(v) {
+    kids <- children[[v]]
+    if (is.null(kids)) {
+      x[[v]] <<- 0
+      members[[v]] <<- v
+      return(own_contour(v))
+    }
+
+    combined <- place_siblings(kids)
+    x[[v]] <<- mean(x[kids[c(1, length(kids))]])
+    members[[v]] <<- c(v, unlist(members[kids], use.names = FALSE))
+    merge_contour(combined, own_contour(v))
+  }
+
+  # Segments: nodes with no or several layout parents, grouped by parent set
+  roots <- Filter(function(nm) length(lay_par[[nm]]) != 1L, main_nd)
+  keys  <- vapply(roots, function(nm) paste(lay_par[[nm]], collapse = "|"), "")
+  for (key in unique(keys)) {
+    grp <- roots[keys == key]
+    place_siblings(grp)
+
+    parents <- lay_par[[grp[1]]]
+    target  <- if (length(parents) == 0L) 0 else mean(x[parents])
+    shift   <- target - mean(x[grp[c(1, length(grp))]])
+    seg     <- unlist(members[grp], use.names = FALSE)
+    x[seg]  <- x[seg] + shift
+  }
+
+  # Side boxes sit beside their anchor
+  xs <- x
+  for (anchor in names(side_of)) {
+    for (sb in side_of[[anchor]]) {
+      off <- sb_offset + width[[sb]] / 2
+      xs[[sb]] <- if (identical(consort_plot[[sb]]$side, "left")) {
+        x[[anchor]] - off
+      } else {
+        x[[anchor]] + off
+      }
     }
   }
 
-  pos - mean(pos)
-}
-
-# Offset sidebox nodes from their parent column's X position
-#' @keywords internal
-place_sideboxes <- function(col_x, sb_widths, sb_sides, pad_u) {
-  n_cols <- length(col_x)
-  sb_x <- numeric(n_cols)
-  for (k in seq_len(n_cols)) {
-    sb_x[k] <- if (sb_sides[k] == "right") {
-      col_x[k] + sb_widths[k] / 2 + pad_u / 2
-    } else {
-      col_x[k] - sb_widths[k] / 2 - pad_u / 2
-    }
-  }
-  sb_x
-}
-
-# Recenter parent nodes at the midpoint of their children after a second split
-#' @keywords internal
-adjust_multisplit <- function(nd_x, nd_type, nodes_layout, consort_plot) {
-  n_splits <- sum(nd_type == "splitbox")
-  if (n_splits <= 1) return(nd_x)
-  if (n_splits > 2) stop("More than two splits are not supported.")
-
-  split_idx <- which(nd_type == "splitbox")[-1]
-  prev_nodes <- sapply(unlist(nodes_layout[split_idx]), function(y) {
-    consort_plot[[y]]$prev_node
-  }, simplify = FALSE)
-  prev_nodes <- unlist(prev_nodes)
-
-  for (parent in unique(prev_nodes)) {
-    children_x <- nd_x[[split_idx]][names(prev_nodes[prev_nodes == parent])]
-    nd_x[[split_idx - 1]][parent] <- mean(range(children_x))
-  }
-
-  nd_x
+  setNames(lapply(nodes_layout, function(nd) xs[nd]), NULL)
 }
 
 # Shift all X coordinates so minimum is 0 and compute final bounds
 #' @keywords internal
-normalize_x <- function(nd_x, nd_wd, nodes_layout) {
-  nd_minmax <- lapply(seq_along(nodes_layout), function(i) {
-    n_cols <- length(nodes_layout[[i]])
-    if (n_cols > 1) {
-      wd_mat <- do.call(rbind, nd_wd[i])
-      x_mat  <- do.call(rbind, nd_x[i])
-      c(minx = min(x_mat[, 1] - wd_mat[, 1] / 2),
-        maxx = max(x_mat[, n_cols] + wd_mat[, n_cols] / 2))
-    } else {
-      c(minx = nd_x[[i]] - nd_wd[[i]] / 2,
-        maxx = nd_x[[i]] + nd_wd[[i]] / 2)
-    }
-  })
+normalize_x <- function(nd_x, nd_wd) {
+  lo <- min(unlist(Map(function(x, w) x - w / 2, nd_x, nd_wd)))
+  hi <- max(unlist(Map(function(x, w) x + w / 2, nd_x, nd_wd)))
 
-  bounds <- do.call(rbind, Filter(Negate(is.null), nd_minmax))
-  min_val <- min(bounds[, 1])
-  max_val <- max(bounds[, 2])
-
-  for (i in seq_along(nodes_layout)) {
-    nd_x[[i]] <- nd_x[[i]] - min_val
-  }
-
-  list(nd_x = nd_x, max_width = max_val - min_val)
+  list(nd_x = lapply(nd_x, function(x) x - lo), max_width = hi - lo)
 }
 
 # Calculate coordinates
@@ -201,77 +281,16 @@ calc_coords <- function(consort_plot) {
   y_result <- calc_y_coords(consort_plot, nodes_layout, pad_u)
   nd_y <- y_result$nd_y
 
-  # --- Phase 2: Gather node widths and sides ---
+  # --- Phase 2: Gather node widths ---
   nd_wd <- lapply(nodes_layout, function(nd) {
     sapply(consort_plot[nd], function(x) get_size(x$box)$width)
   })
 
-  nd_sides <- lapply(nodes_layout, function(nd) {
-    unlist(sapply(consort_plot[nd], function(x) x$side))
-  })
-
   # --- Phase 3: X coordinates ---
-  nd_x <- vector("list", length = length(nodes_layout))
-  col_counts <- sapply(nodes_layout, length)
-  row_groups <- gp_consecutive(col_counts)
+  nd_x <- calc_tree_x(consort_plot, nodes_layout, nd_type, nd_wd, pad_u)
 
-  for (gp in unique(row_groups)) {
-    gp_rows <- which(row_groups == gp)
-    n_cols <- unique(col_counts[gp_rows])
-    gp_types <- nd_type[gp_rows]
-
-    if (n_cols == 1) {
-      # Single-column: main nodes at center, sideboxes offset
-      for (r in gp_rows) {
-        if (nd_type[r] != "sidebox") {
-          nd_x[[r]] <- 0
-        } else {
-          nd_x[[r]] <- ifelse(nd_sides[[r]] == "right",
-                              nd_wd[[r]] / 2 + pad_u,
-                              -nd_wd[[r]] / 2 - pad_u)
-        }
-        names(nd_x[[r]]) <- nodes_layout[[r]]
-      }
-    } else {
-      # Multi-column
-      wd_mat <- do.call(rbind, nd_wd[gp_rows])
-      is_sb <- gp_types == "sidebox"
-
-      if (any(is_sb)) {
-        # Column positions with sidebox-aware spacing
-        main_col_widths <- apply(wd_mat[!is_sb, , drop = FALSE], 2, max)
-        sb_wd_mat <- wd_mat[is_sb, , drop = FALSE]
-        sb_sd_mat <- do.call(rbind, nd_sides[gp_rows][is_sb])
-
-        col_x <- calc_column_x(main_col_widths, sb_wd_mat, sb_sd_mat, pad_u)
-
-        for (r in gp_rows) {
-          if (nd_type[r] != "sidebox") {
-            nd_x[[r]] <- col_x
-          } else {
-            nd_x[[r]] <- place_sideboxes(col_x, nd_wd[[r]], nd_sides[[r]], pad_u)
-          }
-          names(nd_x[[r]]) <- nodes_layout[[r]]
-        }
-      } else {
-        # No sideboxes: simple equal spacing
-        col_widths <- apply(wd_mat, 2, max)
-        col_x <- col_widths / 2 + c(0, cumsum(col_widths[-length(col_widths)] + 4 * pad_u))
-        col_x <- col_x - mean(col_x)
-
-        for (r in gp_rows) {
-          nd_x[[r]] <- col_x
-          names(nd_x[[r]]) <- nodes_layout[[r]]
-        }
-      }
-    }
-  }
-
-  # --- Phase 4: Multiple split adjustment ---
-  nd_x <- adjust_multisplit(nd_x, nd_type, nodes_layout, consort_plot)
-
-  # --- Phase 5: Normalize to positive coordinates ---
-  x_result <- normalize_x(nd_x, nd_wd, nodes_layout)
+  # --- Phase 4: Normalize to positive coordinates ---
+  x_result <- normalize_x(nd_x, nd_wd)
 
   list(
     x = unlist(x_result$nd_x),
@@ -310,22 +329,4 @@ calc_coords_label <- function(label_plot, node_y, max_h){
               x = lab_x, # Put inside
               y = lab_y))
   
-}
-
-# Create groups if consecutive 
-#' @keywords internal
-#'
-#'
-gp_consecutive <- function(x){
-  int <- 1
-  gp <- vector("character", length = length(x))
-  gp[1] <- as.character(int)
-  if(length(x) > 1){
-    for(i in 2:length(x)){
-      if(x[i] != x[i-1])
-        int <- int + 1
-      gp[i] <- as.character(int)
-    }
-  }
-  return(gp)
 }

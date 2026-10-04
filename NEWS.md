@@ -6,6 +6,7 @@
 -   Fixed an error with multiple variables in the first element of `orders`.
 -   `plot()` now shrinks the diagram to fit the device instead of stretching it, fixing overlapping nodes.
 -   Fixed `add_label_box()` ignoring its own `box_fn` and `just` arguments.
+-   `build_grid()` and `plot()` now lay out nodes as a tree, supporting any depth of nested splits.
 
 # consort 1.2.3
 

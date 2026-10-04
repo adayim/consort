@@ -22,10 +22,8 @@ A \code{gList} object, with a \code{size} attribute giving the
 }
 \description{
 Build a \code{grob} consort diagram, use this if you want
-to save plots with \code{\link[ggplot2]{ggsave}}. \code{build_grid}
-does not support more than two nested splits for the moment, please use
- \code{\link{build_grviz}} or \code{plot(g, grViz = TRUE)} for
-such diagrams instead.
+to save plots with \code{\link[ggplot2]{ggsave}}. Splits can be nested to
+any depth.
 }
 \details{
 The diagram is laid out at a fixed, device-independent "natural" size,
