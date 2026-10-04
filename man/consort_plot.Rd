@@ -30,9 +30,9 @@ box will be the subset of the missing values of these variables.}
 
 \item{allocation}{Name of the grouping/treatment variable (optional), the
  diagram will split into branches on this variables forward. For a factorial 
-design, with two splits for example, a character vector with a maximum of 
-length two can be provided. The extra box will be skipped if the values
- in the \code{orders} blank.}
+design, with several splits, a character vector with one variable per split
+can be provided, the splits are nested in that order. The extra box will be
+skipped if the values in the \code{orders} blank.}
 
 \item{labels}{Named vector, names is the location of the terminal node. The
 position location should plus 1 after the allocation variables if the allocation

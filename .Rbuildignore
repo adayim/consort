@@ -12,3 +12,5 @@
 ^Meta$
 ^CRAN-SUBMISSION$
 ^\..+$
+^\.Rproj\.user$
+^docs$

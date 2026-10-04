@@ -1,0 +1,45 @@
+url: https://adayim.github.io/consort/
+template:
+  bootstrap: 5
+
+reference:
+  - title: Diagram from data
+    desc: >
+      Generate a CONSORT diagram from a participant disposition data set,
+      counts are calculated automatically.
+    contents:
+      - consort_plot
+      - gen_text
+      - dispos.data
+
+  - title: Diagram step by step
+    desc: >
+      Build a diagram node by node with a pipeline of `add_*()` functions.
+      Splits can be nested to any depth.
+    contents:
+      - add_box
+      - add_split
+      - add_side_box
+      - add_label_box
+
+  - title: Plot and export
+    desc: >
+      Draw a diagram with grid graphics, or as Graphviz code for HTML and
+      Shiny use.
+    contents:
+      - plot.consort
+      - build_grid
+      - build_grviz
+
+  - title: Appearance
+    desc: Package-wide defaults for text, boxes, arrows, padding and markup.
+    contents:
+      - set_consort_defaults
+
+  - title: Low-level building blocks
+    desc: Create, move and connect individual boxes.
+    contents:
+      - textbox
+      - move_box
+      - connect_box
+      - get_coords

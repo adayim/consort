@@ -211,3 +211,33 @@ test_that("nested splits render", {
   expect_snapshot_file(save_png(nested_split(4), width = 16, height = 9),
                        "nested-split-4.png")
 })
+
+test_that("consort_plot supports more than two allocation variables", {
+  df <- dispos.data
+  df$site <- factor(rep(c("Site 1", "Site 2"), length.out = nrow(df)))
+
+  p <- consort_plot(data = df,
+                    orders = c(trialno = "Population", exclusion = "Excluded",
+                               arm = "Randomized patient", arm3 = "", site = "",
+                               subjid_notdosed = "Lost of Follow-up",
+                               followup = "Followup-up",
+                               lost_followup = "Lost to follow-up",
+                               mitt = "Final Analysis"),
+                    side_box = c("exclusion", "subjid_notdosed", "lost_followup"),
+                    allocation = c("arm", "arm3", "site"))
+
+  layout <- attr(p, "nodes.list")
+  types <- vapply(layout, function(nd) p[[nd[1]]]$node_type, "")
+  expect_equal(sum(types == "splitbox"), 3)
+
+  # Final boxes: one per arm x arm3 x site, counts as tabulated from the data
+  final <- p[layout[[length(layout)]]]
+  n_shown <- as.numeric(gsub("[^0-9]", "", sub(".*n=", "", vapply(final, `[[`, "", "text"))))
+  kept <- subset(df, is.na(exclusion) & is.na(subjid_notdosed) &
+                   is.na(lost_followup) & !is.na(mitt))
+  expected <- sapply(split(kept, list(kept$site, factor(kept$arm3), kept$arm)), nrow)
+  expect_equal(n_shown, unname(expected))
+
+  check_layout(p)
+  expect_no_error(build_grviz(p))
+})

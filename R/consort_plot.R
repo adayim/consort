@@ -14,9 +14,9 @@
 #'  box will be the subset of the missing values of these variables.
 #' @param allocation Name of the grouping/treatment variable (optional), the
 #'  diagram will split into branches on this variables forward. For a factorial 
-#' design, with two splits for example, a character vector with a maximum of 
-#' length two can be provided. The extra box will be skipped if the values
-#'  in the \code{orders} blank.
+#' design, with several splits, a character vector with one variable per split
+#' can be provided, the splits are nested in that order. The extra box will be
+#' skipped if the values in the \code{orders} blank.
 #' @param labels Named vector, names is the location of the terminal node. The
 #' position location should plus 1 after the allocation variables if the allocation
 #' is defined.
@@ -107,9 +107,6 @@ consort_plot <- function(data,
   }
   
   if(!is.null(allocation)){
-    if(length(allocation) > 2)
-      stop("A maximum of two treatment allocation is supported.")
-    
     for(i in allocation){
       if(!is.factor(data[[i]]))
         data[[i]] <- as.factor(data[[i]])
@@ -170,8 +167,8 @@ consort_plot <- function(data,
           )
         }
         
-        if(split_ctn == 2){
-          txt2 <- lapply(val, function(x){
+        if(split_ctn >= 2){
+          txt2 <- lapply(leaf_list(val), function(x){
             make_text(value = x, variable = nd, drop_levels = drop_levels)
           })
         }else{
@@ -189,18 +186,8 @@ consort_plot <- function(data,
         
       } else {
         # txt <- gen_text(x = val, label = orders[indx], bullet = FALSE)
-        if(split_ctn == 2){
-          txt <- lapply(val, function(x){
-            r <- lapply(x, function(y){
-              make_text(value = y, variable = nd,
-                        label = TRUE, split = FALSE,
-                        drop_levels = drop_levels)
-            })
-            unlist(r)
-          })
-          txt <- unlist(txt)
-        }else if(split_ctn == 1){
-          txt <- lapply(val, function(x){
+        if(split_ctn >= 1){
+          txt <- lapply(leaf_list(val), function(x){
             make_text(value = x, variable = nd,
                       label = TRUE, split = FALSE,
                       drop_levels = drop_levels)
@@ -269,73 +256,43 @@ unlst <- function(lst){
 }
 
 
-# Split data for the next step
+# Data after k splits is a list nested k levels deep with a data.frame at each
+# leaf, in the order of the nodes in the diagram. Apply `f` to every leaf,
+# keeping the nesting.
 #' @keywords internal
-split_data <- function(data, variable){
-  if(!is.data.frame(data)){
-    sapply(data, function(x){
-      split(x, as.factor(x[[variable]]))
-    }, simplify = FALSE)
-  }else{
-    split(data, as.factor(data[[variable]]))
-  }
+map_leaves <- function(data, f) {
+  if (is.data.frame(data)) return(f(data))
+  lapply(data, map_leaves, f = f)
 }
 
+# The leaf data.frames as a flat list, in diagram order
+#' @keywords internal
+leaf_list <- function(data) {
+  if (is.data.frame(data)) return(list(data))
+  unlist(lapply(data, leaf_list), recursive = FALSE, use.names = FALSE)
+}
+
+# Split data for the next step
+#' @keywords internal
+split_data <- function(data, variable) {
+  map_leaves(data, function(d) split(d, as.factor(d[[variable]])))
+}
 
 # Subset missing data for the next step
 #' @keywords internal
 subset_missing <- function(data, variable) {
-  if (!is.data.frame(data)) {
-    sapply(data, function(x){
-      if(!is.data.frame(x))
-        sapply(x, function(y) y[is.na(y[[variable]]), ],
-               simplify = FALSE
-        )
-      else
-        x[is.na(x[[variable]]), ]
-    },simplify = FALSE)
-  } else {
-    data[is.na(data[[variable]]), ]
-  }
+  map_leaves(data, function(d) d[is.na(d[[variable]]), ])
 }
 
 # Subset non-missing data for the next step
 #' @keywords internal
 subset_nonmissing <- function(data, variable) {
-  if (!is.data.frame(data)) {
-    sapply(data, function(x){
-      if(!is.data.frame(x))
-        sapply(x, function(y) y[!is.na(y[[variable]]), ],
-               simplify = FALSE
-        )
-      else
-        x[!is.na(x[[variable]]), ]
-    },simplify = FALSE)
-  } else {
-    data[!is.na(data[[variable]]), ]
-  }
+  map_leaves(data, function(d) d[!is.na(d[[variable]]), ])
 }
 
 # Extract variable values
 # Extract values of a variables form a `data.frame`, `list` or a nested `list`.
 #' @keywords internal
-get_val <- function(dat, variables){
-  if (is.data.frame(dat)) {
-    val <- dat[, variables, drop = FALSE]
-  } else {
-    val <- sapply(dat, function(x){
-      if(is.data.frame(x))
-        x[, variables, drop = FALSE]
-      else{
-        sapply(x, function(y) y[, variables, drop = FALSE], simplify = FALSE)
-      }
-    }, simplify = FALSE)
-    
-    # if(any(sapply(val, is.list)))
-    #   val <- unlist(val, recursive = FALSE)
-  }
-  
-  return(val)
+get_val <- function(dat, variables) {
+  map_leaves(dat, function(d) d[, variables, drop = FALSE])
 }
-
-

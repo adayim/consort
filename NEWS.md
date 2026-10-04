@@ -7,6 +7,7 @@
 -   `plot()` now shrinks the diagram to fit the device instead of stretching it, fixing overlapping nodes.
 -   Fixed `add_label_box()` ignoring its own `box_fn` and `just` arguments.
 -   `build_grid()`, `build_grviz()` and `plot()` now support any depth of nested splits.
+-   `consort_plot()` accepts more than two `allocation` variables.
 -   Straighter, better centred nodes in `grViz` plots.
 
 # consort 1.2.3
