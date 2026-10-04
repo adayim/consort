@@ -307,5 +307,52 @@ mk_invs_side <- function(node1, node2, node3, group = NULL){
               "rank" = sm_rnk))
 }
 
+# Group name of every node, as a list with one named vector per row.
+#
+# Graphviz keeps edges inside a group straight, so nodes that sit on one
+# vertical line share a group (a "spine"): a node continues the spine of its
+# parent when it is the only child, or the middle one of an odd number of
+# children (the parent sits right above it). Any other child starts a spine of
+# its own. Likewise a merge node continues the middle parent's spine. A side
+# box takes the spine of the node it is attached to, for its connection point.
+#' @keywords internal
+assign_spines <- function(consort_plot, nodes_layout, nd_type) {
+  main_rows <- which(nd_type %in% c("vertbox", "splitbox"))
+  main_nd   <- unlist(nodes_layout[main_rows])
+  lay_par   <- layout_parents(consort_plot, nodes_layout, main_rows)
 
+  children <- list()
+  for (nm in main_nd) {
+    if (length(lay_par[[nm]]) == 1L)
+      children[[lay_par[[nm]]]] <- c(children[[lay_par[[nm]]]], nm)
+  }
 
+  n_spine <- 0L
+  new_spine <- function() {
+    n_spine <<- n_spine + 1L
+    paste0("S", n_spine)
+  }
+  middle <- function(x) x[ceiling(length(x) / 2)]
+  odd <- function(x) length(x) %% 2L == 1L
+
+  spine <- character()
+  for (nm in main_nd) {
+    parents <- lay_par[[nm]]
+    siblings <- children[[parents[1]]]
+
+    spine[[nm]] <- if (length(parents) == 0L) {
+      new_spine()
+    } else if (length(parents) == 1L) {
+      if (odd(siblings) && identical(middle(siblings), nm)) spine[[parents]] else new_spine()
+    } else {
+      if (odd(parents)) spine[[middle(parents)]] else new_spine()
+    }
+  }
+
+  lapply(nodes_layout, function(nd) {
+    r <- vapply(nd, function(nm) {
+      if (nm %in% main_nd) spine[[nm]] else spine[[consort_plot[[nm]]$prev_node[1]]]
+    }, character(1))
+    setNames(r, nd)
+  })
+}

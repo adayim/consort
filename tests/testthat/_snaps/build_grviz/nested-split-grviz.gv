@@ -1,0 +1,192 @@
+digraph consort_diagram {
+  graph [layout = dot, splines=ortho]
+
+node [shape = rectangle]
+
+
+
+
+
+# node definitions with substituted label text
+
+node1 [label = "Population (n=300)" group=S1 fillcolor="white" style="filled" fontcolor="black"]
+node2 [label = "Region A" group=S2 fillcolor="white" style="filled" fontcolor="black"]
+node3 [label = "Region B" group=S3 fillcolor="white" style="filled" fontcolor="black"]
+node4 [label = "Site A1" group=S4 fillcolor="white" style="filled" fontcolor="black"]
+node5 [label = "Site A2" group=S5 fillcolor="white" style="filled" fontcolor="black"]
+node6 [label = "Site B1" group=S6 fillcolor="white" style="filled" fontcolor="black"]
+node7 [label = "Site B2" group=S3 fillcolor="white" style="filled" fontcolor="black"]
+node8 [label = "Site B3" group=S7 fillcolor="white" style="filled" fontcolor="black"]
+node9 [label = "Arm A1x" group=S8 fillcolor="white" style="filled" fontcolor="black"]
+node10 [label = "Arm A1y" group=S9 fillcolor="white" style="filled" fontcolor="black"]
+node11 [label = "Arm A2x" group=S5 fillcolor="white" style="filled" fontcolor="black"]
+node12 [label = "Arm B1x" group=S10 fillcolor="white" style="filled" fontcolor="black"]
+node13 [label = "Arm B1y" group=S11 fillcolor="white" style="filled" fontcolor="black"]
+node14 [label = "Arm B2x long label" group=S12 fillcolor="white" style="filled" fontcolor="black"]
+node15 [label = "Arm B2y" group=S13 fillcolor="white" style="filled" fontcolor="black"]
+node16 [label = "Arm B3x" group=S7 fillcolor="white" style="filled" fontcolor="black"]
+node17 [label = "Lost (n=1)\l" fillcolor="white" style="filled" fontcolor="black"]
+node18 [label = "Excluded (n=3):\l Reason one\l Reason two\l" fillcolor="white" style="filled" fontcolor="black"]
+node19 [label = "Lost (n=1)\l" fillcolor="white" style="filled" fontcolor="black"]
+node20 [label = "Excluded (n=3):\l Reason one\l Reason two\l" fillcolor="white" style="filled" fontcolor="black"]
+node21 [label = "Lost (n=1)\l" fillcolor="white" style="filled" fontcolor="black"]
+node22 [label = "Excluded (n=3):\l Reason one\l Reason two\l" fillcolor="white" style="filled" fontcolor="black"]
+node23 [label = "Lost (n=1)\l" fillcolor="white" style="filled" fontcolor="black"]
+node24 [label = "Excluded (n=3):\l Reason one\l Reason two\l" fillcolor="white" style="filled" fontcolor="black"]
+node25 [label = "Analysed 1" group=S8 fillcolor="white" style="filled" fontcolor="black"]
+node26 [label = "Analysed 2" group=S9 fillcolor="white" style="filled" fontcolor="black"]
+node27 [label = "Analysed 3" group=S5 fillcolor="white" style="filled" fontcolor="black"]
+node28 [label = "Analysed 4" group=S10 fillcolor="white" style="filled" fontcolor="black"]
+node29 [label = "Analysed 5" group=S11 fillcolor="white" style="filled" fontcolor="black"]
+node30 [label = "Analysed 6" group=S12 fillcolor="white" style="filled" fontcolor="black"]
+node31 [label = "Analysed 7" group=S13 fillcolor="white" style="filled" fontcolor="black"]
+node32 [label = "Analysed 8" group=S7 fillcolor="white" style="filled" fontcolor="black"]
+
+
+## Invisible point node for joints
+
+node [shape = point, width = 0, style=invis]
+
+P1 [group=S2]
+P2 [group=S1]
+P3 [group=S3]
+P4 [group=S4]
+P5 [group=S2]
+P6 [group=S5]
+P7 [group=S6]
+P8 [group=S3]
+P9 [group=S7]
+P10 [group=S8]
+P11 [group=S4]
+P12 [group=S9]
+P13 [group=S5]
+P14 [group=S10]
+P15 [group=S6]
+P16 [group=S11]
+P17 [group=S12]
+P18 [group=S3]
+P19 [group=S13]
+P20 [group=S7]
+P21 [group=S8]
+P22 [group=S9]
+P23 [group=S5]
+P24 [group=S10]
+P25 [group=S11]
+P26 [group=S12]
+P27 [group=S13]
+P28 [group=S7]
+
+subgraph {
+  rank = same; rankdir = LR; P1; P2; P3;
+  }
+subgraph {
+  rank = same; rankdir = LR; node2; node3;
+  }
+subgraph {
+  rank = same; rankdir = LR; P4; P5; P6; P7; P8; P9;
+  }
+subgraph {
+  rank = same; rankdir = LR; node4; node5; node6; node7; node8;
+  }
+subgraph {
+  rank = same; rankdir = LR; P10; P11; P12; P13; P14; P15; P16; P17; P18; P19; P20;
+  }
+subgraph {
+  rank = same; rankdir = LR; node9; node10; node11; node12; node13; node14; node15; node16;
+  }
+subgraph {
+  rank = same; rankdir = LR; P21; node17;
+  }
+subgraph {
+  rank = same; rankdir = LR; node25; node26; node27; node28; node29; node30; node31; node32;
+  }
+subgraph {
+  rank = same; rankdir = LR; node17; node18; node19; node20; node21; node22; node23; node24;
+  }
+subgraph {
+  rank = same; rankdir = LR; P22; node18;
+  }
+subgraph {
+  rank = same; rankdir = LR; P23; node19;
+  }
+subgraph {
+  rank = same; rankdir = LR; P24; node20;
+  }
+subgraph {
+  rank = same; rankdir = LR; P25; node21;
+  }
+subgraph {
+  rank = same; rankdir = LR; P26; node22;
+  }
+subgraph {
+  rank = same; rankdir = LR; P27; node23;
+  }
+subgraph {
+  rank = same; rankdir = LR; P28; node24;
+  }
+
+edge[color="black" penwidth=1 style="" arrowhead="normal" arrowsize=1.00];
+
+node1 -> P2 [arrowhead = none];
+P1 -> node2;
+P3 -> node3;
+P1 -> P2 -> P3 [arrowhead = none];
+node2 -> P5 [arrowhead = none];
+P4 -> node4;
+P6 -> node5;
+P4 -> P5 -> P6 [arrowhead = none];
+node3 -> P8 [arrowhead = none];
+P7 -> node6;
+P8 -> node7;
+P9 -> node8;
+P7 -> P8 -> P9 [arrowhead = none];
+P6 -> P7 [style=invis];
+node4 -> P11 [arrowhead = none];
+P10 -> node9;
+P12 -> node10;
+P10 -> P11 -> P12 [arrowhead = none];
+node5 -> P13 [arrowhead = none];
+P13 -> node11;
+P13 [arrowhead = none];
+node6 -> P15 [arrowhead = none];
+P14 -> node12;
+P16 -> node13;
+P14 -> P15 -> P16 [arrowhead = none];
+node7 -> P18 [arrowhead = none];
+P17 -> node14;
+P19 -> node15;
+P17 -> P18 -> P19 [arrowhead = none];
+node8 -> P20 [arrowhead = none];
+P20 -> node16;
+P20 [arrowhead = none];
+P12 -> P13 [style=invis];
+P13 -> P14 [style=invis];
+P16 -> P17 [style=invis];
+P19 -> P20 [style=invis];
+node9 -> P21 [arrowhead = none];
+P21 -> node17;
+P21 -> node25;
+node10 -> P22 [arrowhead = none];
+P22 -> node18;
+P22 -> node26;
+node11 -> P23 [arrowhead = none];
+P23 -> node19;
+P23 -> node27;
+node12 -> P24 [arrowhead = none];
+P24 -> node20;
+P24 -> node28;
+node13 -> P25 [arrowhead = none];
+P25 -> node21;
+P25 -> node29;
+node14 -> P26 [arrowhead = none];
+P26 -> node22;
+P26 -> node30;
+node15 -> P27 [arrowhead = none];
+P27 -> node23;
+P27 -> node31;
+node16 -> P28 [arrowhead = none];
+P28 -> node24;
+P28 -> node32;
+
+
+}

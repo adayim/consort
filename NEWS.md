@@ -2,11 +2,12 @@
 
 -   New `drop_levels` argument in `consort_plot()` and `gen_text()` to report zero-count factor levels as `(n=0)` (#25).
 -   Faster plotting by caching text box measurements and simplifying layout calculations.
--   Fixed node-name confusion (e.g. `node1` vs `node10`) in `build_grviz()`.
+-   Fixed node-name confusion in `build_grviz()`.
 -   Fixed an error with multiple variables in the first element of `orders`.
 -   `plot()` now shrinks the diagram to fit the device instead of stretching it, fixing overlapping nodes.
 -   Fixed `add_label_box()` ignoring its own `box_fn` and `just` arguments.
--   `build_grid()` and `plot()` now lay out nodes as a tree, supporting any depth of nested splits.
+-   `build_grid()`, `build_grviz()` and `plot()` now support any depth of nested splits.
+-   Straighter, better centred nodes in `grViz` plots.
 
 # consort 1.2.3
 

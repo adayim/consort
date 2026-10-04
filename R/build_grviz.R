@@ -3,8 +3,7 @@
 #' Build the Graphviz DOT representation of a consort object, use this if
 #' you want to render with \code{\link[DiagrammeR]{grViz}} (see
 #' \code{plot(x, grViz = TRUE)}) or export via
-#' \code{\link[DiagrammeRsvg]{export_svg}}. At most two nested splits are
-#' supported, use \code{\link{build_grid}} for deeper nesting.
+#' \code{\link[DiagrammeRsvg]{export_svg}}. Splits can be nested to any depth.
 #'
 #' @param x A consort object.
 #'
@@ -97,20 +96,8 @@ build_grviz <- function(x) {
   inv_nd <- vector("character") # Invisible node
   con_nd <- vector("character") # Connections
   
-  # For multiple split
-  if(sum(nd_type == "splitbox") > 2)
-    stop("More than two splits are not supported.")
-  
-  # Group name
-  # Number of nodes at each level
-  nd_len <- unique(sapply(nodes_layout, length))
-  names(nd_len) <- LETTERS[1:length(nd_len)]
-  group_name <- lapply(nodes_layout, function(x){
-    r <- names(nd_len[nd_len == length(x)])
-    r <- paste0(r, seq_along(x))
-    names(r) <- x
-    return(r)
-  })
+  # Group name: nodes on the same vertical line share a group
+  group_name <- assign_spines(consort_plot, nodes_layout, nd_type)
   
   # Main nodes
   for(i in seq_along(nd_type)){

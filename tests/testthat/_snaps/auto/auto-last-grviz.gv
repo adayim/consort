@@ -12,23 +12,23 @@ label8 -> label9;
 
 # node definitions with substituted label text
 
-node1 [label = "Screened (n=1,000)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node1 [label = "Screened (n=1,000)" group=S1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
 node2 [label = "Excluded (n=286)\l Hx medication (n=48)\l age < 40 (n=82)\l pain-free (n=156)\l" fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
-node3 [label = "Qualified for Randomization (n=714)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
-node4 [label = "Consented (n=634)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
-node5 [label = "Randomized (n=534)" group=A1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
-node6 [label = "Treatment A (n=285)" group=B1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
-node7 [label = "Treatment B (n=249)" group=B2 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node3 [label = "Qualified for Randomization (n=714)" group=S1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node4 [label = "Consented (n=634)" group=S1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node5 [label = "Randomized (n=534)" group=S1 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node6 [label = "Treatment A (n=285)" group=S2 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
+node7 [label = "Treatment B (n=249)" group=S3 fillcolor="white" style="filled" fontcolor="black" fontsize=11.2]
 
 
 ## Invisible point node for joints
 
 node [shape = point, width = 0, style=invis]
 
-P1 [group=A1]
-P2 [group=B1]
-P3 [group=A1]
-P4 [group=B2]
+P1 [group=S1]
+P2 [group=S2]
+P3 [group=S1]
+P4 [group=S3]
 
 subgraph {
   rank = same; rankdir = LR; label8;  node1;

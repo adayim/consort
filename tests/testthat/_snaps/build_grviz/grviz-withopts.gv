@@ -13,34 +13,34 @@ label14 -> label15 -> label16;
 
 # node definitions with substituted label text
 
-node1 [label = "Study 1 (n=8)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
-node2 [label = "Study 2 (n=12)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
-node3 [label = "Included All (n=20)" group=B1 fillcolor="white" style="filled" fontcolor="black"]
+node1 [label = "Study 1 (n=8)" group=S1 fillcolor="white" style="filled" fontcolor="black"]
+node2 [label = "Study 2 (n=12)" group=S2 fillcolor="white" style="filled" fontcolor="black"]
+node3 [label = "Included All (n=20)" group=S3 fillcolor="white" style="filled" fontcolor="black"]
 node4 [label = "Excluded (n=7):\l MRI not collected (n=3)\l" fillcolor="white" style="filled" fontcolor="black"]
-node5 [label = "Randomised" group=B1 fillcolor="white" style="filled" fontcolor="black"]
-node6 [label = "Arm A (n=143)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
-node7 [label = "Arm B (n=142)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
-node8 [label = "Follow-up (n=20)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
-node9 [label = "Follow-up (n=7)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node5 [label = "Randomised" group=S3 fillcolor="white" style="filled" fontcolor="black"]
+node6 [label = "Arm A (n=143)" group=S4 fillcolor="white" style="filled" fontcolor="black"]
+node7 [label = "Arm B (n=142)" group=S5 fillcolor="white" style="filled" fontcolor="black"]
+node8 [label = "Follow-up (n=20)" group=S4 fillcolor="white" style="filled" fontcolor="black"]
+node9 [label = "Follow-up (n=7)" group=S5 fillcolor="white" style="filled" fontcolor="black"]
 node10 [label = "Excluded (n=15):\l MRI not collected (n=3)\l Tissues not collected (n=4)\l Other (n=8)\l" fillcolor="white" style="filled" fontcolor="black"]
 node11 [label = "Excluded (n=7):\l MRI not collected (n=3)\l Tissues not collected (n=4)\l" fillcolor="white" style="filled" fontcolor="black"]
-node12 [label = "Final analysis (n=128)" group=A1 fillcolor="white" style="filled" fontcolor="black"]
-node13 [label = "Final analysis (n=135)" group=A2 fillcolor="white" style="filled" fontcolor="black"]
+node12 [label = "Final analysis (n=128)" group=S4 fillcolor="white" style="filled" fontcolor="black"]
+node13 [label = "Final analysis (n=135)" group=S5 fillcolor="white" style="filled" fontcolor="black"]
 
 
 ## Invisible point node for joints
 
 node [shape = point, width = 0, style=invis]
 
-P1 [group=A1]
-P2 [group=B1]
-P3 [group=A2]
-P4 [group=B1]
-P5 [group=A1]
-P6 [group=B1]
-P7 [group=A2]
-P8 [group=A1]
-P9 [group=A2]
+P1 [group=S1]
+P2 [group=S3]
+P3 [group=S2]
+P4 [group=S3]
+P5 [group=S4]
+P6 [group=S3]
+P7 [group=S5]
+P8 [group=S4]
+P9 [group=S5]
 
 subgraph {
   rank = same; rankdir = LR; P1; P2; P3;
