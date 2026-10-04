@@ -145,7 +145,7 @@ The package supports two plotting engines: `grid` (`grid` package) and
 `Graphviz`. The default was `grid`, `plot(g)` (assuming `g` is the
 consort plot object) will use the `grid` to draw the plot. The
 coordinates are calculated internally, one can simply use
-`build_grviz(g)` to get a built `grob` object. This means you can do use
+`build_grid(g)` to get a built `grob` object. This means you can do use
 `patchwork` package to combine different plots. You can use the example
 below to add title and footnotes.
 
@@ -204,25 +204,14 @@ get_consort_defaults()
 #>   parse_markup  : FALSE
 ```
 
-The available options are:
-
-| Option | Type | Default | Description |
-|----|----|----|----|
-| `arrow_gp` | [`gpar()`](https://rdrr.io/r/grid/gpar.html) | `gpar(col = "black", lwd = 1)` | Graphical parameters for arrows (colour, line width, line type, etc.). |
-| `txt_gp` | [`gpar()`](https://rdrr.io/r/grid/gpar.html) | `gpar(cex = 1, col = "black")` | Graphical parameters for the text inside boxes (font size, colour, font family, etc.). |
-| `box_gp` | [`gpar()`](https://rdrr.io/r/grid/gpar.html) | `gpar(fill = "white")` | Graphical parameters for the box border and fill colour. |
-| `label_txt_gp` | [`gpar()`](https://rdrr.io/r/grid/gpar.html) | `gpar(col = "#4F81BD", cex = 1, fontface = "bold")` | Graphical parameters for the phase/stage label text. |
-| `label_box_gp` | [`gpar()`](https://rdrr.io/r/grid/gpar.html) | `gpar(fill = "#A9C7FD")` | Graphical parameters for the phase/stage label box. |
-| `arrow_length` | numeric | `0.1` | Length of the arrowhead in inches. |
-| `arrow_type` | character | `"closed"` | Arrow type: `"closed"` (filled) or `"open"`. |
-| `pad_u` | numeric | `3` | Padding between nodes (in grid unit multiples). |
-| `bullet` | character | `"\u2022"` | Bullet character used in side box item lists (e.g. `"\u2013"` for en-dash, `"-"` for hyphen). |
-| `parse_markup` | logical | `FALSE` | Whether to parse lightweight markup (`**bold**`, `*italic*`, etc.) in node labels. See [Text formatting with markup](#text-formatting-with-markup) below. |
+See
+[`?set_consort_defaults`](https://adayim.github.io/consort/reference/set_consort_defaults.md)
+for what each option does.
 
 The [`gpar()`](https://rdrr.io/r/grid/gpar.html) options are merged with
 the existing defaults, so you only need to specify the properties you
-want to change. Previous settings can be restored by capturing the
-return value:
+want to change. The package defaults can be restored with
+[`init_consort_defaults()`](https://adayim.github.io/consort/reference/set_consort_defaults.md):
 
 ``` r
 

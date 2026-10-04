@@ -2,7 +2,10 @@
 
 Modify the default graphical parameters and other settings for consort
 diagrams. Any parameter set to `NULL` (the default) will remain
-unchanged.
+unchanged. [`gpar`](https://rdrr.io/r/grid/gpar.html) arguments are
+merged with the current values, so only the properties to change need to
+be given. Use `init_consort_defaults()` to restore the package defaults,
+and `get_consort_defaults()` to view the current settings.
 
 ## Usage
 
@@ -32,43 +35,48 @@ print(x, ...)
 
 - arrow_gp:
 
-  A [`gpar`](https://rdrr.io/r/grid/gpar.html) object for the arrow
-  line.
+  A [`gpar`](https://rdrr.io/r/grid/gpar.html) object for the arrow line
+  (colour, line width, line type, etc.). Package default is
+  `gpar(col = "black", lwd = 1)`.
 
 - txt_gp:
 
   A [`gpar`](https://rdrr.io/r/grid/gpar.html) object for the text
-  inside boxes.
+  inside boxes (font size, colour, font family, etc.). Package default
+  is `gpar(cex = 1, col = "black")`.
 
 - box_gp:
 
   A [`gpar`](https://rdrr.io/r/grid/gpar.html) object for the box border
-  and fill.
+  and fill. Package default is `gpar(fill = "white")`.
 
 - label_txt_gp:
 
   A [`gpar`](https://rdrr.io/r/grid/gpar.html) object for the label
-  text.
+  text. Package default is
+  `gpar(col = "#4F81BD", cex = 1, fontface = "bold")`.
 
 - label_box_gp:
 
   A [`gpar`](https://rdrr.io/r/grid/gpar.html) object for the label box.
+  Package default is `gpar(fill = "#A9C7FD")`.
 
 - arrow_length:
 
-  Numeric, length of the arrowhead in inches.
+  Numeric, length of the arrowhead in inches. Default is `0.1`.
 
 - arrow_type:
 
-  Character, arrow type: `"closed"` or `"open"`.
+  Character, arrow type: `"closed"` (default) or `"open"`.
 
 - pad_u:
 
-  Numeric, padding between nodes.
+  Numeric, padding between nodes in character units. Default is `3`.
 
 - bullet:
 
-  Character, bullet character for side box items.
+  Character, bullet character for side box items, e.g. an en dash or a
+  hyphen. Default is the Unicode bullet (U+2022).
 
 - parse_markup:
 
